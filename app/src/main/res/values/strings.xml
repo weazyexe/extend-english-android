@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">extendenglish</string>
+    <string name="app_name">exten</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_learn">Learn</string>
+    <string name="title_account">Account</string>
+    <string name="title_settings">Settings</string>
+    <string name="login">Log in</string>
+    <string name="greeting">Hey! Log in or sign up, please</string>
+    <string name="email">E-mail</string>
+    <string name="password">Password</string>
+    <string name="signup">Sign up</string>
+    <string name="create_account">Create account</string>
+    <string name="wrong_email_or_password">Wrong email or password</string>
 </resources>
