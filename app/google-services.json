@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "996814277135",
+    "firebase_url": "https://extend-english.firebaseio.com",
+    "project_id": "extend-english",
+    "storage_bucket": "extend-english.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996814277135:android:fe11630b40219322",
+        "android_client_info": {
+          "package_name": "exe.weazy.extendenglish"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996814277135-vt1mr6ql4jo1gnlugq6jure3crof2tvf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "exe.weazy.extendenglish",
+            "certificate_hash": "87983939d9cc19191a9c9a323351d3db03dd0a1e"
+          }
+        },
+        {
+          "client_id": "996814277135-csso5chqbhulc7em8t959rblgfarc7n9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2MT7GuoaMORJSGU0jyiAEHVEcv9ymPHo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "996814277135-csso5chqbhulc7em8t959rblgfarc7n9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "996814277135-1j2mfj3rdv8o17t2fjbivoalv34hjv83.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ru.pyinc.Extend-English"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
