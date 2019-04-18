@@ -11,12 +11,10 @@ import com.yuyakaido.android.cardstackview.*
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.WordCardStackAdapter
 import exe.weazy.extendenglish.entity.LearnWord
-import exe.weazy.extendenglish.entity.Category
-import java.util.Arrays.asList
 
 class LearnFragment : Fragment(), CardStackListener {
 
-    lateinit var words : List<LearnWord>
+    lateinit var words : ArrayList<LearnWord>
 
     private val stack by lazy { view?.findViewById<CardStackView>(R.id.word_card_stack) }
     private val manager by lazy { CardStackLayoutManager(activity?.applicationContext, this) }
@@ -24,12 +22,14 @@ class LearnFragment : Fragment(), CardStackListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        words = asList(
-            LearnWord("word", "слово", Category.BASICS),
-            LearnWord("hello", "привет", Category.BASICS),
-            LearnWord("sequence", "последовательность", Category.COMPUTER),
-            LearnWord("cat", "кот", Category.ANIMALS),
-            LearnWord("крышка", "lid", Category.HOUSE))
+        words = arguments?.getParcelableArrayList("words")!!
+            /*words = arrayListOf(
+                LearnWord("word", "слово", Category.BASICS),
+                LearnWord("hello", "привет", Category.BASICS),
+                LearnWord("sequence", "последовательность", Category.COMPUTER),
+                LearnWord("cat", "кот", Category.ANIMALS),
+                LearnWord("крышка", "lid", Category.HOUSE))*/
+
 
         initialize()
 
@@ -79,7 +79,7 @@ class LearnFragment : Fragment(), CardStackListener {
         manager.setScaleInterval(0.95f)
         manager.setSwipeThreshold(0.3f)
         manager.setMaxDegree(20.0f)
-        manager.setDirections(arrayListOf(Direction.Bottom, Direction.Right, Direction.Left))
+        manager.setDirections(listOf(Direction.Bottom, Direction.Right, Direction.Left))
         manager.setCanScrollHorizontal(true)
         manager.setCanScrollVertical(true)
         manager.setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
