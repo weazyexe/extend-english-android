@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
@@ -14,22 +15,23 @@ import exe.weazy.extendenglish.entity.LearnWord
 
 class LearnFragment : Fragment(), CardStackListener {
 
-    lateinit var words : ArrayList<LearnWord>
+    private lateinit var repeatWords : ArrayList<LearnWord>
+    private lateinit var learnWords : ArrayList<LearnWord>
+    private lateinit var failedWords : ArrayList<LearnWord>
+    private lateinit var doneWords : ArrayList<LearnWord>
 
     private val stack by lazy { view?.findViewById<CardStackView>(R.id.word_card_stack) }
     private val manager by lazy { CardStackLayoutManager(activity?.applicationContext, this) }
-    private val adapter by lazy { WordCardStackAdapter(words) }
+    private lateinit var adapter : WordCardStackAdapter
+
+    private var isRepeat = true
+    private var isLearn = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        words = arguments?.getParcelableArrayList("words")!!
-            /*words = arrayListOf(
-                LearnWord("word", "слово", Category.BASICS),
-                LearnWord("hello", "привет", Category.BASICS),
-                LearnWord("sequence", "последовательность", Category.COMPUTER),
-                LearnWord("cat", "кот", Category.ANIMALS),
-                LearnWord("крышка", "lid", Category.HOUSE))*/
+        repeatWords = arguments?.getParcelableArrayList("words")!!
 
+        adapter = WordCardStackAdapter(repeatWords)
 
         initialize()
 
@@ -57,7 +59,34 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     override fun onCardSwiped(direction: Direction?) {
+        val wordText = manager.topView.findViewById<TextView>(R.id.word_english_text).text
+        val word = repeatWords.find { it.word == wordText }
 
+        if (word != null) {
+            when (direction) {
+                Direction.Left -> {
+                    if (isRepeat) {
+                        doneWords.add(word)
+                        //repeatWords.remove(word)
+                    }
+                }
+
+                Direction.Right -> {
+                    if (isRepeat) {
+                        failedWords.add(word)
+                        //repeatWords.remove(word)
+                    }
+                }
+
+                Direction.Bottom -> {
+                    if (isRepeat) {
+                        repeatWords.remove(word)
+                    } else {
+                        learnWords.remove(word)
+                    }
+                }
+            }
+        }
     }
 
     override fun onCardCanceled() {

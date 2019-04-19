@@ -24,6 +24,8 @@ class LoginActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        login_loading_layout.visibility = View.GONE
+
         updateUI(firebaseAuth?.currentUser)
     }
 
@@ -33,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
             intent.putExtra("user", user)
 
             startActivity(intent)
+            finish()
         }
     }
 
@@ -40,11 +43,17 @@ class LoginActivity : AppCompatActivity() {
         val email = email_editText.text.toString()
         val password = password_editText.text.toString()
 
+        login_form_layout.visibility = View.GONE
+        login_loading_layout.visibility = View.VISIBLE
+
         firebaseAuth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
                 updateUI(firebaseAuth?.currentUser)
+                login_form_layout.visibility = View.GONE
+                login_loading_layout.visibility = View.VISIBLE
             } else {
-                //Snackbar.make(coordinatorLayout, getString(R.string.wrong_email_or_password), Snackbar.LENGTH_LONG).show()
+                login_form_layout.visibility = View.VISIBLE
+                login_loading_layout.visibility = View.GONE
             }
         }
     }

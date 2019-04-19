@@ -11,4 +11,16 @@
     <string name="signup">Sign up</string>
     <string name="create_account">Create account</string>
     <string name="wrong_email_or_password">Wrong email or password</string>
+    <string name="logout">Log out</string>
+    <string name="categories">Categories</string>
+    <string name="edit_categories">Edit categories</string>
+    <string name="basics">Basics</string>
+    <string name="house">House</string>
+    <string name="city">City</string>
+    <string name="time">Time</string>
+    <string name="family">Family</string>
+    <string name="clothes">Clothes</string>
+    <string name="character">Character</string>
+    <string name="animals">Animals</string>
+    <string name="computer">Computer</string>
 </resources>

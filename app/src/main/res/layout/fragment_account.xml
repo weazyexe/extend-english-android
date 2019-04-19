@@ -12,7 +12,7 @@
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.0" app:layout_constraintVertical_bias="0.013"
-            android:id="@+id/cardView">
+            android:id="@+id/account_card">
 
         <RelativeLayout
                 android:layout_margin="16dp"
@@ -47,6 +47,57 @@
                     android:layout_marginLeft="16dp"
                     android:layout_toRightOf="@+id/avatar_imageView"
                     android:layout_below="@+id/username_text"/>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+            android:id="@+id/categories_card"
+            android:layout_width="match_parent"
+            app:cardCornerRadius="10dp"
+            android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/account_card" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintVertical_bias="0.022">
+
+        <RelativeLayout
+                android:layout_margin="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <TextView
+                    android:id="@+id/categories_header"
+                    android:text="@string/categories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="24sp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/categories_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/categories_header"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+            >
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <Button
+                    android:id="@+id/edit_categories_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_edit_black_24dp"
+                    android:text="@string/edit_categories"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_below="@id/categories_rv"
+                    android:layout_marginStart="-8dp"
+                    android:layout_marginTop="8dp"
+                    android:drawablePadding="8dp"/>
 
         </RelativeLayout>
 
