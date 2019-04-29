@@ -59,7 +59,7 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     override fun onCardSwiped(direction: Direction?) {
-        val wordText = manager.topView.findViewById<TextView>(R.id.word_english_text).text
+        /*val wordText = manager.topView.findViewById<TextView>(R.id.word_english_text).text
         val word = repeatWords.find { it.word == wordText }
 
         if (word != null) {
@@ -86,7 +86,7 @@ class LearnFragment : Fragment(), CardStackListener {
                     }
                 }
             }
-        }
+        }*/
     }
 
     override fun onCardCanceled() {

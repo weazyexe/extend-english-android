@@ -57,4 +57,9 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun onCreateButtonClick(view: View) {
+        val intent = Intent(this, SignupActivity::class.java)
+        startActivity(intent)
+    }
 }

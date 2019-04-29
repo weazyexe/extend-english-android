@@ -7,8 +7,8 @@
     <string name="login">Log in</string>
     <string name="greeting">Hey! Log in or sign up, please</string>
     <string name="email">E-mail</string>
+    <string name="repeat_password">Confirm password</string>
     <string name="password">Password</string>
-    <string name="signup">Sign up</string>
     <string name="create_account">Create account</string>
     <string name="wrong_email_or_password">Wrong email or password</string>
     <string name="logout">Log out</string>
@@ -23,4 +23,18 @@
     <string name="character">Character</string>
     <string name="animals">Animals</string>
     <string name="computer">Computer</string>
+    <string name="signup">Sign up</string>
+    <string name="username">Username</string>
+    <string name="choose_image">Choose image</string>
+    <string name="load_image">Load image</string>
+    <string name="error">Unable to create user. Try again</string>
+    <string name="passwords_arent_equal">Passwords aren\'t equal</string>
+    <string-array name="levels">
+        <item>Newbie</item>
+        <item>Elementary</item>
+        <item>Intermediate</item>
+        <item>Upper Intermediate</item>
+        <item>Advanced</item>
+        <item>Proficiency</item>
+    </string-array>
 </resources>

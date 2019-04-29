@@ -53,7 +53,13 @@ class MainActivity : AppCompatActivity() {
             R.id.navigation_account -> {
 
                 val bundle = Bundle()
-                bundle.putString("username", user.email)
+
+                if (user.displayName != null) {
+                    bundle.putString("username", user.displayName)
+                } else {
+                    bundle.putString("username", user.email)
+                }
+
                 bundle.putString("level", level)
                 bundle.putSerializable("categories", categories)
 
