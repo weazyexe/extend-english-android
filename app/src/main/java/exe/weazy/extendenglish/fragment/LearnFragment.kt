@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
@@ -15,23 +14,29 @@ import exe.weazy.extendenglish.entity.LearnWord
 
 class LearnFragment : Fragment(), CardStackListener {
 
-    private lateinit var repeatWords : ArrayList<LearnWord>
-    private lateinit var learnWords : ArrayList<LearnWord>
-    private lateinit var failedWords : ArrayList<LearnWord>
-    private lateinit var doneWords : ArrayList<LearnWord>
+    private lateinit var learnToday : ArrayList<LearnWord>
+    private lateinit var repeatYesterday : ArrayList<LearnWord>
+    private lateinit var repeatTwoDays : ArrayList<LearnWord>
+    private lateinit var repeatThreeDays : ArrayList<LearnWord>
+    private lateinit var repeatFourDays : ArrayList<LearnWord>
+    private lateinit var repeatLongTimeAgo : ArrayList<LearnWord>
+
+    private var isLearnToday = false
+    private var isRepeatYesterday = false
+    private var isRepeatTwoDays = false
+    private var isRepeatThreeDays = false
+    private var isRepeatFourDays = false
+    private var isRepeatLongTimeAgo = false
 
     private val stack by lazy { view?.findViewById<CardStackView>(R.id.word_card_stack) }
     private val manager by lazy { CardStackLayoutManager(activity?.applicationContext, this) }
     private lateinit var adapter : WordCardStackAdapter
 
-    private var isRepeat = true
-    private var isLearn = false
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        repeatWords = arguments?.getParcelableArrayList("words")!!
+        val words = arguments?.getParcelableArrayList<LearnWord>("words")!!
 
-        adapter = WordCardStackAdapter(repeatWords)
+        adapter = WordCardStackAdapter(words)
 
         initialize()
 
