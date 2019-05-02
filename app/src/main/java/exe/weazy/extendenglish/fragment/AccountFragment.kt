@@ -17,16 +17,20 @@ class AccountFragment : Fragment() {
     private var username : String? = "name placeholder"
     private var level : String? = "level placeholder"
     lateinit var categories : ArrayList<Category>
-    lateinit var adapter : CategoriesRecyclerViewAdapter
+    private var adapter : CategoriesRecyclerViewAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        username = arguments?.getString("username")
-        level = arguments?.getString("level")
+        if (arguments != null) {
+            username = arguments?.getString("username")
+            level = arguments?.getString("level")
 
-        categories = arguments?.getSerializable("categories") as ArrayList<Category>
+            categories = arguments?.getSerializable("categories") as ArrayList<Category>
 
-        adapter = CategoriesRecyclerViewAdapter(categories)
+            if (::categories.isInitialized) {
+                adapter = CategoriesRecyclerViewAdapter(categories)
+            }
+        }
 
         return inflater.inflate(R.layout.fragment_account, null)
     }

@@ -22,11 +22,12 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var learnFragment : LearnFragment
     private lateinit var accountFragment : AccountFragment
-    private lateinit var settingsFragment: SettingsFragment
+    private lateinit var settingsFragment : SettingsFragment
+    private var active = Fragment()
 
     private lateinit var user : FirebaseUser
     private var firestore = FirebaseFirestore.getInstance()
-    private var firebaseAuth = FirebaseAuth.getInstance()
+    private var auth = FirebaseAuth.getInstance()
 
     private lateinit var repeatYesterday : ArrayList<LearnWord>
     private lateinit var repeatTwoDays : ArrayList<LearnWord>
@@ -38,6 +39,11 @@ class MainActivity : AppCompatActivity() {
 
     private var isAccountLoaded = false
     private var isCategoriesLoaded = false
+    private var isRepeatYesterdayLoaded = false
+    private var isRepeatTwoDaysLoaded = false
+    private var isRepeatThreeDaysLoaded = false
+    private var isRepeatFourDaysLoaded = false
+    private var isRepeatLongLoaded = false
 
     private var level : String? = null
     private var progress : LearnProgress? = null
@@ -45,30 +51,32 @@ class MainActivity : AppCompatActivity() {
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_learn -> {
-                learnFragment = LearnFragment()
 
-                val bundle = getInitLearnFragmentBundle()
-
-                learnFragment.arguments = bundle
-
-                loadFragment(learnFragment)
+                if (learnFragment != active) {
+                    changeFragment(learnFragment)
+                    active = learnFragment
+                }
 
                 appbar_text.text = getString(R.string.title_learn)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_account -> {
-                accountFragment = AccountFragment()
-                val bundle = getInitAccountFragmentBundle()
-                accountFragment.arguments = bundle
 
-                loadFragment(accountFragment)
+                if (accountFragment != active) {
+                    changeFragment(accountFragment)
+                    active = accountFragment
+                }
 
                 appbar_text.text = getString(R.string.title_account)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_settings -> {
-                if (!::settingsFragment.isInitialized) settingsFragment = SettingsFragment()
-                loadFragment(settingsFragment)
+
+                if (settingsFragment != active) {
+                    changeFragment(settingsFragment)
+                    active = settingsFragment
+                }
+
                 appbar_text.text = getString(R.string.title_settings)
                 return@OnNavigationItemSelectedListener true
             }
@@ -93,14 +101,32 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onLogOutButtonClick(v: View) {
-        firebaseAuth.signOut()
+        auth.signOut()
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
     }
 
-    private fun loadFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, fragment).commit()
+    private fun loadFragments() {
+        learnFragment = LearnFragment()
+        var bundle = getInitLearnFragmentBundle()
+        learnFragment.arguments = bundle
+
+        accountFragment = AccountFragment()
+        bundle = getInitAccountFragmentBundle()
+        accountFragment.arguments = bundle
+
+        settingsFragment = SettingsFragment()
+
+        supportFragmentManager.beginTransaction().add(R.id.fragment_layout, learnFragment).hide(learnFragment).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment_layout, settingsFragment).hide(settingsFragment).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment_layout, accountFragment).commit()
+
+        navigation.selectedItemId = R.id.navigation_account
+    }
+
+    private fun changeFragment(fragment : Fragment) {
+        supportFragmentManager.beginTransaction().show(fragment).hide(active).commit()
     }
 
     private fun getUserData() {
@@ -122,6 +148,9 @@ class MainActivity : AppCompatActivity() {
             result?.forEach {
                 repeatYesterday.add(it.toObject(LearnWord::class.java)!!)
             }
+
+            isRepeatYesterdayLoaded = true
+            afterLoad()
         }
     }
 
@@ -134,6 +163,9 @@ class MainActivity : AppCompatActivity() {
             result?.forEach {
                 repeatTwoDays.add(it.toObject(LearnWord::class.java)!!)
             }
+
+            isRepeatTwoDaysLoaded = true
+            afterLoad()
         }
     }
 
@@ -146,6 +178,9 @@ class MainActivity : AppCompatActivity() {
             result?.forEach {
                 repeatThreeDays.add(it.toObject(LearnWord::class.java)!!)
             }
+
+            isRepeatThreeDaysLoaded = true
+            afterLoad()
         }
     }
 
@@ -158,6 +193,9 @@ class MainActivity : AppCompatActivity() {
             result?.forEach {
                 repeatFourDays.add(it.toObject(LearnWord::class.java)!!)
             }
+
+            isRepeatFourDaysLoaded = true
+            afterLoad()
         }
     }
 
@@ -181,6 +219,9 @@ class MainActivity : AppCompatActivity() {
                 }
 
             }
+
+            isRepeatLongLoaded = true
+            afterLoad()
         }
     }
 
@@ -197,12 +238,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 isAccountLoaded = true
-            }
-
-            if (isAccountLoaded && isCategoriesLoaded) {
-                navigation.selectedItemId = R.id.navigation_account
-                fragment_layout.visibility = View.VISIBLE
-                loading_layout.visibility = View.GONE
+                afterLoad()
             }
         }
     }
@@ -221,12 +257,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             isCategoriesLoaded = true
-
-            if (isAccountLoaded && isCategoriesLoaded) {
-                navigation.selectedItemId = R.id.navigation_account
-                fragment_layout.visibility = View.VISIBLE
-                loading_layout.visibility = View.GONE
-            }
+            afterLoad()
         }
     }
 
@@ -273,5 +304,16 @@ class MainActivity : AppCompatActivity() {
         bundle.putSerializable("categories", categories)
 
         return bundle
+    }
+
+    private fun afterLoad() {
+        if (isAccountLoaded && isCategoriesLoaded && isRepeatFourDaysLoaded && isRepeatLongLoaded &&
+                isRepeatThreeDaysLoaded && isRepeatTwoDaysLoaded && isRepeatYesterdayLoaded) {
+            fragment_layout.visibility = View.VISIBLE
+            loading_layout.visibility = View.GONE
+
+            loadFragments()
+            active = accountFragment
+        }
     }
 }

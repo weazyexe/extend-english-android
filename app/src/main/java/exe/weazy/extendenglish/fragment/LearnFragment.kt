@@ -33,18 +33,17 @@ class LearnFragment : Fragment(), CardStackListener {
     private lateinit var adapter : WordCardStackAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_learn, null)
+    }
+
+    override fun onStart() {
+        super.onStart()
 
         val words = arguments?.getParcelableArrayList<LearnWord>("words")
 
         adapter = if (words != null) WordCardStackAdapter(words) else WordCardStackAdapter(ArrayList())
 
         initialize()
-
-        return inflater.inflate(R.layout.fragment_learn, null)
-    }
-
-    override fun onStart() {
-        super.onStart()
 
         stack?.layoutManager = manager
         stack?.adapter = adapter

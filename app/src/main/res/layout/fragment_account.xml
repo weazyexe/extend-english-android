@@ -23,7 +23,7 @@
                     android:id="@+id/avatar_imageView"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
-                    android:src="@drawable/wendy"
+                    android:src="@drawable/jonsnow"
                     app:civ_border_color="@color/colorAccent"
                     app:civ_border_width="2dp"
                     android:layout_centerVertical="true"/>
