@@ -5,6 +5,6 @@ enum class Level(name : String) {
     UPPER_INTERMEDIATE("Upper Intermediate"), ADVANCED("Advanced"), PROFICIENCY("Proficiency");
 
     companion object {
-        fun getCategoryByString(str : String) = Category.valueOf(str.toUpperCase())
+        fun getLevelByString(str : String) = Level.valueOf(str)
     }
 }

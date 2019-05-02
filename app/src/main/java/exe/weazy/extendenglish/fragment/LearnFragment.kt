@@ -19,7 +19,7 @@ class LearnFragment : Fragment(), CardStackListener {
     private lateinit var repeatTwoDays : ArrayList<LearnWord>
     private lateinit var repeatThreeDays : ArrayList<LearnWord>
     private lateinit var repeatFourDays : ArrayList<LearnWord>
-    private lateinit var repeatLongTimeAgo : ArrayList<LearnWord>
+    private lateinit var repeatLong : ArrayList<LearnWord>
 
     private var isLearnToday = false
     private var isRepeatYesterday = false
@@ -34,9 +34,9 @@ class LearnFragment : Fragment(), CardStackListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val words = arguments?.getParcelableArrayList<LearnWord>("words")!!
+        val words = arguments?.getParcelableArrayList<LearnWord>("words")
 
-        adapter = WordCardStackAdapter(words)
+        adapter = if (words != null) WordCardStackAdapter(words) else WordCardStackAdapter(ArrayList())
 
         initialize()
 

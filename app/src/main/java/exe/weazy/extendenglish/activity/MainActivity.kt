@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.entity.Category
+import exe.weazy.extendenglish.entity.LearnProgress
 import exe.weazy.extendenglish.entity.LearnWord
 import exe.weazy.extendenglish.fragment.AccountFragment
 import exe.weazy.extendenglish.fragment.LearnFragment
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repeatTwoDays : ArrayList<LearnWord>
     private lateinit var repeatThreeDays : ArrayList<LearnWord>
     private lateinit var repeatFourDays : ArrayList<LearnWord>
-    private lateinit var repeatLongTimeAgo : ArrayList<LearnWord>
+    private lateinit var repeatLong : ArrayList<LearnWord>
 
     private lateinit var categories : ArrayList<Category>
 
@@ -39,28 +40,14 @@ class MainActivity : AppCompatActivity() {
     private var isCategoriesLoaded = false
 
     private var level : String? = null
-    private var didLearnToday : Boolean? = false
-    private var isLearnToday : Boolean? = false
-    private var isRepeatYesterday : Boolean? = false
-    private var isRepeatTwoDays : Boolean? = false
-    private var isRepeatThreeDays : Boolean? = false
-    private var isRepeatFourDays : Boolean? = false
-    private var isRepeatLongTimeAgo : Boolean? = false
+    private var progress : LearnProgress? = null
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_learn -> {
                 learnFragment = LearnFragment()
 
-                val bundle = Bundle()
-
-                bundle.putParcelableArrayList("words", repeatLongTimeAgo)
-
-                bundle.putParcelableArrayList("repeatYesterday", repeatYesterday)
-                bundle.putParcelableArrayList("repeatTwoDays", repeatTwoDays)
-                bundle.putParcelableArrayList("repeatThreeDays", repeatThreeDays)
-                bundle.putParcelableArrayList("repeatFourDays", repeatFourDays)
-                bundle.putParcelableArrayList("repeatLongTimeAgo", repeatLongTimeAgo)
+                val bundle = getInitLearnFragmentBundle()
 
                 learnFragment.arguments = bundle
 
@@ -70,19 +57,8 @@ class MainActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_account -> {
-
-                val bundle = Bundle()
-
-                if (!user.displayName.isNullOrEmpty()) {
-                    bundle.putString("username", user.displayName)
-                } else {
-                    bundle.putString("username", user.email)
-                }
-
-                bundle.putString("level", level)
-                bundle.putSerializable("categories", categories)
-
                 accountFragment = AccountFragment()
+                val bundle = getInitAccountFragmentBundle()
                 accountFragment.arguments = bundle
 
                 loadFragment(accountFragment)
@@ -189,18 +165,18 @@ class MainActivity : AppCompatActivity() {
         firestore.collection("users/${user.uid}/learned").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result?.documents
 
-            repeatLongTimeAgo = ArrayList()
+            repeatLong = ArrayList()
 
             if (result != null) {
                 result.shuffle()
 
                 if (result.size > 7) {
                     for (i in 0..6) {
-                        repeatLongTimeAgo.add(result[i].toObject(LearnWord::class.java)!!)
+                        repeatLong.add(result[i].toObject(LearnWord::class.java)!!)
                     }
                 } else {
                     result.forEach {
-                        repeatLongTimeAgo.add(it.toObject(LearnWord::class.java)!!)
+                        repeatLong.add(it.toObject(LearnWord::class.java)!!)
                     }
                 }
 
@@ -214,13 +190,11 @@ class MainActivity : AppCompatActivity() {
 
             if (result != null) {
                 level = result.getString("level")
-                didLearnToday = result.getBoolean("didLearnToday")
-                isLearnToday = result.getBoolean("isLearnToday")
-                isRepeatYesterday = result.getBoolean("isRepeatYesterday")
-                isRepeatTwoDays = result.getBoolean("isRepeatTwoDays")
-                isRepeatThreeDays = result.getBoolean("isRepeatThreeDays")
-                isRepeatFourDays = result.getBoolean("isRepeatFourDays")
-                isRepeatLongTimeAgo = result.getBoolean("isRepeatLongTimeAgo")
+
+                val pr = result.getString("progress")
+                if (pr != null) {
+                    progress = LearnProgress.getLearnProgressByString(pr)
+                }
 
                 isAccountLoaded = true
             }
@@ -254,5 +228,50 @@ class MainActivity : AppCompatActivity() {
                 loading_layout.visibility = View.GONE
             }
         }
+    }
+
+    private fun getInitLearnFragmentBundle() : Bundle {
+        val bundle = Bundle()
+
+        if (::repeatLong.isInitialized) {
+            bundle.putParcelableArrayList("words", repeatLong)
+        }
+
+        if (::repeatYesterday.isInitialized) {
+            bundle.putParcelableArrayList("repeatYesterday", repeatYesterday)
+        }
+
+        if (::repeatTwoDays.isInitialized) {
+            bundle.putParcelableArrayList("repeatTwoDays", repeatTwoDays)
+        }
+
+        if (::repeatThreeDays.isInitialized) {
+            bundle.putParcelableArrayList("repeatThreeDays", repeatThreeDays)
+        }
+
+        if (::repeatFourDays.isInitialized) {
+            bundle.putParcelableArrayList("repeatFourDays", repeatFourDays)
+        }
+
+        if (::repeatLong.isInitialized) {
+            bundle.putParcelableArrayList("repeatLong", repeatLong)
+        }
+
+        return bundle
+    }
+
+    private fun getInitAccountFragmentBundle() : Bundle {
+        val bundle = Bundle()
+
+        if (!user.displayName.isNullOrEmpty()) {
+            bundle.putString("username", user.displayName)
+        } else {
+            bundle.putString("username", user.email)
+        }
+
+        bundle.putString("level", level)
+        bundle.putSerializable("categories", categories)
+
+        return bundle
     }
 }
