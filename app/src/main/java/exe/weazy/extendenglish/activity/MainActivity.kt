@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
         getRepeatTwoDaysWords()
         getRepeatThreeDaysWords()
         getRepeatFourDaysWords()
-        getRepeatLongTimeAgoWords()
+        getRepeatLongWords()
         getUserFields()
     }
 
@@ -199,7 +199,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getRepeatLongTimeAgoWords() {
+    private fun getRepeatLongWords() {
         firestore.collection("users/${user.uid}/learned").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result?.documents
 

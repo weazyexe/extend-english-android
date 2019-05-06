@@ -28,8 +28,8 @@ class WordCardStackAdapter(private val words : List<LearnWord>) : RecyclerView.A
 
         init {
             super.itemView
-            word = itemView.findViewById(R.id.word_english_text)
-            translate = itemView.findViewById(R.id.word_translate_text)
+            word = itemView.findViewById(R.id.word_show_english_text)
+            translate = itemView.findViewById(R.id.word_show_translate_text)
         }
     }
 }

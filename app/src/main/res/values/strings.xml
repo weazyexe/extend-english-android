@@ -37,4 +37,13 @@
         <item>Advanced</item>
         <item>Proficiency</item>
     </string-array>
+    <string name="know_it">I know it, next</string>
+    <string name="learn_it">Let\'s learn it</string>
+    <string name="learn_later">Learn later</string>
+    <string name="show_word">Show word</string>
+    <string name="write_word">Write word</string>
+    <string name="choose_word">Choose word</string>
+    <string name="translate">Translate</string>
+    <string name="check">Check</string>
+    <string name="help">Help</string>
 </resources>
