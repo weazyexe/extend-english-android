@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
-        android:layout_height="500dp"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:id="@+id/layout_show_word"
             android:layout_marginBottom="100dp"
-            android:visibility="visible">
+            android:visibility="gone">
 
         <TextView
                 tools:text="word"
@@ -57,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="50dp"
-            android:visibility="gone">
+            android:visibility="visible">
 
         <TextView
                 tools:text="word"
@@ -65,7 +65,7 @@
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/word_hide_english_text"
+                android:id="@+id/word_variant_english_text"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="50dp"/>
@@ -115,14 +115,14 @@
 
         </LinearLayout>
 
-        <View
+        <!--<View
                 android:layout_height="1dp"
                 android:layout_width="match_parent"
                 android:background="@color/colorLightGrey"
                 android:layout_gravity="center_horizontal|bottom"
                 android:layout_marginStart="32dp"
                 android:layout_marginEnd="32dp"
-                android:layout_marginBottom="40dp"/>
+                android:layout_marginBottom="40dp"/>-->
 
     </FrameLayout>
 
@@ -165,6 +165,7 @@
                     android:layout_gravity="center_horizontal">
 
                 <Button
+                        android:id="@+id/submit_word_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -175,6 +176,7 @@
                         android:layout_marginEnd="16dp"/>
 
                 <Button
+                        android:id="@+id/help_word_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -216,71 +218,78 @@
 
             <Button
                     android:id="@+id/choose_one_button"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_width="170dp"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     tools:text="word1"
-                    android:layout_margin="8dp"/>
+                    android:layout_margin="8dp"
+                    android:textAlignment="center"/>
 
             <Button
                     android:id="@+id/choose_two_button"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_width="170dp"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     tools:text="word2"
-                    android:layout_margin="8dp"/>
+                    android:layout_margin="8dp"
+                    android:textAlignment="center"/>
 
             <Button
                     android:id="@+id/choose_three_button"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_width="170dp"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     tools:text="word3"
-                    android:layout_margin="8dp"/>
+                    android:layout_margin="8dp"
+                    android:textAlignment="center"/>
 
             <Button
                     android:id="@+id/choose_four_button"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_width="170dp"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     tools:text="word4"
-                    android:layout_margin="8dp"/>
+                    android:layout_margin="8dp"
+                    android:textAlignment="center"/>
 
         </GridLayout>
 
     </FrameLayout>
 
-    <Button
+    <!--<Button
             android:id="@+id/swipe_left_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/ic_arrow_back_green_24dp"
-            tools:text="@string/know_it"
+            android:text="@string/know_it"
             android:textColor="@color/colorGreen"
             android:drawablePadding="8dp"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_gravity="bottom"/>
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="8dp"/>
 
     <Button
             android:id="@+id/swipe_right_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/ic_arrow_forward_red_24dp"
-            tools:text="@string/learn_it"
+            android:text="@string/learn_it"
             android:textColor="@color/colorRed"
             android:drawablePadding="8dp"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_gravity="bottom|end"/>
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="8dp"/>
 
     <Button
             android:id="@+id/swipe_bottom_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/ic_arrow_downward_grey_24dp"
-            tools:text="@string/learn_later"
+            android:text="@string/learn_later"
             android:textColor="@color/colorLightGrey"
             android:drawablePadding="8dp"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_gravity="bottom|center_horizontal"/>
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="8dp"/>-->
 
 </androidx.cardview.widget.CardView>

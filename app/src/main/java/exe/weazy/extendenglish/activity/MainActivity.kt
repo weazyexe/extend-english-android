@@ -34,9 +34,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repeatThreeDays : ArrayList<LearnWord>
     private lateinit var repeatFourDays : ArrayList<LearnWord>
     private lateinit var repeatLong : ArrayList<LearnWord>
+    private lateinit var words : ArrayList<LearnWord>
 
     private lateinit var categories : ArrayList<Category>
 
+    private var isAllWordsLoaded = false
     private var isAccountLoaded = false
     private var isCategoriesLoaded = false
     private var isRepeatYesterdayLoaded = false
@@ -131,12 +133,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun getUserData() {
         getAllCategories()
+        getAllWords()
+        getRepeatLongWords()
         getRepeatYesterdayWords()
         getRepeatTwoDaysWords()
         getRepeatThreeDaysWords()
         getRepeatFourDaysWords()
-        getRepeatLongWords()
         getUserFields()
+    }
+
+    private fun getAllWords() {
+        firestore.collection("words").get().addOnCompleteListener { querySnapshot ->
+            val result = querySnapshot.result?.documents
+
+            words = ArrayList()
+
+            result?.forEach {
+                words.add(it.toObject(LearnWord::class.java)!!)
+            }
+
+            isAllWordsLoaded = true
+            afterLoad()
+        }
     }
 
     private fun getRepeatYesterdayWords() {
@@ -265,7 +283,7 @@ class MainActivity : AppCompatActivity() {
         val bundle = Bundle()
 
         if (::repeatLong.isInitialized) {
-            bundle.putParcelableArrayList("words", repeatLong)
+            bundle.putParcelableArrayList("words", words)
         }
 
         if (::repeatYesterday.isInitialized) {
@@ -288,6 +306,8 @@ class MainActivity : AppCompatActivity() {
             bundle.putParcelableArrayList("repeatLong", repeatLong)
         }
 
+        bundle.putSerializable("progress", progress)
+
         return bundle
     }
 
@@ -307,7 +327,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun afterLoad() {
-        if (isAccountLoaded && isCategoriesLoaded && isRepeatFourDaysLoaded && isRepeatLongLoaded &&
+        if (isAllWordsLoaded && isAccountLoaded && isCategoriesLoaded && isRepeatFourDaysLoaded && isRepeatLongLoaded &&
                 isRepeatThreeDaysLoaded && isRepeatTwoDaysLoaded && isRepeatYesterdayLoaded) {
             fragment_layout.visibility = View.VISIBLE
             loading_layout.visibility = View.GONE
