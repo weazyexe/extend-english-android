@@ -60,7 +60,7 @@ class LearnFragment : Fragment(), CardStackListener {
 
 
     override fun onCardDisappeared(view: View?, position: Int) {
-        currentWord = current[position]
+        //currentWord = current[position]
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {
@@ -97,6 +97,7 @@ class LearnFragment : Fragment(), CardStackListener {
     override fun onCardAppeared(view: View?, position: Int) {
 
         // FIXME: word/translate issue
+        currentWord = current[position]
         val writeButton = view?.findViewById<Button>(R.id.write_word_button)
         val showButton = view?.findViewById<Button>(R.id.show_word_button)
         val chooseButton = view?.findViewById<Button>(R.id.choose_word_button)
@@ -256,16 +257,26 @@ class LearnFragment : Fragment(), CardStackListener {
 
     private fun updateCardStack() {
         if (progress == LearnProgress.LEARN_TODAY && toLearn < 7 && remain == 0) {
+            word_card_stack.visibility = View.GONE
+
             generateLearnTodayWords()
             setDataAndNotify(learnToday)
+
+            UiTools.showView(word_card_stack)
         }
 
         if (toLearn == 7) {
+            word_card_stack.visibility = View.GONE
+
             setDataAndNotify(again)
             toLearn++
+
+            UiTools.showView(word_card_stack)
         }
 
         if (remain == 0 && again.isEmpty()) {
+            word_card_stack.visibility = View.GONE
+
             when (progress) {
                 LearnProgress.REPEAT_LONG -> {
                     progress = LearnProgress.REPEAT_FOUR_DAYS
@@ -297,14 +308,18 @@ class LearnFragment : Fragment(), CardStackListener {
                     // TODO: learn today allWords
                     progress = LearnProgress.LEARNED
 
-                    word_card_stack.visibility = View.GONE
-                    layout_learned.visibility = View.VISIBLE
+                    UiTools.hideView(word_card_stack)
+                    UiTools.showView(layout_learned)
                 }
             }
+
+            UiTools.showView(word_card_stack)
         }
 
         if (again.isNotEmpty() && remain == 0) {
+            word_card_stack.visibility = View.GONE
             setDataAndNotify(again)
+            UiTools.showView(word_card_stack)
         }
     }
 
