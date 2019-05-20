@@ -1,13 +1,11 @@
-package exe.weazy.extendenglish.fragment
+package exe.weazy.extendenglish.ui.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.LinearInterpolator
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -20,6 +18,7 @@ import exe.weazy.extendenglish.adapter.WordCardStackAdapter
 import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.entity.LearnProgress
 import exe.weazy.extendenglish.entity.LearnWord
+import exe.weazy.extendenglish.ui.UiTools
 import kotlinx.android.synthetic.main.fragment_learn.*
 
 
@@ -109,8 +108,6 @@ class LearnFragment : Fragment(), CardStackListener {
             }
 
             else -> {
-                //showVariant(view)
-
                 writeButton?.setOnClickListener {
                     showWrite(view)
 
@@ -119,7 +116,7 @@ class LearnFragment : Fragment(), CardStackListener {
                     val written = view.findViewById<EditText>(R.id.word_written_edit_text)
 
                     submitButton.setOnClickListener {
-                        hideKeyboard(view)
+                        UiTools.hideKeyboard(view, context)
                         checkWord(written.text.toString(), currentWord.translate, view)
                         written.setText("", TextView.BufferType.EDITABLE)
                     }
@@ -183,17 +180,19 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     private fun initializeCardStackView() {
-        manager.setStackFrom(StackFrom.None)
-        manager.setVisibleCount(3)
-        manager.setTranslationInterval(8.0f)
-        manager.setScaleInterval(0.95f)
-        manager.setSwipeThreshold(0.3f)
-        manager.setMaxDegree(20.0f)
-        manager.setDirections(listOf(Direction.Bottom, Direction.Right, Direction.Left))
-        manager.setCanScrollHorizontal(true)
-        manager.setCanScrollVertical(true)
-        manager.setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
-        manager.setOverlayInterpolator(LinearInterpolator())
+        manager.apply {
+            setStackFrom(StackFrom.None)
+            setVisibleCount(3)
+            setTranslationInterval(8.0f)
+            setScaleInterval(0.95f)
+            setSwipeThreshold(0.3f)
+            setMaxDegree(20.0f)
+            setDirections(listOf(Direction.Bottom, Direction.Right, Direction.Left))
+            setCanScrollHorizontal(true)
+            setCanScrollVertical(true)
+            setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
+            setOverlayInterpolator(LinearInterpolator())
+        }
 
         word_card_stack.layoutManager = manager
         word_card_stack.itemAnimator.apply {
@@ -352,10 +351,14 @@ class LearnFragment : Fragment(), CardStackListener {
         val layoutShowWord = view?.findViewById<View>(R.id.layout_show_word)
         val layoutVariantWord = view?.findViewById<View>(R.id.layout_variant)
 
-        layoutChooseWord?.visibility = View.VISIBLE
+        UiTools.hideView(layoutShowWord)
+        UiTools.hideView(layoutVariantWord)
+        UiTools.hideView(layoutWriteWord)
+        UiTools.showView(layoutChooseWord)
+        /*layoutChooseWord?.visibility = View.VISIBLE
         layoutWriteWord?.visibility = View.GONE
         layoutShowWord?.visibility = View.GONE
-        layoutVariantWord?.visibility = View.GONE
+        layoutVariantWord?.visibility = View.GONE*/
     }
 
     private fun showWord(view: View?) {
@@ -364,10 +367,14 @@ class LearnFragment : Fragment(), CardStackListener {
         val layoutShowWord = view?.findViewById<View>(R.id.layout_show_word)
         val layoutVariantWord = view?.findViewById<View>(R.id.layout_variant)
 
-        layoutChooseWord?.visibility = View.GONE
+        UiTools.hideView(layoutChooseWord)
+        UiTools.hideView(layoutVariantWord)
+        UiTools.hideView(layoutWriteWord)
+        UiTools.showView(layoutShowWord)
+        /*layoutChooseWord?.visibility = View.GONE
         layoutWriteWord?.visibility = View.GONE
         layoutShowWord?.visibility = View.VISIBLE
-        layoutVariantWord?.visibility = View.GONE
+        layoutVariantWord?.visibility = View.GONE*/
     }
 
     private fun showVariant(view: View?) {
@@ -376,10 +383,14 @@ class LearnFragment : Fragment(), CardStackListener {
         val layoutShowWord = view?.findViewById<View>(R.id.layout_show_word)
         val layoutVariantWord = view?.findViewById<View>(R.id.layout_variant)
 
-        layoutChooseWord?.visibility = View.GONE
+        UiTools.hideView(layoutChooseWord)
+        UiTools.hideView(layoutShowWord)
+        UiTools.hideView(layoutWriteWord)
+        UiTools.showView(layoutVariantWord)
+        /*layoutChooseWord?.visibility = View.GONE
         layoutWriteWord?.visibility = View.GONE
         layoutShowWord?.visibility = View.GONE
-        layoutVariantWord?.visibility = View.VISIBLE
+        layoutVariantWord?.visibility = View.VISIBLE*/
     }
 
     private fun showWrite(view: View?) {
@@ -388,10 +399,14 @@ class LearnFragment : Fragment(), CardStackListener {
         val layoutShowWord = view?.findViewById<View>(R.id.layout_show_word)
         val layoutVariantWord = view?.findViewById<View>(R.id.layout_variant)
 
-        layoutChooseWord?.visibility = View.GONE
+        UiTools.hideView(layoutChooseWord)
+        UiTools.hideView(layoutShowWord)
+        UiTools.hideView(layoutVariantWord)
+        UiTools.showView(layoutWriteWord)
+        /*layoutChooseWord?.visibility = View.GONE
         layoutWriteWord?.visibility = View.VISIBLE
         layoutShowWord?.visibility = View.GONE
-        layoutVariantWord?.visibility = View.GONE
+        layoutVariantWord?.visibility = View.GONE*/
     }
 
 
@@ -443,15 +458,5 @@ class LearnFragment : Fragment(), CardStackListener {
                 }
             }
         }
-    }
-
-
-
-    private fun hideKeyboard(view: View?) {
-        val inputManager = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(
-            view?.windowToken,
-            InputMethodManager.HIDE_NOT_ALWAYS
-        )
     }
 }

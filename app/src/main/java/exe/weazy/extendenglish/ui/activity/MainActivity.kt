@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.activity
+package exe.weazy.extendenglish.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,9 +13,10 @@ import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.entity.LearnProgress
 import exe.weazy.extendenglish.entity.LearnWord
-import exe.weazy.extendenglish.fragment.AccountFragment
-import exe.weazy.extendenglish.fragment.LearnFragment
-import exe.weazy.extendenglish.fragment.SettingsFragment
+import exe.weazy.extendenglish.ui.UiTools
+import exe.weazy.extendenglish.ui.fragment.AccountFragment
+import exe.weazy.extendenglish.ui.fragment.LearnFragment
+import exe.weazy.extendenglish.ui.fragment.SettingsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -96,8 +97,8 @@ class MainActivity : AppCompatActivity() {
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        fragment_layout.visibility = View.GONE
-        loading_layout.visibility = View.VISIBLE
+        UiTools.hideView(fragment_layout)
+        UiTools.showView(loading_layout)
 
         navigation.menu.findItem(R.id.navigation_account).isChecked = true
 
@@ -343,11 +344,11 @@ class MainActivity : AppCompatActivity() {
     private fun afterLoad() {
         if (isAllWordsLoaded && isAccountLoaded && isCategoriesLoaded && isRepeatFourDaysLoaded && isRepeatLongLoaded &&
                 isRepeatThreeDaysLoaded && isRepeatTwoDaysLoaded && isRepeatYesterdayLoaded) {
-            fragment_layout.visibility = View.VISIBLE
-            loading_layout.visibility = View.GONE
-
             loadFragments()
             active = accountFragment
+
+            UiTools.hideView(loading_layout)
+            UiTools.showView(fragment_layout)
         }
     }
 }

@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.fragment
+package exe.weazy.extendenglish.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.firebase.firestore.FirebaseFirestore
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.CategoriesRecyclerViewAdapter
 import exe.weazy.extendenglish.entity.Category
