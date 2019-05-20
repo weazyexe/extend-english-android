@@ -41,6 +41,7 @@ class LearnFragment : Fragment(), CardStackListener {
     private lateinit var categories : ArrayList<Category>
 
     private var remain = 0
+    private var toLearn = 0
 
     private val manager by lazy { CardStackLayoutManager(activity?.applicationContext, this) }
     private lateinit var adapter: WordCardStackAdapter
@@ -54,7 +55,7 @@ class LearnFragment : Fragment(), CardStackListener {
 
         initializeWords()
         initializeUserInfo()
-        initializeCardStack()
+        initializeCardStackView()
     }
 
 
@@ -72,6 +73,10 @@ class LearnFragment : Fragment(), CardStackListener {
             Direction.Right -> {
                 again.add(currentWord)
                 remain--
+
+                if (progress == LearnProgress.LEARN_TODAY) {
+                    toLearn++
+                }
             }
 
             Direction.Left -> {
@@ -93,7 +98,6 @@ class LearnFragment : Fragment(), CardStackListener {
     override fun onCardAppeared(view: View?, position: Int) {
 
         // FIXME: word/translate issue
-        val word = view?.findViewById<TextView>(R.id.word_show_translate_text)?.text.toString()
         val writeButton = view?.findViewById<Button>(R.id.write_word_button)
         val showButton = view?.findViewById<Button>(R.id.show_word_button)
         val chooseButton = view?.findViewById<Button>(R.id.choose_word_button)
@@ -101,11 +105,11 @@ class LearnFragment : Fragment(), CardStackListener {
         when (progress) {
 
             LearnProgress.LEARN_TODAY -> {
-                showWord(view)
+                //showWord(view)
             }
 
             else -> {
-                showVariant(view)
+                //showVariant(view)
 
                 writeButton?.setOnClickListener {
                     showWrite(view)
@@ -116,12 +120,12 @@ class LearnFragment : Fragment(), CardStackListener {
 
                     submitButton.setOnClickListener {
                         hideKeyboard(view)
-                        checkWord(written.text.toString(), word, view)
+                        checkWord(written.text.toString(), currentWord.translate, view)
                         written.setText("", TextView.BufferType.EDITABLE)
                     }
 
                     helpButton.setOnClickListener {
-                        helpWord(written.text.toString(), word, written)
+                        helpWord(written.text.toString(), currentWord.translate, written)
                     }
                 }
 
@@ -138,25 +142,23 @@ class LearnFragment : Fragment(), CardStackListener {
                     val button4 = view.findViewById<Button>(R.id.choose_four_button)
 
                     button1.setOnClickListener {
-                        checkWord(button1.text.toString(), word, view)
+                        checkWord(button1.text.toString(), currentWord.translate, view)
                     }
 
                     button2.setOnClickListener {
-                        checkWord(button2.text.toString(), word, view)
+                        checkWord(button2.text.toString(), currentWord.translate, view)
                     }
 
                     button3.setOnClickListener {
-                        checkWord(button3.text.toString(), word, view)
+                        checkWord(button3.text.toString(), currentWord.translate, view)
                     }
 
                     button4.setOnClickListener {
-                        checkWord(button4.text.toString(), word, view)
+                        checkWord(button4.text.toString(), currentWord.translate, view)
                     }
                 }
             }
         }
-
-        showVariant(view)
     }
 
     override fun onCardRewound() {
@@ -173,7 +175,6 @@ class LearnFragment : Fragment(), CardStackListener {
         repeatTwoDays = arguments?.getParcelableArrayList<LearnWord>("repeatTwoDays")!!
         repeatYesterday = arguments?.getParcelableArrayList<LearnWord>("repeatYesterday")!!
         again = ArrayList()
-
     }
 
     private fun initializeUserInfo() {
@@ -181,7 +182,7 @@ class LearnFragment : Fragment(), CardStackListener {
         categories = arguments?.getSerializable("categories")!! as ArrayList<Category>
     }
 
-    private fun initializeCardStack() {
+    private fun initializeCardStackView() {
         manager.setStackFrom(StackFrom.None)
         manager.setVisibleCount(3)
         manager.setTranslationInterval(8.0f)
@@ -215,50 +216,56 @@ class LearnFragment : Fragment(), CardStackListener {
             }
 
             LearnProgress.LEARN_TODAY -> {
-
+                generateLearnTodayWords()
+                current = ArrayList(learnToday)
             }
 
             LearnProgress.REPEAT_YESTERDAY -> {
                 current = ArrayList(repeatYesterday)
-                initializeCardStackAdapter()
             }
 
             LearnProgress.REPEAT_TWO_DAYS -> {
                 current = ArrayList(repeatTwoDays)
-                initializeCardStackAdapter()
             }
 
             LearnProgress.REPEAT_THREE_DAYS -> {
                 current = ArrayList(repeatThreeDays)
-                initializeCardStackAdapter()
             }
 
             LearnProgress.REPEAT_FOUR_DAYS -> {
                 current = ArrayList(repeatFourDays)
-                initializeCardStackAdapter()
             }
 
             LearnProgress.REPEAT_LONG -> {
                 current = ArrayList(repeatLong)
-                initializeCardStackAdapter()
             }
 
         }
+
+        initializeCardStackAdapter()
     }
-
-
 
     private fun initializeCardStackAdapter() {
         this.allWords.shuffle()
-        val variants = this.allWords.subList(0, 200)
+        val variants = this.allWords.subList(0, 150)
 
-        adapter = WordCardStackAdapter(current, ArrayList(variants))
+        adapter = WordCardStackAdapter(current, ArrayList(variants), progress)
         word_card_stack.adapter = adapter
 
         remain = current.size
     }
 
     private fun updateCardStack() {
+        if (progress == LearnProgress.LEARN_TODAY && toLearn < 7 && remain == 0) {
+            generateLearnTodayWords()
+            setDataAndNotify(learnToday)
+        }
+
+        if (toLearn == 7) {
+            setDataAndNotify(again)
+            toLearn++
+        }
+
         if (remain == 0 && again.isEmpty()) {
             when (progress) {
                 LearnProgress.REPEAT_LONG -> {
@@ -282,13 +289,17 @@ class LearnFragment : Fragment(), CardStackListener {
                 }
 
                 LearnProgress.REPEAT_YESTERDAY -> {
-                    // TODO: learn today allWords
                     progress = LearnProgress.LEARN_TODAY
+                    generateLearnTodayWords()
+                    setDataAndNotify(learnToday)
                 }
 
                 LearnProgress.LEARN_TODAY -> {
                     // TODO: learn today allWords
                     progress = LearnProgress.LEARNED
+
+                    word_card_stack.visibility = View.GONE
+                    layout_learned.visibility = View.VISIBLE
                 }
             }
         }
@@ -300,7 +311,7 @@ class LearnFragment : Fragment(), CardStackListener {
 
     private fun setDataAndNotify(words : ArrayList<LearnWord>) {
         current = ArrayList(words)
-        adapter.setWords(words)
+        adapter.words = words
         adapter.notifyDataSetChanged()
         again = ArrayList()
         remain = current.size
@@ -315,6 +326,22 @@ class LearnFragment : Fragment(), CardStackListener {
 
         manager.setSwipeAnimationSetting(setting)
         word_card_stack.swipe()
+    }
+
+    private fun generateLearnTodayWords() {
+        val repeatWords = repeatLong + repeatFourDays + repeatThreeDays + repeatTwoDays + repeatYesterday
+        var index = 0
+
+        val toLearnWordList = allWords.filter { categories.contains(it.category) } as ArrayList<LearnWord>
+        toLearnWordList.shuffle()
+
+        learnToday = ArrayList()
+        while (learnToday.size < 7) {
+            val word = toLearnWordList[index++]
+            if (!repeatWords.contains(word) && !again.contains(word)) {
+                learnToday.add(word)
+            }
+        }
     }
 
 

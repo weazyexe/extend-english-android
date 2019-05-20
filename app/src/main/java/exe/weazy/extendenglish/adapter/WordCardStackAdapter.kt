@@ -8,23 +8,20 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import exe.weazy.extendenglish.R
+import exe.weazy.extendenglish.entity.LearnProgress
 import exe.weazy.extendenglish.entity.LearnWord
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-class WordCardStackAdapter(private var words : ArrayList<LearnWord>, private var variants : ArrayList<LearnWord>) :
-    RecyclerView.Adapter<WordCardStackAdapter.ViewHolder>() {
+class WordCardStackAdapter(var words : ArrayList<LearnWord>,
+                           var variants : ArrayList<LearnWord>,
+                           var progress : LearnProgress)
+    : RecyclerView.Adapter<WordCardStackAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.card_word, parent, false))
 
     override fun getItemCount() = words.size
-
-    fun getWords() = words
-
-    fun setWords(words: ArrayList<LearnWord>) {
-        this.words = words
-    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val w = words[position]
@@ -36,10 +33,17 @@ class WordCardStackAdapter(private var words : ArrayList<LearnWord>, private var
 
 
     private fun setWordOnHolder(w : LearnWord, holder : ViewHolder) {
-        holder.layoutShow.visibility = View.GONE
-        holder.layoutChoose.visibility = View.GONE
-        holder.layoutWrite.visibility = View.GONE
-        holder.layoutVariant.visibility = View.VISIBLE
+        if (progress != LearnProgress.LEARN_TODAY) {
+            holder.layoutShow.visibility = View.GONE
+            holder.layoutChoose.visibility = View.GONE
+            holder.layoutWrite.visibility = View.GONE
+            holder.layoutVariant.visibility = View.VISIBLE
+        } else {
+            holder.layoutShow.visibility = View.VISIBLE
+            holder.layoutChoose.visibility = View.GONE
+            holder.layoutWrite.visibility = View.GONE
+            holder.layoutVariant.visibility = View.GONE
+        }
 
         holder.wordShow.text = w.word
         holder.wordWrite.text = w.word
@@ -49,7 +53,7 @@ class WordCardStackAdapter(private var words : ArrayList<LearnWord>, private var
     }
 
     private fun setVariantsOnHolder(w : LearnWord, holder : ViewHolder) {
-        val variants = getRandomVariants(w)
+        val variants = getRandomWords(w)
 
         // FIXME: word/translate issue
         val random = Random.nextInt(0..3)
@@ -84,8 +88,8 @@ class WordCardStackAdapter(private var words : ArrayList<LearnWord>, private var
         }
     }
 
-    private fun getRandomVariants(w : LearnWord) : ArrayList<LearnWord> {
-        var list = variants
+    private fun getRandomWords(w : LearnWord) : ArrayList<LearnWord> {
+        val list = variants
         list.shuffle()
         return list.filter { it.word != w.word && it.category == w.category } as ArrayList<LearnWord>
     }
