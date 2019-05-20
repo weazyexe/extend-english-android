@@ -86,6 +86,8 @@ class MainActivity : AppCompatActivity() {
         false
     }
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -109,6 +111,8 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
+
+
     private fun loadFragments() {
         learnFragment = LearnFragment()
         var bundle = getInitLearnFragmentBundle()
@@ -130,6 +134,8 @@ class MainActivity : AppCompatActivity() {
     private fun changeFragment(fragment : Fragment) {
         supportFragmentManager.beginTransaction().show(fragment).hide(active).commit()
     }
+
+
 
     private fun getUserData() {
         getAllCategories()
@@ -279,11 +285,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun getInitLearnFragmentBundle() : Bundle {
         val bundle = Bundle()
 
         if (::repeatLong.isInitialized) {
-            bundle.putParcelableArrayList("words", words)
+            bundle.putParcelableArrayList("allWords", words)
         }
 
         if (::repeatYesterday.isInitialized) {
@@ -306,6 +314,10 @@ class MainActivity : AppCompatActivity() {
             bundle.putParcelableArrayList("repeatLong", repeatLong)
         }
 
+        if (::categories.isInitialized) {
+            bundle.putSerializable("categories", categories)
+        }
+
         bundle.putSerializable("progress", progress)
 
         return bundle
@@ -325,6 +337,8 @@ class MainActivity : AppCompatActivity() {
 
         return bundle
     }
+
+
 
     private fun afterLoad() {
         if (isAllWordsLoaded && isAccountLoaded && isCategoriesLoaded && isRepeatFourDaysLoaded && isRepeatLongLoaded &&

@@ -151,6 +151,7 @@
                 android:orientation="vertical"
                 android:layout_gravity="center_horizontal|center_vertical">
 
+            <!--FIXME: word/translate issue, fix hint-->
             <EditText
                     android:id="@+id/word_written_edit_text"
                     android:layout_width="250dp"
