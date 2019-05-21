@@ -9,13 +9,15 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name="exe.weazy.extendenglish.ui.activity.SignupActivity">
+        <activity android:name=".UserActivity">
+        </activity>
+        <activity android:name=".ui.activity.SignupActivity">
         </activity>
         <activity
-                android:name="exe.weazy.extendenglish.ui.activity.MainActivity"
+                android:name=".ui.activity.MainActivity"
                 android:label="@string/title_activity_main">
         </activity>
-        <activity android:name="exe.weazy.extendenglish.ui.activity.LoginActivity">
+        <activity android:name=".ui.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

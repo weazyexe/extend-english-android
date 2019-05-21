@@ -12,7 +12,10 @@
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.0" app:layout_constraintVertical_bias="0.013"
-            android:id="@+id/account_card">
+            android:id="@+id/account_card"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
 
         <RelativeLayout
                 android:layout_margin="16dp"
@@ -26,7 +29,8 @@
                     android:src="@drawable/jonsnow"
                     app:civ_border_color="@color/colorAccent"
                     app:civ_border_width="2dp"
-                    android:layout_centerVertical="true"/>
+                    android:layout_centerVertical="true"
+                    android:transitionName="avatar_image"/>
 
             <TextView
                     android:id="@+id/username_text"
