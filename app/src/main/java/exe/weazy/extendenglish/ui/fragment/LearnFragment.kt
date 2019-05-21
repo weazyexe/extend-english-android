@@ -38,6 +38,8 @@ class LearnFragment : Fragment(), CardStackListener {
     private lateinit var repeatLong: ArrayList<LearnWord>
     private lateinit var learned : ArrayList<LearnWord>
     private lateinit var allWords: ArrayList<LearnWord>
+    private lateinit var know : ArrayList<LearnWord>
+    private lateinit var newKnow : ArrayList<LearnWord>
 
     private lateinit var learnedToRepeat : ArrayList<LearnWord>
     private lateinit var again: ArrayList<LearnWord>
@@ -91,6 +93,10 @@ class LearnFragment : Fragment(), CardStackListener {
 
             Direction.Left -> {
                 remain--
+
+                if (progress == LearnProgress.LEARN_TODAY) {
+                    newKnow.add(currentWord)
+                }
             }
 
             Direction.Bottom -> {
@@ -358,7 +364,7 @@ class LearnFragment : Fragment(), CardStackListener {
                 }
 
                 LearnProgress.REPEAT_FOUR_DAYS -> {
-                    writeLearnedToFirestore(repeatFourDays)
+                    writeWordsToFirestore(LearnProgress.LEARNED, repeatFourDays)
                     progress = LearnProgress.REPEAT_THREE_DAYS
                     setDataAndNotify(repeatThreeDays)
                 }
@@ -386,6 +392,7 @@ class LearnFragment : Fragment(), CardStackListener {
                 LearnProgress.LEARN_TODAY -> {
                     // TODO: learn today allWords
                     writeWordsToFirestore(LearnProgress.REPEAT_YESTERDAY, learnedToRepeat)
+                    writeKnownToFirestore()
                     progress = LearnProgress.LEARNED
 
                     UiHelper.hideView(word_card_stack)
@@ -588,9 +595,11 @@ class LearnFragment : Fragment(), CardStackListener {
 
 
     private fun writeWordsToFirestore(p : LearnProgress, words: ArrayList<LearnWord>) {
+        var index = words.size
         val collection = StringHelper.upperSnakeToLowerCamel(p.name)
-        for (i in 0..(words.size - 1)) {
-            firestore.document("users/${user?.uid}/$collection/word-$i").set(words[i])
+
+        words.forEach {
+            firestore.document("users/${user?.uid}/$collection/word-${index++}").set(it)
         }
     }
 
@@ -598,11 +607,11 @@ class LearnFragment : Fragment(), CardStackListener {
         firestore.document("users/${user?.uid}").update("progress", StringHelper.upperSnakeToLowerCamel(p.name))
     }
 
-    private fun writeLearnedToFirestore(words : ArrayList<LearnWord>) {
-        var index = learned.size
+    private fun writeKnownToFirestore() {
+        var index = know.size
 
-        words.forEach {
-            firestore.document("users/${user?.uid}/learned/word-${index++}").set(it)
+        newKnow.forEach {
+            firestore.document("users/${user?.uid}/know/word-${index++}").set(it)
         }
     }
 }
