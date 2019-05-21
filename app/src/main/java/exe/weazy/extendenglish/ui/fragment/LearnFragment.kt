@@ -36,6 +36,7 @@ class LearnFragment : Fragment(), CardStackListener {
     private lateinit var repeatThreeDays: ArrayList<LearnWord>
     private lateinit var repeatFourDays: ArrayList<LearnWord>
     private lateinit var repeatLong: ArrayList<LearnWord>
+    private lateinit var learned : ArrayList<LearnWord>
     private lateinit var allWords: ArrayList<LearnWord>
 
     private lateinit var learnedToRepeat : ArrayList<LearnWord>
@@ -141,13 +142,15 @@ class LearnFragment : Fragment(), CardStackListener {
      */
     private fun initializeWords() {
         allWords = arguments?.getParcelableArrayList<LearnWord>("allWords")!!
-        repeatLong = arguments?.getParcelableArrayList<LearnWord>("repeatLong")!!
+        learned = arguments?.getParcelableArrayList<LearnWord>("learned")!!
         repeatFourDays = arguments?.getParcelableArrayList<LearnWord>("repeatFourDays")!!
         repeatThreeDays = arguments?.getParcelableArrayList<LearnWord>("repeatThreeDays")!!
         repeatTwoDays = arguments?.getParcelableArrayList<LearnWord>("repeatTwoDays")!!
         repeatYesterday = arguments?.getParcelableArrayList<LearnWord>("repeatYesterday")!!
+
         again = ArrayList()
         learnedToRepeat = ArrayList()
+        current = ArrayList()
     }
 
 
@@ -297,6 +300,7 @@ class LearnFragment : Fragment(), CardStackListener {
             }
 
             LearnProgress.REPEAT_LONG -> {
+                generateRepeatLongWords()
                 current = ArrayList(repeatLong)
             }
 
@@ -354,6 +358,7 @@ class LearnFragment : Fragment(), CardStackListener {
                 }
 
                 LearnProgress.REPEAT_FOUR_DAYS -> {
+                    writeLearnedToFirestore(repeatFourDays)
                     progress = LearnProgress.REPEAT_THREE_DAYS
                     setDataAndNotify(repeatThreeDays)
                 }
@@ -428,7 +433,7 @@ class LearnFragment : Fragment(), CardStackListener {
      * Generates learnToday words
      */
     private fun generateLearnTodayWords() {
-        val repeatWords = repeatLong + repeatFourDays + repeatThreeDays + repeatTwoDays + repeatYesterday
+        val repeatWords = learned + repeatFourDays + repeatThreeDays + repeatTwoDays + repeatYesterday
         var index = 0
 
         val toLearnWordList = allWords.filter { categories.contains(it.category) } as ArrayList<LearnWord>
@@ -439,6 +444,25 @@ class LearnFragment : Fragment(), CardStackListener {
             val word = toLearnWordList[index++]
             if (!repeatWords.contains(word) && !learnedToRepeat.contains(word)) {
                 learnToday.add(word)
+            }
+        }
+    }
+
+    /**
+     * Generates repeatLong words
+     */
+    private fun generateRepeatLongWords() {
+        learned.shuffle()
+
+        repeatLong = ArrayList()
+
+        if (learned.size > 7) {
+            for (i in 0..6) {
+                repeatLong.add(learned[i])
+            }
+        } else {
+            learned.forEach {
+                repeatLong.add(it)
             }
         }
     }
@@ -571,6 +595,14 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     private fun writeProgressToFirestore(p : LearnProgress) {
-        firestore.document("users/${user?.uid}").update("progress", p.name)
+        firestore.document("users/${user?.uid}").update("progress", StringHelper.upperSnakeToLowerCamel(p.name))
+    }
+
+    private fun writeLearnedToFirestore(words : ArrayList<LearnWord>) {
+        var index = learned.size
+
+        words.forEach {
+            firestore.document("users/${user?.uid}/learned/word-${index++}").set(it)
+        }
     }
 }

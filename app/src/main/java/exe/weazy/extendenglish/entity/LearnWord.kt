@@ -40,4 +40,16 @@ class LearnWord : Parcelable {
             return arrayOfNulls(size)
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is LearnWord) return false
+
+        if (this.word == other.word && this.translate == other.translate && this.category == other.category) return true
+
+        return false
+    }
+
+    override fun toString(): String {
+        return "${this.word} | ${this.translate} | ${this.category}"
+    }
 }

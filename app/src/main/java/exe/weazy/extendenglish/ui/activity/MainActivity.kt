@@ -6,7 +6,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.common.base.CaseFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repeatTwoDays : ArrayList<LearnWord>
     private lateinit var repeatThreeDays : ArrayList<LearnWord>
     private lateinit var repeatFourDays : ArrayList<LearnWord>
-    private lateinit var repeatLong : ArrayList<LearnWord>
+    private lateinit var learned : ArrayList<LearnWord>
     private lateinit var words : ArrayList<LearnWord>
 
     private lateinit var categories : ArrayList<Category>
@@ -230,22 +229,26 @@ class MainActivity : AppCompatActivity() {
         firestore.collection("users/${user.uid}/learned").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result?.documents
 
-            repeatLong = ArrayList()
+            learned = ArrayList()
 
-            if (result != null) {
+            result?.forEach {
+                learned.add(it.toObject(LearnWord::class.java)!!)
+            }
+
+            /*if (result != null) {
                 result.shuffle()
 
                 if (result.size > 7) {
                     for (i in 0..6) {
-                        repeatLong.add(result[i].toObject(LearnWord::class.java)!!)
+                        learned.add(result[i].toObject(LearnWord::class.java)!!)
                     }
                 } else {
                     result.forEach {
-                        repeatLong.add(it.toObject(LearnWord::class.java)!!)
+                        learned.add(it.toObject(LearnWord::class.java)!!)
                     }
                 }
 
-            }
+            }*/
 
             isRepeatLongLoaded = true
             afterLoad()
@@ -294,7 +297,7 @@ class MainActivity : AppCompatActivity() {
     private fun getInitLearnFragmentBundle() : Bundle {
         val bundle = Bundle()
 
-        if (::repeatLong.isInitialized) {
+        if (::learned.isInitialized) {
             bundle.putParcelableArrayList("allWords", words)
         }
 
@@ -314,8 +317,8 @@ class MainActivity : AppCompatActivity() {
             bundle.putParcelableArrayList("repeatFourDays", repeatFourDays)
         }
 
-        if (::repeatLong.isInitialized) {
-            bundle.putParcelableArrayList("repeatLong", repeatLong)
+        if (::learned.isInitialized) {
+            bundle.putParcelableArrayList("learned", learned)
         }
 
         if (::categories.isInitialized) {
