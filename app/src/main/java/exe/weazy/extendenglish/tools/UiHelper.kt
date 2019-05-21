@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.ui
+package exe.weazy.extendenglish.tools
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -6,8 +6,11 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 
-class UiTools {
+class UiHelper {
     companion object {
+        /**
+         * Hide keyboard
+         */
         fun hideKeyboard(view: View?, context: Context?) {
             val inputManager = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputManager.hideSoftInputFromWindow(
@@ -16,6 +19,9 @@ class UiTools {
             )
         }
 
+        /**
+         * Set view's visibility to GONE with crossfade animation
+         */
         fun hideView(view : View?) {
             view?.alpha = 1f
             view?.animate()
@@ -28,6 +34,9 @@ class UiTools {
                 })
         }
 
+        /**
+         * Set view's visibility to VISIBLE with crossfade animation
+         */
         fun showView(view : View?) {
             view?.alpha = 0f
             view?.visibility = View.VISIBLE

@@ -13,9 +13,7 @@ import exe.weazy.extendenglish.entity.LearnWord
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-class WordCardStackAdapter(var words : ArrayList<LearnWord>,
-                           var variants : ArrayList<LearnWord>,
-                           var progress : LearnProgress)
+class WordCardStackAdapter(var words : ArrayList<LearnWord>, var variants : ArrayList<LearnWord>)
     : RecyclerView.Adapter<WordCardStackAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -33,17 +31,10 @@ class WordCardStackAdapter(var words : ArrayList<LearnWord>,
 
 
     private fun setWordOnHolder(w : LearnWord, holder : ViewHolder) {
-        if (progress != LearnProgress.LEARN_TODAY) {
-            holder.layoutShow.visibility = View.GONE
-            holder.layoutChoose.visibility = View.GONE
-            holder.layoutWrite.visibility = View.GONE
-            holder.layoutVariant.visibility = View.VISIBLE
-        } else {
-            holder.layoutShow.visibility = View.VISIBLE
-            holder.layoutChoose.visibility = View.GONE
-            holder.layoutWrite.visibility = View.GONE
-            holder.layoutVariant.visibility = View.GONE
-        }
+        holder.layoutShow.visibility = View.GONE
+        holder.layoutChoose.visibility = View.GONE
+        holder.layoutWrite.visibility = View.GONE
+        holder.layoutVariant.visibility = View.GONE
 
         holder.wordShow.text = w.word
         holder.wordWrite.text = w.word

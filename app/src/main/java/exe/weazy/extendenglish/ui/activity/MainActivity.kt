@@ -6,6 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.common.base.CaseFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,7 +14,8 @@ import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.entity.LearnProgress
 import exe.weazy.extendenglish.entity.LearnWord
-import exe.weazy.extendenglish.ui.UiTools
+import exe.weazy.extendenglish.tools.StringHelper
+import exe.weazy.extendenglish.tools.UiHelper
 import exe.weazy.extendenglish.ui.fragment.AccountFragment
 import exe.weazy.extendenglish.ui.fragment.LearnFragment
 import exe.weazy.extendenglish.ui.fragment.SettingsFragment
@@ -97,8 +99,8 @@ class MainActivity : AppCompatActivity() {
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        UiTools.hideView(fragment_layout)
-        UiTools.showView(loading_layout)
+        UiHelper.hideView(fragment_layout)
+        UiHelper.showView(loading_layout)
 
         navigation.menu.findItem(R.id.navigation_account).isChecked = true
 
@@ -257,8 +259,9 @@ class MainActivity : AppCompatActivity() {
             if (result != null) {
                 level = result.getString("level")
 
-                val pr = result.getString("progress")
+                var pr = result.getString("progress")
                 if (pr != null) {
+                    pr = StringHelper.lowerCamelToUpperSnake(pr)
                     progress = LearnProgress.getLearnProgressByString(pr)
                 }
 
@@ -347,8 +350,8 @@ class MainActivity : AppCompatActivity() {
             loadFragments()
             active = accountFragment
 
-            UiTools.hideView(loading_layout)
-            UiTools.showView(fragment_layout)
+            UiHelper.hideView(loading_layout)
+            UiHelper.showView(fragment_layout)
         }
     }
 }
