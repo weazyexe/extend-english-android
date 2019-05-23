@@ -5,58 +5,67 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.entity.LearnProgress
 import exe.weazy.extendenglish.entity.LearnWord
-import exe.weazy.extendenglish.tools.StringHelper
 import exe.weazy.extendenglish.tools.UiHelper
 import exe.weazy.extendenglish.ui.fragment.AccountFragment
 import exe.weazy.extendenglish.ui.fragment.LearnFragment
 import exe.weazy.extendenglish.ui.fragment.SettingsFragment
+import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var user : FirebaseUser
+    private var auth = FirebaseAuth.getInstance()
+
+    private lateinit var viewModel: MainViewModel
 
     private lateinit var learnFragment : LearnFragment
     private lateinit var accountFragment : AccountFragment
     private lateinit var settingsFragment : SettingsFragment
     private var active = Fragment()
 
-    private lateinit var user : FirebaseUser
-    private var firestore = FirebaseFirestore.getInstance()
-    private var auth = FirebaseAuth.getInstance()
-
     private lateinit var repeatYesterday : ArrayList<LearnWord>
     private lateinit var repeatTwoDays : ArrayList<LearnWord>
     private lateinit var repeatThreeDays : ArrayList<LearnWord>
     private lateinit var repeatFourDays : ArrayList<LearnWord>
     private lateinit var learned : ArrayList<LearnWord>
-    private lateinit var words : ArrayList<LearnWord>
+    private lateinit var allWords : ArrayList<LearnWord>
+    private lateinit var know : ArrayList<LearnWord>
 
+    private lateinit var level : String
+    private lateinit var progress : LearnProgress
     private lateinit var categories : ArrayList<Category>
 
     private var isAllWordsLoaded = false
-    private var isAccountLoaded = false
     private var isCategoriesLoaded = false
     private var isRepeatYesterdayLoaded = false
     private var isRepeatTwoDaysLoaded = false
     private var isRepeatThreeDaysLoaded = false
     private var isRepeatFourDaysLoaded = false
-    private var isRepeatLongLoaded = false
+    private var isLearnedLoaded = false
+    private var isKnowLoaded = false
+    private var isLevelLoaded = false
+    private var isProgressLoaded = false
 
-    private var level : String? = null
-    private var progress : LearnProgress? = null
+    private var newPosition = 1
+    private var startingPosition = 1
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_learn -> {
 
                 if (learnFragment != active) {
+                    newPosition = 0
                     changeFragment(learnFragment)
                     active = learnFragment
                 }
@@ -67,6 +76,7 @@ class MainActivity : AppCompatActivity() {
             R.id.navigation_account -> {
 
                 if (accountFragment != active) {
+                    newPosition = 1
                     changeFragment(accountFragment)
                     active = accountFragment
                 }
@@ -77,6 +87,7 @@ class MainActivity : AppCompatActivity() {
             R.id.navigation_settings -> {
 
                 if (settingsFragment != active) {
+                    newPosition = 2
                     changeFragment(settingsFragment)
                     active = settingsFragment
                 }
@@ -87,7 +98,6 @@ class MainActivity : AppCompatActivity() {
         }
         false
     }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,7 +113,9 @@ class MainActivity : AppCompatActivity() {
 
         navigation.menu.findItem(R.id.navigation_account).isChecked = true
 
-        getUserData()
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+
+        initializeObservers()
     }
 
     fun onLogOutButtonClick(v: View) {
@@ -114,14 +126,118 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    fun initializeObservers() {
+        initializeAllWordsObserver()
+        initializeLearnedWordsObserver()
+        initializeKnowWordsObserver()
+        initializeRepeatYesterdayWordsObserver()
+        initializeRepeatTwoDaysWordsObserver()
+        initializeRepeatThreeDaysWordsObserver()
+        initializeRepeatFourDaysWordsObserver()
+        initializeCategoriesObserver()
+        initializeLevelObserver()
+        initializeProgressObserver()
+    }
+
+    private fun initializeAllWordsObserver() {
+        val allWordsLiveData = viewModel.getAllWords()
+        allWordsLiveData.observe(this, Observer {
+            allWords = it
+            isAllWordsLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeRepeatYesterdayWordsObserver() {
+        val repeatYesterdayWordsLiveData = viewModel.getRepeatYesterdayWords()
+        repeatYesterdayWordsLiveData.observe(this, Observer {
+            repeatYesterday = it
+            isRepeatYesterdayLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeRepeatTwoDaysWordsObserver() {
+        val repeatTwoDaysWordsLiveData = viewModel.getRepeatTwoDaysWords()
+        repeatTwoDaysWordsLiveData.observe(this, Observer {
+            repeatTwoDays = it
+            isRepeatTwoDaysLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeRepeatThreeDaysWordsObserver() {
+        val repeatThreeDaysWordsLiveData = viewModel.getRepeatThreeDaysWords()
+        repeatThreeDaysWordsLiveData.observe(this, Observer {
+            repeatThreeDays = it
+            isRepeatThreeDaysLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeRepeatFourDaysWordsObserver() {
+        val repeatFourDaysWordsLiveData = viewModel.getRepeatFourDaysWords()
+        repeatFourDaysWordsLiveData.observe(this, Observer {
+            repeatFourDays = it
+            isRepeatFourDaysLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeLearnedWordsObserver() {
+        val learnedLiveData = viewModel.getLearnedWords()
+        learnedLiveData.observe(this, Observer {
+            learned = it
+            isLearnedLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeKnowWordsObserver() {
+        val knowLiveData = viewModel.getKnowWords()
+        knowLiveData.observe(this, Observer {
+            know = it
+            isKnowLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeLevelObserver() {
+        val levelLiveData = viewModel.getLevel()
+        levelLiveData.observe(this, Observer {
+            level = it
+            isLevelLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeProgressObserver() {
+        val progressLiveData = viewModel.getProgress()
+        progressLiveData.observe(this, Observer {
+            progress = it
+            isProgressLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeCategoriesObserver() {
+        val categoriesLiveData = viewModel.getCategories()
+        categoriesLiveData.observe(this, Observer {
+            categories = it
+            isCategoriesLoaded = true
+            afterLoad()
+        })
+    }
+
+
 
     private fun loadFragments() {
         learnFragment = LearnFragment()
-        var bundle = getInitLearnFragmentBundle()
+        var bundle = getLearnFragmentBundle()
         learnFragment.arguments = bundle
 
         accountFragment = AccountFragment()
-        bundle = getInitAccountFragmentBundle()
+        bundle = getAccountFragmentBundle()
         accountFragment.arguments = bundle
 
         settingsFragment = SettingsFragment()
@@ -134,171 +250,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun changeFragment(fragment : Fragment) {
-        supportFragmentManager.beginTransaction().show(fragment).hide(active).commit()
-    }
-
-
-
-    private fun getUserData() {
-        getAllCategories()
-        getAllWords()
-        getRepeatLongWords()
-        getRepeatYesterdayWords()
-        getRepeatTwoDaysWords()
-        getRepeatThreeDaysWords()
-        getRepeatFourDaysWords()
-        getUserFields()
-    }
-
-    private fun getAllWords() {
-        firestore.collection("words").get().addOnCompleteListener { querySnapshot ->
-            val result = querySnapshot.result?.documents
-
-            words = ArrayList()
-
-            result?.forEach {
-                words.add(it.toObject(LearnWord::class.java)!!)
-            }
-
-            isAllWordsLoaded = true
-            afterLoad()
+        if (startingPosition > newPosition) {
+            supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_to_right, R.anim.slide_out_right).show(fragment).hide(active).commit()
+        } else {
+            supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_to_left, R.anim.slide_out_left).show(fragment).hide(active).commit()
         }
-    }
-
-    private fun getRepeatYesterdayWords() {
-        firestore.collection("users/${user.uid}/repeatYesterday").get().addOnCompleteListener { querySnapshot ->
-            val result = querySnapshot.result?.documents
-
-            repeatYesterday = ArrayList()
-
-            result?.forEach {
-                repeatYesterday.add(it.toObject(LearnWord::class.java)!!)
-            }
-
-            isRepeatYesterdayLoaded = true
-            afterLoad()
-        }
-    }
-
-    private fun getRepeatTwoDaysWords() {
-        firestore.collection("users/${user.uid}/repeatTwoDays").get().addOnCompleteListener { querySnapshot ->
-            val result = querySnapshot.result?.documents
-
-            repeatTwoDays = ArrayList()
-
-            result?.forEach {
-                repeatTwoDays.add(it.toObject(LearnWord::class.java)!!)
-            }
-
-            isRepeatTwoDaysLoaded = true
-            afterLoad()
-        }
-    }
-
-    private fun getRepeatThreeDaysWords() {
-        firestore.collection("users/${user.uid}/repeatThreeDays").get().addOnCompleteListener { querySnapshot ->
-            val result = querySnapshot.result?.documents
-
-            repeatThreeDays = ArrayList()
-
-            result?.forEach {
-                repeatThreeDays.add(it.toObject(LearnWord::class.java)!!)
-            }
-
-            isRepeatThreeDaysLoaded = true
-            afterLoad()
-        }
-    }
-
-    private fun getRepeatFourDaysWords() {
-        firestore.collection("users/${user.uid}/repeatFourDays").get().addOnCompleteListener { querySnapshot ->
-            val result = querySnapshot.result?.documents
-
-            repeatFourDays = ArrayList()
-
-            result?.forEach {
-                repeatFourDays.add(it.toObject(LearnWord::class.java)!!)
-            }
-
-            isRepeatFourDaysLoaded = true
-            afterLoad()
-        }
-    }
-
-    private fun getRepeatLongWords() {
-        firestore.collection("users/${user.uid}/learned").get().addOnCompleteListener { querySnapshot ->
-            val result = querySnapshot.result?.documents
-
-            learned = ArrayList()
-
-            result?.forEach {
-                learned.add(it.toObject(LearnWord::class.java)!!)
-            }
-
-            /*if (result != null) {
-                result.shuffle()
-
-                if (result.size > 7) {
-                    for (i in 0..6) {
-                        learned.add(result[i].toObject(LearnWord::class.java)!!)
-                    }
-                } else {
-                    result.forEach {
-                        learned.add(it.toObject(LearnWord::class.java)!!)
-                    }
-                }
-
-            }*/
-
-            isRepeatLongLoaded = true
-            afterLoad()
-        }
-    }
-
-    private fun getUserFields() {
-        firestore.document("users/${user.uid}").get().addOnCompleteListener { documentSnapshot ->
-            val result = documentSnapshot.result
-
-            if (result != null) {
-                level = result.getString("level")
-
-                var pr = result.getString("progress")
-                if (pr != null) {
-                    pr = StringHelper.lowerCamelToUpperSnake(pr)
-                    progress = LearnProgress.getLearnProgressByString(pr)
-                }
-
-                isAccountLoaded = true
-                afterLoad()
-            }
-        }
-    }
-
-    private fun getAllCategories() {
-        firestore.collection("users/${user.uid}/categories").get().addOnCompleteListener { querySnapshot ->
-            val result = querySnapshot.result?.documents
-
-            categories = ArrayList()
-
-            result?.forEach {
-
-                val name = it.getString("name")
-                if (name != null)
-                    categories.add(Category.getCategoryByString(name))
-            }
-
-            isCategoriesLoaded = true
-            afterLoad()
-        }
+        startingPosition = newPosition
     }
 
 
 
-    private fun getInitLearnFragmentBundle() : Bundle {
+    private fun getLearnFragmentBundle() : Bundle {
         val bundle = Bundle()
 
-        if (::learned.isInitialized) {
-            bundle.putParcelableArrayList("allWords", words)
+        if (::allWords.isInitialized) {
+            bundle.putParcelableArrayList("allWords", allWords)
         }
 
         if (::repeatYesterday.isInitialized) {
@@ -321,6 +287,10 @@ class MainActivity : AppCompatActivity() {
             bundle.putParcelableArrayList("learned", learned)
         }
 
+        if (::know.isInitialized) {
+            bundle.putParcelableArrayList("know", know)
+        }
+
         if (::categories.isInitialized) {
             bundle.putSerializable("categories", categories)
         }
@@ -330,7 +300,7 @@ class MainActivity : AppCompatActivity() {
         return bundle
     }
 
-    private fun getInitAccountFragmentBundle() : Bundle {
+    private fun getAccountFragmentBundle() : Bundle {
         val bundle = Bundle()
 
         if (!user.displayName.isNullOrEmpty()) {
@@ -348,8 +318,10 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun afterLoad() {
-        if (isAllWordsLoaded && isAccountLoaded && isCategoriesLoaded && isRepeatFourDaysLoaded && isRepeatLongLoaded &&
+        if (isAllWordsLoaded && isLearnedLoaded && isKnowLoaded && isLevelLoaded && isProgressLoaded &&
+                isCategoriesLoaded && isRepeatFourDaysLoaded && isLearnedLoaded &&
                 isRepeatThreeDaysLoaded && isRepeatTwoDaysLoaded && isRepeatYesterdayLoaded) {
+
             loadFragments()
             active = accountFragment
 
