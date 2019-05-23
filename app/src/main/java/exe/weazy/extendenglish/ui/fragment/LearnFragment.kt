@@ -63,9 +63,11 @@ class LearnFragment : Fragment(), CardStackListener {
     override fun onStart() {
         super.onStart()
 
-        initializeWords()
-        initializeUserInfo()
-        initializeCardStackView()
+        if (!::learnToday.isInitialized || learnToday.isNullOrEmpty()) {
+            initializeWords()
+            initializeUserInfo()
+            initializeCardStackView()
+        }
     }
 
 
@@ -156,6 +158,7 @@ class LearnFragment : Fragment(), CardStackListener {
         again = ArrayList()
         learnedToRepeat = ArrayList()
         current = ArrayList()
+        newKnow = ArrayList()
     }
 
 

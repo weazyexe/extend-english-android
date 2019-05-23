@@ -122,7 +122,7 @@ class MainViewModel : ViewModel() {
 
 
     private fun loadAllWords() {
-        firestore.collection("allWords").get().addOnCompleteListener { querySnapshot ->
+        firestore.collection("words").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result?.documents
 
             val words = ArrayList<LearnWord>()

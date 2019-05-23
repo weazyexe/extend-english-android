@@ -104,6 +104,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        preLoad()
+
         user = intent.getParcelableExtra("user")
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
@@ -126,7 +128,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun initializeObservers() {
+    private fun initializeObservers() {
         initializeAllWordsObserver()
         initializeLearnedWordsObserver()
         initializeKnowWordsObserver()
@@ -324,9 +326,23 @@ class MainActivity : AppCompatActivity() {
 
             loadFragments()
             active = accountFragment
+            preLoad()
 
             UiHelper.hideView(loading_layout)
             UiHelper.showView(fragment_layout)
         }
+    }
+
+    private fun preLoad() {
+        isAllWordsLoaded = false
+        isCategoriesLoaded = false
+        isRepeatYesterdayLoaded = false
+        isRepeatTwoDaysLoaded = false
+        isRepeatThreeDaysLoaded = false
+        isRepeatFourDaysLoaded = false
+        isLearnedLoaded = false
+        isKnowLoaded = false
+        isLevelLoaded = false
+        isProgressLoaded = false
     }
 }
