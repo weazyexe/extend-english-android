@@ -1,7 +1,9 @@
-package exe.weazy.extendenglish
+package exe.weazy.extendenglish.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import exe.weazy.extendenglish.R
+
 
 class UserActivity : AppCompatActivity() {
 

@@ -24,7 +24,6 @@ import exe.weazy.extendenglish.tools.StringHelper
 import exe.weazy.extendenglish.tools.UiHelper
 import kotlinx.android.synthetic.main.fragment_learn.*
 
-
 class LearnFragment : Fragment(), CardStackListener {
 
     private val firestore = FirebaseFirestore.getInstance()
@@ -64,9 +63,11 @@ class LearnFragment : Fragment(), CardStackListener {
     override fun onStart() {
         super.onStart()
 
-        initializeWords()
-        initializeUserInfo()
-        initializeCardStackView()
+        if (!::learnToday.isInitialized || learnToday.isNullOrEmpty()) {
+            initializeWords()
+            initializeUserInfo()
+            initializeCardStackView()
+        }
     }
 
 
@@ -157,6 +158,7 @@ class LearnFragment : Fragment(), CardStackListener {
         again = ArrayList()
         learnedToRepeat = ArrayList()
         current = ArrayList()
+        newKnow = ArrayList()
     }
 
 
