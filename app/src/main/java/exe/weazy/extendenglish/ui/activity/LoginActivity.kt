@@ -28,11 +28,9 @@ class LoginActivity : AppCompatActivity() {
         updateUI(firebaseAuth?.currentUser)
     }
 
-    fun updateUI(user : FirebaseUser?) {
+    private fun updateUI(user : FirebaseUser?) {
         if (user != null) {
             val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("user", user)
-
             startActivity(intent)
             finish()
         }

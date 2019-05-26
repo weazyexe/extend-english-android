@@ -2,6 +2,7 @@ package exe.weazy.extendenglish.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -9,7 +10,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.entity.LearnProgress
@@ -20,12 +23,14 @@ import exe.weazy.extendenglish.ui.fragment.LearnFragment
 import exe.weazy.extendenglish.ui.fragment.SettingsFragment
 import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var user : FirebaseUser
-    private var auth = FirebaseAuth.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+    private val user = auth.currentUser
+    private val firestore = FirebaseFirestore.getInstance()
 
     private lateinit var viewModel: MainViewModel
 
@@ -106,8 +111,6 @@ class MainActivity : AppCompatActivity() {
 
         preLoad()
 
-        user = intent.getParcelableExtra("user")
-
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         UiHelper.hideView(fragment_layout)
@@ -129,7 +132,17 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initializeObservers() {
-        initializeAllWordsObserver()
+        val file = File(applicationContext.filesDir, "allWords")
+        if (file.exists()) {
+            val type = object : TypeToken<ArrayList<LearnWord>>() {}.type
+            allWords = Gson().fromJson(file.readText(), type)
+
+            Log.d("KEK", "Read from file")
+            isAllWordsLoaded = true
+            afterLoad()
+        } else {
+            initializeAllWordsObserver()
+        }
         initializeLearnedWordsObserver()
         initializeKnowWordsObserver()
         initializeRepeatYesterdayWordsObserver()
@@ -145,6 +158,12 @@ class MainActivity : AppCompatActivity() {
         val allWordsLiveData = viewModel.getAllWords()
         allWordsLiveData.observe(this, Observer {
             allWords = it
+
+            val file = File(applicationContext.filesDir, "allWords")
+            file.writeText(Gson().toJson(allWords))
+
+            Log.d("KEK", "Callback initAllWords")
+
             isAllWordsLoaded = true
             afterLoad()
         })
@@ -305,10 +324,10 @@ class MainActivity : AppCompatActivity() {
     private fun getAccountFragmentBundle() : Bundle {
         val bundle = Bundle()
 
-        if (!user.displayName.isNullOrEmpty()) {
-            bundle.putString("username", user.displayName)
+        if (!user?.displayName.isNullOrEmpty()) {
+            bundle.putString("username", user?.displayName)
         } else {
-            bundle.putString("username", user.email)
+            bundle.putString("username", user?.email)
         }
 
         bundle.putString("level", level)

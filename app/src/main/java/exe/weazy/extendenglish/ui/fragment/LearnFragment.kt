@@ -86,7 +86,7 @@ class LearnFragment : Fragment(), CardStackListener {
                 again.add(currentWord)
                 remain--
 
-                if (progress == LearnProgress.LEARN_TODAY) {
+                if (progress == LearnProgress.LEARN_TODAY && toLearn < 7) {
                     toLearn++
                     learnedToRepeat.add(currentWord)
                 }
@@ -95,7 +95,7 @@ class LearnFragment : Fragment(), CardStackListener {
             Direction.Left -> {
                 remain--
 
-                if (progress == LearnProgress.LEARN_TODAY) {
+                if (progress == LearnProgress.LEARN_TODAY && toLearn < 7) {
                     newKnow.add(currentWord)
                 }
             }
@@ -128,6 +128,7 @@ class LearnFragment : Fragment(), CardStackListener {
                     showWord(view)
                 } else {
                     showVariant(view)
+                    initializeVariantListeners(view, writeButton, showButton, chooseButton)
                 }
             }
 
@@ -150,6 +151,7 @@ class LearnFragment : Fragment(), CardStackListener {
     private fun initializeWords() {
         allWords = arguments?.getParcelableArrayList<LearnWord>("allWords")!!
         learned = arguments?.getParcelableArrayList<LearnWord>("learned")!!
+        know = arguments?.getParcelableArrayList<LearnWord>("know")!!
         repeatFourDays = arguments?.getParcelableArrayList<LearnWord>("repeatFourDays")!!
         repeatThreeDays = arguments?.getParcelableArrayList<LearnWord>("repeatThreeDays")!!
         repeatTwoDays = arguments?.getParcelableArrayList<LearnWord>("repeatTwoDays")!!
@@ -322,7 +324,7 @@ class LearnFragment : Fragment(), CardStackListener {
      */
     private fun initializeCardStackAdapter() {
         this.allWords.shuffle()
-        val variants = this.allWords.subList(0, 150)
+        val variants = this.allWords.filter { categories.contains(it.category) }
 
         adapter = WordCardStackAdapter(current, ArrayList(variants))
         word_card_stack.adapter = adapter
@@ -372,20 +374,20 @@ class LearnFragment : Fragment(), CardStackListener {
                 }
 
                 LearnProgress.REPEAT_THREE_DAYS -> {
-                    writeWordsToFirestore(LearnProgress.REPEAT_FOUR_DAYS, repeatThreeDays)
+                    rewriteWordsToFirestore(LearnProgress.REPEAT_FOUR_DAYS, repeatThreeDays)
                     progress = LearnProgress.REPEAT_TWO_DAYS
                     setDataAndNotify(repeatTwoDays)
                 }
 
                 LearnProgress.REPEAT_TWO_DAYS -> {
-                    writeWordsToFirestore(LearnProgress.REPEAT_THREE_DAYS, repeatTwoDays)
+                    rewriteWordsToFirestore(LearnProgress.REPEAT_THREE_DAYS, repeatTwoDays)
                     progress = LearnProgress.REPEAT_YESTERDAY
                     writeProgressToFirestore(progress)
                     setDataAndNotify(repeatYesterday)
                 }
 
                 LearnProgress.REPEAT_YESTERDAY -> {
-                    writeWordsToFirestore(LearnProgress.REPEAT_TWO_DAYS, repeatYesterday)
+                    rewriteWordsToFirestore(LearnProgress.REPEAT_TWO_DAYS, repeatYesterday)
                     progress = LearnProgress.LEARN_TODAY
                     generateLearnTodayWords()
                     setDataAndNotify(learnToday)
@@ -393,7 +395,7 @@ class LearnFragment : Fragment(), CardStackListener {
 
                 LearnProgress.LEARN_TODAY -> {
                     // TODO: learn today allWords
-                    writeWordsToFirestore(LearnProgress.REPEAT_YESTERDAY, learnedToRepeat)
+                    rewriteWordsToFirestore(LearnProgress.REPEAT_YESTERDAY, learnedToRepeat)
                     writeKnownToFirestore()
                     progress = LearnProgress.LEARNED
 
@@ -425,7 +427,7 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     /**
-     * Swipe card to said direction
+     * Swipe card to direction
      */
     private fun swipe(direction: Direction) {
         val setting = SwipeAnimationSetting.Builder()
@@ -567,7 +569,7 @@ class LearnFragment : Fragment(), CardStackListener {
         val words = word.split(", ")
 
         if (words.contains(written)) {
-            showWord(editText?.rootView)
+            showWord(editText.rootView)
         } else {
             words.forEach {
                 var count = 0
@@ -582,12 +584,12 @@ class LearnFragment : Fragment(), CardStackListener {
 
                 if (count == it.length) {
                     // Right answer handle
-                    showWord(editText?.rootView)
+                    showWord(editText.rootView)
                     return
                 } else {
                     // Wrong answer handle
-                    editText?.setText(it.substring(0..count), TextView.BufferType.EDITABLE)
-                    editText?.setSelection(written.length + 1)
+                    editText.setText(it.substring(0..count), TextView.BufferType.EDITABLE)
+                    editText.setSelection(written.length + 1)
                     return
                 }
             }
@@ -595,6 +597,15 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
 
+
+    private fun rewriteWordsToFirestore(p : LearnProgress, words: ArrayList<LearnWord>) {
+        var index = 0
+        val collection = StringHelper.upperSnakeToLowerCamel(p.name)
+
+        words.forEach {
+            firestore.document("users/${user?.uid}/$collection/word-${index++}").set(it)
+        }
+    }
 
     private fun writeWordsToFirestore(p : LearnProgress, words: ArrayList<LearnWord>) {
         var index = words.size

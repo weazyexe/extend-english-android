@@ -40,7 +40,14 @@ class WordCardStackAdapter(var words : ArrayList<LearnWord>, var variants : Arra
         holder.wordWrite.text = w.word
         holder.wordVariant.text = w.word
         holder.wordChoose.text = w.word
+
+        holder.transcriptionShow.text = w.transcription
+        holder.transcriptionWrite.text = w.transcription
+        holder.transcriptionVariant.text = w.transcription
+        holder.transcriptionChoose.text = w.transcription
+
         holder.translate.text = w.translate
+        holder.category.text = w.category.name
     }
 
     private fun setVariantsOnHolder(w : LearnWord, holder : ViewHolder) {
@@ -93,7 +100,16 @@ class WordCardStackAdapter(var words : ArrayList<LearnWord>, var variants : Arra
         var wordChoose : TextView
         var wordWrite : TextView
         var wordVariant : TextView
+
         var translate : TextView
+
+        var category : TextView
+
+        var transcriptionShow : TextView
+        var transcriptionChoose : TextView
+        var transcriptionWrite : TextView
+        var transcriptionVariant : TextView
+
         var choose1Button : Button
         var choose2Button : Button
         var choose3Button : Button
@@ -111,7 +127,14 @@ class WordCardStackAdapter(var words : ArrayList<LearnWord>, var variants : Arra
             wordShow = itemView.findViewById(R.id.word_show_english_text)
             wordVariant = itemView.findViewById(R.id.word_variant_english_text)
 
+            transcriptionChoose = itemView.findViewById(R.id.transcription_choose_english_text)
+            transcriptionWrite = itemView.findViewById(R.id.transcription_write_english_text)
+            transcriptionShow = itemView.findViewById(R.id.transcription_show_english_text)
+            transcriptionVariant = itemView.findViewById(R.id.transcription_variant_english_text)
+
             translate = itemView.findViewById(R.id.word_show_translate_text)
+
+            category = itemView.findViewById(R.id.category_text)
 
             choose1Button = itemView.findViewById(R.id.choose_one_button)
             choose2Button = itemView.findViewById(R.id.choose_two_button)
