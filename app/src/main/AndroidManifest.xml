@@ -9,6 +9,8 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity android:name=".ui.activity.CategoriesActivity">
+        </activity>
         <activity android:name=".ui.activity.UserActivity">
         </activity>
         <activity android:name=".ui.activity.SignupActivity">
@@ -17,7 +19,8 @@
                 android:name=".ui.activity.MainActivity"
                 android:label="@string/title_activity_main">
         </activity>
-        <activity android:name=".ui.activity.LoginActivity">
+        <activity android:name=".ui.activity.LoginActivity"
+                  android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

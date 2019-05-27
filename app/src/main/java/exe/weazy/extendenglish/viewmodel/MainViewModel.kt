@@ -119,6 +119,11 @@ class MainViewModel : ViewModel() {
         return categories
     }
 
+    fun setCategories(categories : ArrayList<Category>) {
+        this.categories = MutableLiveData()
+        this.categories.postValue(categories)
+    }
+
 
 
     private fun loadAllWords() {

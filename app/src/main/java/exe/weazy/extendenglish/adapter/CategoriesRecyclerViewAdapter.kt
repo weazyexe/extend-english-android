@@ -3,69 +3,69 @@ package exe.weazy.extendenglish.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.entity.Category
+import exe.weazy.extendenglish.tools.StringHelper
+import exe.weazy.extendenglish.tools.UiHelper
+import java.util.ArrayList
 
 class CategoriesRecyclerViewAdapter(private var categories : List<Category>) : RecyclerView.Adapter<CategoriesRecyclerViewAdapter.ViewHolder>() {
+
+    private var initializedChecks = false
+
+    private var checks = ArrayList<Boolean>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.element_category, parent, false))
 
     override fun getItemCount() = categories.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+        if (!initializedChecks) {
+            categories.forEach { _ ->
+                checks.add(false)
+            }
+            initializedChecks = true
+        }
+
         val category = categories[position]
 
-        when (category) {
-            Category.BASICS -> {
-                holder.icon.setImageResource(R.drawable.ic_star_black_24dp)
-                holder.name.text = holder.itemView.resources.getString(R.string.basics)
-            }
-            Category.HOUSE -> {
-                holder.icon.setImageResource(R.drawable.ic_home_black_24dp)
-                holder.name.text = holder.itemView.resources.getString(R.string.house)
-            }
-            Category.CLOTHES -> {
-                holder.icon.setImageResource(R.drawable.ic_clothes_yellow_24dp)
-                holder.name.text = holder.itemView.resources.getString(R.string.clothes)
-            }
-            Category.FAMILY -> {
-                holder.icon.setImageResource(R.drawable.ic_people_black_24dp)
-                holder.name.text = holder.itemView.resources.getString(R.string.family)
-            }
-            Category.CHARACTER -> {
-                holder.icon.setImageResource(R.drawable.ic_person_pin_black_24dp)
-                holder.name.text = holder.itemView.resources.getString(R.string.character)
-            }
-            Category.COMPUTER -> {
-                holder.icon.setImageResource(R.drawable.ic_computer_black_24dp)
-                holder.name.text = holder.itemView.resources.getString(R.string.computer)
-            }
-            Category.ANIMALS -> {
-                holder.icon.setImageResource(R.drawable.ic_pets_black_24dp)
-                holder.name.text = holder.itemView.resources.getString(R.string.animals)
-            }
-            Category.TIME -> {
-                holder.icon.setImageResource(R.drawable.ic_access_time_black_24dp)
-                holder.name.text = holder.itemView.resources.getString(R.string.time)
-            }
-            Category.CITY -> {
-                holder.icon.setImageResource(R.drawable.ic_location_city_black_24dp)
-                holder.name.text = holder.itemView.resources.getString(R.string.city)
+        holder.name.text = StringHelper.upperSnakeToUpperCamel(category.name)
+
+        if (!checks[position]) {
+            holder.checked.visibility = View.GONE
+        } else {
+            holder.checked.visibility = View.VISIBLE
+        }
+
+        holder.layout.setOnClickListener {
+            if (checks[position]) {
+                checks[position] = false
+                holder.checked.visibility = View.GONE
+            } else {
+                checks[position] = true
+                holder.checked.visibility = View.VISIBLE
             }
         }
     }
 
+    fun getChecks() = checks
+
     inner class ViewHolder(view : View) : RecyclerView.ViewHolder(view) {
-        var icon : ImageView
+        var checked : ImageView
         var name : TextView
+        var layout : FrameLayout
 
         init {
             super.itemView
-            icon = itemView.findViewById(R.id.category_logo)
-            name = itemView.findViewById(R.id.category_name)
+            checked = itemView.findViewById(R.id.image_checked)
+            name = itemView.findViewById(R.id.text_category)
+            layout = itemView.findViewById(R.id.layout_category)
         }
     }
 }

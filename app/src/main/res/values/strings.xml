@@ -3,13 +3,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_learn">Learn</string>
     <string name="title_account">Account</string>
-    <string name="login">Log in</string>
     <string name="greeting">Hey! Log in or sign up, please</string>
-    <string name="email">E-mail</string>
-    <string name="repeat_password">Confirm password</string>
-    <string name="password">Password</string>
-    <string name="create_account">Create account</string>
-    <string name="wrong_email_or_password">Wrong email or password</string>
     <string name="categories">Categories</string>
     <string name="edit_categories">Edit categories</string>
     <string name="basics">Basics</string>
@@ -21,12 +15,12 @@
     <string name="character">Character</string>
     <string name="animals">Animals</string>
     <string name="computer">Computer</string>
+    <string name="_continue">Continue</string>
     <string name="signup">Sign up</string>
     <string name="username">Username</string>
     <string name="choose_image">Choose image</string>
-    <string name="load_image">Load image</string>
+    <string name="set_an_image">Set an image</string>
     <string name="error">Unable to create user. Try again</string>
-    <string name="passwords_arent_equal">Passwords aren\'t equal</string>
     <string-array name="levels">
         <item>Newbie</item>
         <item>Elementary</item>
@@ -60,4 +54,17 @@
     <string name="user_settings">User settings</string>
 
 
+    <!--LOGIN ACTIVITY-->
+    <string name="app_desc">Learn english words app.\nFree and easy.</string>
+    <string name="select_categories">Select categories you want to learn</string>
+    <string name="input_email">First, input your e-mail</string>
+    <string name="input_password">OK, now input your password</string>
+    <string name="confirm_password">You are almost there, confirm your password</string>
+    <string name="password">Password</string>
+    <string name="create_account">Create account</string>
+    <string name="wrong_email_or_password">Wrong email or password</string>
+    <string name="login">Log in</string>
+    <string name="sign_in">Sign in</string>
+    <string name="email">E-mail</string>
+    <string name="passwords_arent_equal">Passwords aren\'t equals</string>
 </resources>

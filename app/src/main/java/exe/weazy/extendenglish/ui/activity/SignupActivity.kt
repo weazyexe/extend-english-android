@@ -10,11 +10,15 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import exe.weazy.extendenglish.R
+import exe.weazy.extendenglish.entity.LearnProgress
+import exe.weazy.extendenglish.entity.Level
+import exe.weazy.extendenglish.tools.StringHelper
 import kotlinx.android.synthetic.main.activity_signup.*
 
 class SignupActivity : AppCompatActivity() {
 
-    private var firebaseAuth = FirebaseAuth.getInstance()
+    private val firebaseAuth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,9 +27,7 @@ class SignupActivity : AppCompatActivity() {
         loading_signup.visibility = View.GONE
     }
 
-    fun onBackButtonClick(view : View) {
-        onBackPressed()
-    }
+
 
     fun onSubmitButtonClick(view : View) {
         val email = email_signup.text.toString()
@@ -58,9 +60,9 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    fun updateUI(user : FirebaseUser?) {
+    private fun updateUI(user : FirebaseUser?) {
         if (user != null) {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, CategoriesActivity::class.java)
             intent.putExtra("user", user)
 
             startActivity(intent)
@@ -68,21 +70,11 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    fun createUserFolder() {
-        val firestore = FirebaseFirestore.getInstance()
+    private fun createUserFolder() {
         val user = firebaseAuth.currentUser
 
         if (user != null) {
-            var hashMap = HashMap<String, String>()
-            val level = level_signup.selectedItem.toString()
-            hashMap["level"] = level
 
-            firestore.collection("users").document(user.uid).set(hashMap).addOnCompleteListener {
-                if (it.isSuccessful) {
-
-                    updateUI(user)
-                }
-            }
         }
     }
 }

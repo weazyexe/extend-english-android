@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity() {
             val type = object : TypeToken<ArrayList<LearnWord>>() {}.type
             allWords = Gson().fromJson(file.readText(), type)
 
-            Log.d("KEK", "Read from file")
+            Log.d("DATA_RW", "Read from file")
             isAllWordsLoaded = true
             afterLoad()
         } else {
@@ -149,7 +149,16 @@ class MainActivity : AppCompatActivity() {
         initializeRepeatTwoDaysWordsObserver()
         initializeRepeatThreeDaysWordsObserver()
         initializeRepeatFourDaysWordsObserver()
-        initializeCategoriesObserver()
+
+        val categories = intent.getSerializableExtra("categories") as ArrayList<Category>?
+        if (categories == null) {
+            initializeCategoriesObserver()
+        } else {
+            viewModel.setCategories(categories)
+            this.categories = ArrayList(categories)
+            writeCategories()
+        }
+
         initializeLevelObserver()
         initializeProgressObserver()
     }
@@ -162,7 +171,7 @@ class MainActivity : AppCompatActivity() {
             val file = File(applicationContext.filesDir, "allWords")
             file.writeText(Gson().toJson(allWords))
 
-            Log.d("KEK", "Callback initAllWords")
+            Log.d("DATA_RW", "Callback initAllWords")
 
             isAllWordsLoaded = true
             afterLoad()
@@ -363,5 +372,15 @@ class MainActivity : AppCompatActivity() {
         isKnowLoaded = false
         isLevelLoaded = false
         isProgressLoaded = false
+    }
+
+
+
+    private fun writeCategories() {
+        var index = 0
+        categories.forEach {
+            // FIXME: UNINITIALIZED LATEINIT EXCEPTION
+            firestore.document("users/${user?.uid}/categories/category-${index++}").set(it)
+        }
     }
 }
