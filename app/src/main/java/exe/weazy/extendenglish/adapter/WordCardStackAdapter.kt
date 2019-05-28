@@ -8,12 +8,11 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.entity.LearnProgress
-import exe.weazy.extendenglish.entity.LearnWord
+import exe.weazy.extendenglish.model.Word
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-class WordCardStackAdapter(var words : ArrayList<LearnWord>, var variants : ArrayList<LearnWord>)
+class WordCardStackAdapter(var words : ArrayList<Word>, var variants : ArrayList<Word>)
     : RecyclerView.Adapter<WordCardStackAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -30,7 +29,7 @@ class WordCardStackAdapter(var words : ArrayList<LearnWord>, var variants : Arra
 
 
 
-    private fun setWordOnHolder(w : LearnWord, holder : ViewHolder) {
+    private fun setWordOnHolder(w : Word, holder : ViewHolder) {
         holder.layoutShow.visibility = View.GONE
         holder.layoutChoose.visibility = View.GONE
         holder.layoutWrite.visibility = View.GONE
@@ -50,7 +49,7 @@ class WordCardStackAdapter(var words : ArrayList<LearnWord>, var variants : Arra
         holder.category.text = w.category.name
     }
 
-    private fun setVariantsOnHolder(w : LearnWord, holder : ViewHolder) {
+    private fun setVariantsOnHolder(w : Word, holder : ViewHolder) {
         val variants = getRandomWords(w)
 
         // FIXME: word/translate issue
@@ -86,10 +85,10 @@ class WordCardStackAdapter(var words : ArrayList<LearnWord>, var variants : Arra
         }
     }
 
-    private fun getRandomWords(w : LearnWord) : ArrayList<LearnWord> {
+    private fun getRandomWords(w : Word) : ArrayList<Word> {
         val list = variants
         list.shuffle()
-        return list.filter { it.word != w.word && it.category == w.category } as ArrayList<LearnWord>
+        return list.filter { it.word != w.word && it.category == w.category } as ArrayList<Word>
     }
 
 

@@ -15,10 +15,13 @@
             android:layout_gravity="center_vertical|center_horizontal"
             android:visibility="gone"/>
 
-    <FrameLayout
-            android:id="@+id/fragment_login"
+    <fragment
+            android:id="@+id/nav_fragment_login"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/login_graph"/>
 
     <ProgressBar
             android:elevation="16dp"

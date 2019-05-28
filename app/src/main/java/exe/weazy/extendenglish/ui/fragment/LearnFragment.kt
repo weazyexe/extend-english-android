@@ -17,9 +17,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.yuyakaido.android.cardstackview.*
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.WordCardStackAdapter
-import exe.weazy.extendenglish.entity.Category
-import exe.weazy.extendenglish.entity.LearnProgress
-import exe.weazy.extendenglish.entity.LearnWord
+import exe.weazy.extendenglish.model.Category
+import exe.weazy.extendenglish.model.Progress
+import exe.weazy.extendenglish.model.Word
 import exe.weazy.extendenglish.tools.StringHelper
 import exe.weazy.extendenglish.tools.UiHelper
 import kotlinx.android.synthetic.main.fragment_learn.*
@@ -29,23 +29,23 @@ class LearnFragment : Fragment(), CardStackListener {
     private val firestore = FirebaseFirestore.getInstance()
     private val user = FirebaseAuth.getInstance().currentUser
 
-    private lateinit var learnToday: ArrayList<LearnWord>
-    private lateinit var repeatYesterday: ArrayList<LearnWord>
-    private lateinit var repeatTwoDays: ArrayList<LearnWord>
-    private lateinit var repeatThreeDays: ArrayList<LearnWord>
-    private lateinit var repeatFourDays: ArrayList<LearnWord>
-    private lateinit var repeatLong: ArrayList<LearnWord>
-    private lateinit var learned : ArrayList<LearnWord>
-    private lateinit var allWords: ArrayList<LearnWord>
-    private lateinit var know : ArrayList<LearnWord>
-    private lateinit var newKnow : ArrayList<LearnWord>
+    private lateinit var learnToday: ArrayList<Word>
+    private lateinit var repeatYesterday: ArrayList<Word>
+    private lateinit var repeatTwoDays: ArrayList<Word>
+    private lateinit var repeatThreeDays: ArrayList<Word>
+    private lateinit var repeatFourDays: ArrayList<Word>
+    private lateinit var repeatLong: ArrayList<Word>
+    private lateinit var learned : ArrayList<Word>
+    private lateinit var allWords: ArrayList<Word>
+    private lateinit var know : ArrayList<Word>
+    private lateinit var newKnow : ArrayList<Word>
 
-    private lateinit var learnedToRepeat : ArrayList<LearnWord>
-    private lateinit var again: ArrayList<LearnWord>
-    private lateinit var current: ArrayList<LearnWord>
-    private lateinit var currentWord: LearnWord
+    private lateinit var learnedToRepeat : ArrayList<Word>
+    private lateinit var again: ArrayList<Word>
+    private lateinit var current: ArrayList<Word>
+    private lateinit var currentWord: Word
 
-    private lateinit var progress: LearnProgress
+    private lateinit var progress: Progress
     private lateinit var categories : ArrayList<Category>
 
     private var remain = 0
@@ -73,7 +73,7 @@ class LearnFragment : Fragment(), CardStackListener {
 
 
     override fun onCardDisappeared(view: View?, position: Int) {
-        //currentWord = current[position]
+
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {
@@ -86,7 +86,7 @@ class LearnFragment : Fragment(), CardStackListener {
                 again.add(currentWord)
                 remain--
 
-                if (progress == LearnProgress.LEARN_TODAY && toLearn < 7) {
+                if (progress == Progress.LEARN_TODAY && toLearn < 7) {
                     toLearn++
                     learnedToRepeat.add(currentWord)
                 }
@@ -95,7 +95,7 @@ class LearnFragment : Fragment(), CardStackListener {
             Direction.Left -> {
                 remain--
 
-                if (progress == LearnProgress.LEARN_TODAY && toLearn < 7) {
+                if (progress == Progress.LEARN_TODAY && toLearn < 7) {
                     newKnow.add(currentWord)
                 }
             }
@@ -121,7 +121,7 @@ class LearnFragment : Fragment(), CardStackListener {
         val chooseButton = view?.findViewById<Button>(R.id.choose_word_button)
 
         when (progress) {
-            LearnProgress.LEARN_TODAY -> {
+            Progress.LEARN_TODAY -> {
                 // If learning right now, show word
                 // Else show variants to repeat
                 if (toLearn < 7) {
@@ -149,13 +149,13 @@ class LearnFragment : Fragment(), CardStackListener {
      * Gets all words from bundle
      */
     private fun initializeWords() {
-        allWords = arguments?.getParcelableArrayList<LearnWord>("allWords")!!
-        learned = arguments?.getParcelableArrayList<LearnWord>("learned")!!
-        know = arguments?.getParcelableArrayList<LearnWord>("know")!!
-        repeatFourDays = arguments?.getParcelableArrayList<LearnWord>("repeatFourDays")!!
-        repeatThreeDays = arguments?.getParcelableArrayList<LearnWord>("repeatThreeDays")!!
-        repeatTwoDays = arguments?.getParcelableArrayList<LearnWord>("repeatTwoDays")!!
-        repeatYesterday = arguments?.getParcelableArrayList<LearnWord>("repeatYesterday")!!
+        allWords = arguments?.getParcelableArrayList<Word>("allWords")!!
+        learned = arguments?.getParcelableArrayList<Word>("learned")!!
+        know = arguments?.getParcelableArrayList<Word>("know")!!
+        repeatFourDays = arguments?.getParcelableArrayList<Word>("repeatFourDays")!!
+        repeatThreeDays = arguments?.getParcelableArrayList<Word>("repeatThreeDays")!!
+        repeatTwoDays = arguments?.getParcelableArrayList<Word>("repeatTwoDays")!!
+        repeatYesterday = arguments?.getParcelableArrayList<Word>("repeatYesterday")!!
 
         again = ArrayList()
         learnedToRepeat = ArrayList()
@@ -168,7 +168,7 @@ class LearnFragment : Fragment(), CardStackListener {
      * Gets progress level and categories
      */
     private fun initializeUserInfo() {
-        progress = arguments?.getSerializable("progress")!! as LearnProgress
+        progress = arguments?.getSerializable("progress")!! as Progress
         categories = arguments?.getSerializable("categories")!! as ArrayList<Category>
     }
 
@@ -283,33 +283,33 @@ class LearnFragment : Fragment(), CardStackListener {
     private fun setCardStackByProgress() {
         when (progress) {
 
-            LearnProgress.LEARNED -> {
+            Progress.LEARNED -> {
                 word_card_stack.visibility = View.GONE
                 layout_learned.visibility = View.VISIBLE
             }
 
-            LearnProgress.LEARN_TODAY -> {
+            Progress.LEARN_TODAY -> {
                 generateLearnTodayWords()
                 current = ArrayList(learnToday)
             }
 
-            LearnProgress.REPEAT_YESTERDAY -> {
+            Progress.REPEAT_YESTERDAY -> {
                 current = ArrayList(repeatYesterday)
             }
 
-            LearnProgress.REPEAT_TWO_DAYS -> {
+            Progress.REPEAT_TWO_DAYS -> {
                 current = ArrayList(repeatTwoDays)
             }
 
-            LearnProgress.REPEAT_THREE_DAYS -> {
+            Progress.REPEAT_THREE_DAYS -> {
                 current = ArrayList(repeatThreeDays)
             }
 
-            LearnProgress.REPEAT_FOUR_DAYS -> {
+            Progress.REPEAT_FOUR_DAYS -> {
                 current = ArrayList(repeatFourDays)
             }
 
-            LearnProgress.REPEAT_LONG -> {
+            Progress.REPEAT_LONG -> {
                 generateRepeatLongWords()
                 current = ArrayList(repeatLong)
             }
@@ -337,7 +337,7 @@ class LearnFragment : Fragment(), CardStackListener {
      */
     private fun updateCardStack() {
         // If card stack are empty, but learned not 7 words, then generate new learn words
-        if (progress == LearnProgress.LEARN_TODAY && toLearn < 7 && remain == 0) {
+        if (progress == Progress.LEARN_TODAY && toLearn < 7 && remain == 0) {
             word_card_stack.visibility = View.GONE
 
             generateLearnTodayWords()
@@ -362,42 +362,42 @@ class LearnFragment : Fragment(), CardStackListener {
             word_card_stack.visibility = View.GONE
 
             when (progress) {
-                LearnProgress.REPEAT_LONG -> {
-                    progress = LearnProgress.REPEAT_FOUR_DAYS
+                Progress.REPEAT_LONG -> {
+                    progress = Progress.REPEAT_FOUR_DAYS
                     setDataAndNotify(repeatFourDays)
                 }
 
-                LearnProgress.REPEAT_FOUR_DAYS -> {
-                    writeWordsToFirestore(LearnProgress.LEARNED, repeatFourDays)
-                    progress = LearnProgress.REPEAT_THREE_DAYS
+                Progress.REPEAT_FOUR_DAYS -> {
+                    writeWordsToFirestore(Progress.LEARNED, repeatFourDays)
+                    progress = Progress.REPEAT_THREE_DAYS
                     setDataAndNotify(repeatThreeDays)
                 }
 
-                LearnProgress.REPEAT_THREE_DAYS -> {
-                    rewriteWordsToFirestore(LearnProgress.REPEAT_FOUR_DAYS, repeatThreeDays)
-                    progress = LearnProgress.REPEAT_TWO_DAYS
+                Progress.REPEAT_THREE_DAYS -> {
+                    rewriteWordsToFirestore(Progress.REPEAT_FOUR_DAYS, repeatThreeDays)
+                    progress = Progress.REPEAT_TWO_DAYS
                     setDataAndNotify(repeatTwoDays)
                 }
 
-                LearnProgress.REPEAT_TWO_DAYS -> {
-                    rewriteWordsToFirestore(LearnProgress.REPEAT_THREE_DAYS, repeatTwoDays)
-                    progress = LearnProgress.REPEAT_YESTERDAY
+                Progress.REPEAT_TWO_DAYS -> {
+                    rewriteWordsToFirestore(Progress.REPEAT_THREE_DAYS, repeatTwoDays)
+                    progress = Progress.REPEAT_YESTERDAY
                     writeProgressToFirestore(progress)
                     setDataAndNotify(repeatYesterday)
                 }
 
-                LearnProgress.REPEAT_YESTERDAY -> {
-                    rewriteWordsToFirestore(LearnProgress.REPEAT_TWO_DAYS, repeatYesterday)
-                    progress = LearnProgress.LEARN_TODAY
+                Progress.REPEAT_YESTERDAY -> {
+                    rewriteWordsToFirestore(Progress.REPEAT_TWO_DAYS, repeatYesterday)
+                    progress = Progress.LEARN_TODAY
                     generateLearnTodayWords()
                     setDataAndNotify(learnToday)
                 }
 
-                LearnProgress.LEARN_TODAY -> {
+                Progress.LEARN_TODAY -> {
                     // TODO: learn today allWords
-                    rewriteWordsToFirestore(LearnProgress.REPEAT_YESTERDAY, learnedToRepeat)
+                    rewriteWordsToFirestore(Progress.REPEAT_YESTERDAY, learnedToRepeat)
                     writeKnownToFirestore()
-                    progress = LearnProgress.LEARNED
+                    progress = Progress.LEARNED
 
                     UiHelper.hideView(word_card_stack)
                     UiHelper.showView(layout_learned)
@@ -418,7 +418,7 @@ class LearnFragment : Fragment(), CardStackListener {
     /**
      * Set words ArrayList and notify changes to adapter
      */
-    private fun setDataAndNotify(words : ArrayList<LearnWord>) {
+    private fun setDataAndNotify(words : ArrayList<Word>) {
         current = ArrayList(words)
         adapter.words = words
         adapter.notifyDataSetChanged()
@@ -447,7 +447,7 @@ class LearnFragment : Fragment(), CardStackListener {
         val repeatWords = learned + repeatFourDays + repeatThreeDays + repeatTwoDays + repeatYesterday
         var index = 0
 
-        val toLearnWordList = allWords.filter { categories.contains(it.category) } as ArrayList<LearnWord>
+        val toLearnWordList = allWords.filter { categories.contains(it.category) } as ArrayList<Word>
         toLearnWordList.shuffle()
 
         learnToday = ArrayList()
@@ -598,7 +598,7 @@ class LearnFragment : Fragment(), CardStackListener {
 
 
 
-    private fun rewriteWordsToFirestore(p : LearnProgress, words: ArrayList<LearnWord>) {
+    private fun rewriteWordsToFirestore(p : Progress, words: ArrayList<Word>) {
         var index = 0
         val collection = StringHelper.upperSnakeToLowerCamel(p.name)
 
@@ -607,7 +607,7 @@ class LearnFragment : Fragment(), CardStackListener {
         }
     }
 
-    private fun writeWordsToFirestore(p : LearnProgress, words: ArrayList<LearnWord>) {
+    private fun writeWordsToFirestore(p : Progress, words: ArrayList<Word>) {
         var index = words.size
         val collection = StringHelper.upperSnakeToLowerCamel(p.name)
 
@@ -616,7 +616,7 @@ class LearnFragment : Fragment(), CardStackListener {
         }
     }
 
-    private fun writeProgressToFirestore(p : LearnProgress) {
+    private fun writeProgressToFirestore(p : Progress) {
         firestore.document("users/${user?.uid}").update("progress", StringHelper.upperSnakeToLowerCamel(p.name))
     }
 

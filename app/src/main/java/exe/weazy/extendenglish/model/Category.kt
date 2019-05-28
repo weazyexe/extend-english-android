@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.entity
+package exe.weazy.extendenglish.model
 
 enum class Category(name : String) {
     BASICS("BASICS"), TIME("TIME"), HOUSE("HOUSE"), CITY("CITY"),

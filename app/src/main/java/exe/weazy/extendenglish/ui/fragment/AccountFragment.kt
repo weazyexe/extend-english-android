@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.ui.activity.UserActivity
 import exe.weazy.extendenglish.adapter.CategoriesRecyclerViewAdapter
-import exe.weazy.extendenglish.entity.Category
+import exe.weazy.extendenglish.model.Category
 import kotlinx.android.synthetic.main.fragment_account.*
 
 class AccountFragment : Fragment() {

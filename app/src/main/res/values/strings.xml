@@ -59,12 +59,13 @@
     <string name="select_categories">Select categories you want to learn</string>
     <string name="input_email">First, input your e-mail</string>
     <string name="input_password">OK, now input your password</string>
-    <string name="confirm_password">You are almost there, confirm your password</string>
+    <string name="input_confirm_password">You are almost there, confirm your password</string>
     <string name="password">Password</string>
     <string name="create_account">Create account</string>
     <string name="wrong_email_or_password">Wrong email or password</string>
     <string name="login">Log in</string>
     <string name="sign_in">Sign in</string>
     <string name="email">E-mail</string>
-    <string name="passwords_arent_equal">Passwords aren\'t equals</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="confirm_password">Confirm password</string>
 </resources>

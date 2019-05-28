@@ -5,13 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.entity.Category
+import exe.weazy.extendenglish.model.Category
 import exe.weazy.extendenglish.tools.StringHelper
-import exe.weazy.extendenglish.tools.UiHelper
 import java.util.ArrayList
 
 class CategoriesRecyclerViewAdapter(private var categories : List<Category>) : RecyclerView.Adapter<CategoriesRecyclerViewAdapter.ViewHolder>() {

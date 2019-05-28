@@ -2,7 +2,6 @@ package exe.weazy.extendenglish.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -14,9 +13,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.entity.Category
-import exe.weazy.extendenglish.entity.LearnProgress
-import exe.weazy.extendenglish.entity.LearnWord
+import exe.weazy.extendenglish.model.Category
+import exe.weazy.extendenglish.model.Progress
+import exe.weazy.extendenglish.model.Word
 import exe.weazy.extendenglish.tools.UiHelper
 import exe.weazy.extendenglish.ui.fragment.AccountFragment
 import exe.weazy.extendenglish.ui.fragment.LearnFragment
@@ -39,16 +38,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var settingsFragment : SettingsFragment
     private var active = Fragment()
 
-    private lateinit var repeatYesterday : ArrayList<LearnWord>
-    private lateinit var repeatTwoDays : ArrayList<LearnWord>
-    private lateinit var repeatThreeDays : ArrayList<LearnWord>
-    private lateinit var repeatFourDays : ArrayList<LearnWord>
-    private lateinit var learned : ArrayList<LearnWord>
-    private lateinit var allWords : ArrayList<LearnWord>
-    private lateinit var know : ArrayList<LearnWord>
+    private lateinit var repeatYesterday : ArrayList<Word>
+    private lateinit var repeatTwoDays : ArrayList<Word>
+    private lateinit var repeatThreeDays : ArrayList<Word>
+    private lateinit var repeatFourDays : ArrayList<Word>
+    private lateinit var learned : ArrayList<Word>
+    private lateinit var allWords : ArrayList<Word>
+    private lateinit var know : ArrayList<Word>
 
     private lateinit var level : String
-    private lateinit var progress : LearnProgress
+    private lateinit var progress : Progress
     private lateinit var categories : ArrayList<Category>
 
     private var isAllWordsLoaded = false
@@ -147,7 +146,7 @@ class MainActivity : AppCompatActivity() {
     private fun initializeAllWordsObserver() {
         val file = File(applicationContext.filesDir, "allWords")
         if (file.exists()) {
-            val type = object : TypeToken<ArrayList<LearnWord>>() {}.type
+            val type = object : TypeToken<ArrayList<Word>>() {}.type
             allWords = Gson().fromJson(file.readText(), type)
 
             viewModel.setAllWords(allWords)
@@ -275,9 +274,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun changeFragment(fragment : Fragment) {
         if (startingPosition > newPosition) {
-            supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_to_right, R.anim.slide_out_right).show(fragment).hide(active).commit()
+            supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right).show(fragment).hide(active).commit()
         } else {
-            supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_to_left, R.anim.slide_out_left).show(fragment).hide(active).commit()
+            supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left).show(fragment).hide(active).commit()
         }
         startingPosition = newPosition
     }

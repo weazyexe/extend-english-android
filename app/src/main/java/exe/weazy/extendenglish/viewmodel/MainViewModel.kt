@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import exe.weazy.extendenglish.entity.Category
-import exe.weazy.extendenglish.entity.LearnProgress
-import exe.weazy.extendenglish.entity.LearnWord
+import exe.weazy.extendenglish.model.Category
+import exe.weazy.extendenglish.model.Progress
+import exe.weazy.extendenglish.model.Word
 import exe.weazy.extendenglish.tools.StringHelper
 
 class MainViewModel : ViewModel() {
@@ -15,21 +15,21 @@ class MainViewModel : ViewModel() {
     private val firestore = FirebaseFirestore.getInstance()
     private val user = FirebaseAuth.getInstance().currentUser
 
-    private lateinit var repeatYesterday : MutableLiveData<ArrayList<LearnWord>>
-    private lateinit var repeatTwoDays : MutableLiveData<ArrayList<LearnWord>>
-    private lateinit var repeatThreeDays : MutableLiveData<ArrayList<LearnWord>>
-    private lateinit var repeatFourDays : MutableLiveData<ArrayList<LearnWord>>
-    private lateinit var learned : MutableLiveData<ArrayList<LearnWord>>
-    private lateinit var allWords : MutableLiveData<ArrayList<LearnWord>>
-    private lateinit var know : MutableLiveData<ArrayList<LearnWord>>
+    private lateinit var repeatYesterday : MutableLiveData<ArrayList<Word>>
+    private lateinit var repeatTwoDays : MutableLiveData<ArrayList<Word>>
+    private lateinit var repeatThreeDays : MutableLiveData<ArrayList<Word>>
+    private lateinit var repeatFourDays : MutableLiveData<ArrayList<Word>>
+    private lateinit var learned : MutableLiveData<ArrayList<Word>>
+    private lateinit var allWords : MutableLiveData<ArrayList<Word>>
+    private lateinit var know : MutableLiveData<ArrayList<Word>>
 
     private lateinit var level : MutableLiveData<String>
-    private lateinit var progress : MutableLiveData<LearnProgress>
+    private lateinit var progress : MutableLiveData<Progress>
     private lateinit var categories : MutableLiveData<ArrayList<Category>>
 
 
 
-    fun getAllWords() : LiveData<ArrayList<LearnWord>> {
+    fun getAllWords() : LiveData<ArrayList<Word>> {
         if (!::allWords.isInitialized) {
             allWords = MutableLiveData()
             loadAllWords()
@@ -38,7 +38,7 @@ class MainViewModel : ViewModel() {
         return allWords
     }
 
-    fun getRepeatYesterdayWords() : LiveData<ArrayList<LearnWord>> {
+    fun getRepeatYesterdayWords() : LiveData<ArrayList<Word>> {
         if (!::repeatYesterday.isInitialized) {
             repeatYesterday = MutableLiveData()
             loadRepeatYesterdayWords()
@@ -47,7 +47,7 @@ class MainViewModel : ViewModel() {
         return repeatYesterday
     }
 
-    fun getRepeatTwoDaysWords() : LiveData<ArrayList<LearnWord>> {
+    fun getRepeatTwoDaysWords() : LiveData<ArrayList<Word>> {
         if (!::repeatTwoDays.isInitialized) {
             repeatTwoDays = MutableLiveData()
             loadRepeatTwoDaysWords()
@@ -56,7 +56,7 @@ class MainViewModel : ViewModel() {
         return repeatTwoDays
     }
 
-    fun getRepeatThreeDaysWords() : LiveData<ArrayList<LearnWord>> {
+    fun getRepeatThreeDaysWords() : LiveData<ArrayList<Word>> {
         if (!::repeatThreeDays.isInitialized) {
             repeatThreeDays = MutableLiveData()
             loadRepeatThreeDaysWords()
@@ -65,7 +65,7 @@ class MainViewModel : ViewModel() {
         return repeatThreeDays
     }
 
-    fun getRepeatFourDaysWords() : LiveData<ArrayList<LearnWord>> {
+    fun getRepeatFourDaysWords() : LiveData<ArrayList<Word>> {
         if (!::repeatFourDays.isInitialized) {
             repeatFourDays = MutableLiveData()
             loadRepeatFourDaysWords()
@@ -74,7 +74,7 @@ class MainViewModel : ViewModel() {
         return repeatFourDays
     }
 
-    fun getLearnedWords() : LiveData<ArrayList<LearnWord>> {
+    fun getLearnedWords() : LiveData<ArrayList<Word>> {
         if (!::learned.isInitialized) {
             learned = MutableLiveData()
             loadLearnedWords()
@@ -83,7 +83,7 @@ class MainViewModel : ViewModel() {
         return learned
     }
 
-    fun getKnowWords() : LiveData<ArrayList<LearnWord>> {
+    fun getKnowWords() : LiveData<ArrayList<Word>> {
         if (!::know.isInitialized) {
             know = MutableLiveData()
             loadKnowWords()
@@ -101,7 +101,7 @@ class MainViewModel : ViewModel() {
         return level
     }
 
-    fun getProgress() : LiveData<LearnProgress> {
+    fun getProgress() : LiveData<Progress> {
         if (!::progress.isInitialized) {
             progress = MutableLiveData()
             loadProgress()
@@ -124,7 +124,7 @@ class MainViewModel : ViewModel() {
         this.categories.postValue(categories)
     }
 
-    fun setAllWords(allWords : ArrayList<LearnWord>) {
+    fun setAllWords(allWords : ArrayList<Word>) {
         this.allWords = MutableLiveData()
         this.allWords.postValue(allWords)
     }
@@ -135,10 +135,10 @@ class MainViewModel : ViewModel() {
         firestore.collection("words").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result?.documents
 
-            val words = ArrayList<LearnWord>()
+            val words = ArrayList<Word>()
 
             result?.forEach {
-                words.add(it.toObject(LearnWord::class.java)!!)
+                words.add(it.toObject(Word::class.java)!!)
             }
 
             allWords.postValue(words)
@@ -149,10 +149,10 @@ class MainViewModel : ViewModel() {
         firestore.collection("users/${user?.uid}/repeatYesterday").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result?.documents
 
-            val words = ArrayList<LearnWord>()
+            val words = ArrayList<Word>()
 
             result?.forEach {
-                words.add(it.toObject(LearnWord::class.java)!!)
+                words.add(it.toObject(Word::class.java)!!)
             }
 
             repeatYesterday.postValue(words)
@@ -163,10 +163,10 @@ class MainViewModel : ViewModel() {
         firestore.collection("users/${user?.uid}/repeatTwoDays").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result?.documents
 
-            val words = ArrayList<LearnWord>()
+            val words = ArrayList<Word>()
 
             result?.forEach {
-                words.add(it.toObject(LearnWord::class.java)!!)
+                words.add(it.toObject(Word::class.java)!!)
             }
 
             repeatTwoDays.postValue(words)
@@ -177,10 +177,10 @@ class MainViewModel : ViewModel() {
         firestore.collection("users/${user?.uid}/repeatThreeDays").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result?.documents
 
-            val words = ArrayList<LearnWord>()
+            val words = ArrayList<Word>()
 
             result?.forEach {
-                words.add(it.toObject(LearnWord::class.java)!!)
+                words.add(it.toObject(Word::class.java)!!)
             }
 
             repeatThreeDays.postValue(words)
@@ -191,10 +191,10 @@ class MainViewModel : ViewModel() {
         firestore.collection("users/${user?.uid}/repeatFourDays").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result?.documents
 
-            val words = ArrayList<LearnWord>()
+            val words = ArrayList<Word>()
 
             result?.forEach {
-                words.add(it.toObject(LearnWord::class.java)!!)
+                words.add(it.toObject(Word::class.java)!!)
             }
 
             repeatFourDays.postValue(words)
@@ -205,10 +205,10 @@ class MainViewModel : ViewModel() {
         firestore.collection("users/${user?.uid}/learned").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result?.documents
 
-            val words = ArrayList<LearnWord>()
+            val words = ArrayList<Word>()
 
             result?.forEach {
-                words.add(it.toObject(LearnWord::class.java)!!)
+                words.add(it.toObject(Word::class.java)!!)
             }
 
             learned.postValue(words)
@@ -219,10 +219,10 @@ class MainViewModel : ViewModel() {
         firestore.collection("users/${user?.uid}/know").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result?.documents
 
-            val words = ArrayList<LearnWord>()
+            val words = ArrayList<Word>()
 
             result?.forEach {
-                words.add(it.toObject(LearnWord::class.java)!!)
+                words.add(it.toObject(Word::class.java)!!)
             }
 
             know.postValue(words)
@@ -237,7 +237,7 @@ class MainViewModel : ViewModel() {
                 var pr = result.getString("progress")
                 if (pr != null) {
                     pr = StringHelper.lowerCamelToUpperSnake(pr)
-                    progress.postValue(LearnProgress.getLearnProgressByString(pr))
+                    progress.postValue(Progress.getLearnProgressByString(pr))
                 }
             }
         }
