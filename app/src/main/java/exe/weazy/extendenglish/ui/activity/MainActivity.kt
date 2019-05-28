@@ -132,46 +132,32 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initializeObservers() {
-        val file = File(applicationContext.filesDir, "allWords")
-        if (file.exists()) {
-            val type = object : TypeToken<ArrayList<LearnWord>>() {}.type
-            allWords = Gson().fromJson(file.readText(), type)
-
-            Log.d("DATA_RW", "Read from file")
-            isAllWordsLoaded = true
-            afterLoad()
-        } else {
-            initializeAllWordsObserver()
-        }
+        initializeAllWordsObserver()
         initializeLearnedWordsObserver()
         initializeKnowWordsObserver()
         initializeRepeatYesterdayWordsObserver()
         initializeRepeatTwoDaysWordsObserver()
         initializeRepeatThreeDaysWordsObserver()
         initializeRepeatFourDaysWordsObserver()
-
-        val categories = intent.getSerializableExtra("categories") as ArrayList<Category>?
-        if (categories == null) {
-            initializeCategoriesObserver()
-        } else {
-            viewModel.setCategories(categories)
-            this.categories = ArrayList(categories)
-            writeCategories()
-        }
-
+        initializeCategoriesObserver()
         initializeLevelObserver()
         initializeProgressObserver()
     }
 
     private fun initializeAllWordsObserver() {
+        val file = File(applicationContext.filesDir, "allWords")
+        if (file.exists()) {
+            val type = object : TypeToken<ArrayList<LearnWord>>() {}.type
+            allWords = Gson().fromJson(file.readText(), type)
+
+            viewModel.setAllWords(allWords)
+        }
+
         val allWordsLiveData = viewModel.getAllWords()
         allWordsLiveData.observe(this, Observer {
             allWords = it
 
-            val file = File(applicationContext.filesDir, "allWords")
             file.writeText(Gson().toJson(allWords))
-
-            Log.d("DATA_RW", "Callback initAllWords")
 
             isAllWordsLoaded = true
             afterLoad()
@@ -251,6 +237,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeCategoriesObserver() {
+        val categoriesFromSignUp = intent.getSerializableExtra("categories") as ArrayList<Category>?
+
+        if (categoriesFromSignUp != null) {
+            viewModel.setCategories(categoriesFromSignUp)
+            categories = categoriesFromSignUp
+            writeCategories()
+        }
+
         val categoriesLiveData = viewModel.getCategories()
         categoriesLiveData.observe(this, Observer {
             categories = it
@@ -379,8 +373,10 @@ class MainActivity : AppCompatActivity() {
     private fun writeCategories() {
         var index = 0
         categories.forEach {
-            // FIXME: UNINITIALIZED LATEINIT EXCEPTION
-            firestore.document("users/${user?.uid}/categories/category-${index++}").set(it)
+            val map = HashMap<String, String>()
+            map["name"] = it.name
+
+            firestore.document("users/${user?.uid}/categories/category-${index++}").set(map)
         }
     }
 }

@@ -13,8 +13,6 @@
         </activity>
         <activity android:name=".ui.activity.UserActivity">
         </activity>
-        <activity android:name=".ui.activity.SignupActivity">
-        </activity>
         <activity
                 android:name=".ui.activity.MainActivity"
                 android:label="@string/title_activity_main">
