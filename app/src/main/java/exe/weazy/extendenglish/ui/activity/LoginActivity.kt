@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -19,6 +20,7 @@ import exe.weazy.extendenglish.adapter.CategoriesRecyclerViewAdapter
 import exe.weazy.extendenglish.model.Category
 import exe.weazy.extendenglish.model.Level
 import exe.weazy.extendenglish.model.Step
+import exe.weazy.extendenglish.tools.FirebaseHelper
 import exe.weazy.extendenglish.tools.StringHelper
 import exe.weazy.extendenglish.tools.UiHelper
 import exe.weazy.extendenglish.ui.fragment.EmailFragment
@@ -48,7 +50,6 @@ class LoginActivity : AppCompatActivity() {
 
     private var isSignIn = true
     private var step = Step.WELCOME
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -234,10 +235,15 @@ class LoginActivity : AppCompatActivity() {
             if (checks[i]) selectedCategories.add(allCategories[i])
         }
 
-        val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("categories", selectedCategories)
-        startActivity(intent)
-        finish()
+        val run = fun() {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        button_next.setImageDrawable(null)
+        progressbar_sign_in.visibility = View.VISIBLE
+        FirebaseHelper.writeCategories(firestore, selectedCategories, run)
     }
 
 

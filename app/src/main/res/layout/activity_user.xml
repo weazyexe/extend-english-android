@@ -14,7 +14,7 @@
             android:layout_margin="8dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/avatar_imageView"
+                android:id="@+id/imageview_avatar"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:src="@drawable/jonsnow"

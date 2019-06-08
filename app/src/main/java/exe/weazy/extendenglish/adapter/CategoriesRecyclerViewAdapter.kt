@@ -54,6 +54,11 @@ class CategoriesRecyclerViewAdapter(private var categories : List<Category>) : R
 
     fun getChecks() = checks
 
+    fun setCategories(categories: List<Category>) {
+        this.categories = categories
+        notifyDataSetChanged()
+    }
+
     inner class ViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         var checked : ImageView
         var name : TextView

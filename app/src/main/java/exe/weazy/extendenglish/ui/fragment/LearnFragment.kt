@@ -1,5 +1,6 @@
 package exe.weazy.extendenglish.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,23 +12,27 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.yuyakaido.android.cardstackview.*
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.WordCardStackAdapter
 import exe.weazy.extendenglish.model.Category
 import exe.weazy.extendenglish.model.Progress
 import exe.weazy.extendenglish.model.Word
-import exe.weazy.extendenglish.tools.StringHelper
+import exe.weazy.extendenglish.tools.FirebaseHelper
 import exe.weazy.extendenglish.tools.UiHelper
+import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_learn.*
+import java.io.File
 
 class LearnFragment : Fragment(), CardStackListener {
 
     private val firestore = FirebaseFirestore.getInstance()
-    private val user = FirebaseAuth.getInstance().currentUser
 
     private lateinit var learnToday: ArrayList<Word>
     private lateinit var repeatYesterday: ArrayList<Word>
@@ -38,12 +43,23 @@ class LearnFragment : Fragment(), CardStackListener {
     private lateinit var learned : ArrayList<Word>
     private lateinit var allWords: ArrayList<Word>
     private lateinit var know : ArrayList<Word>
-    private lateinit var newKnow : ArrayList<Word>
 
-    private lateinit var learnedToRepeat : ArrayList<Word>
-    private lateinit var again: ArrayList<Word>
-    private lateinit var current: ArrayList<Word>
-    private lateinit var currentWord: Word
+    private var newKnow = ArrayList<Word>()
+    private var learnedToRepeat = ArrayList<Word>()
+    private var again = ArrayList<Word>()
+    private var current = ArrayList<Word>()
+    private var currentWord = Word()
+
+    private var isAllWordsLoaded = false
+    private var isCategoriesLoaded = false
+    private var isRepeatYesterdayLoaded = false
+    private var isRepeatTwoDaysLoaded = false
+    private var isRepeatThreeDaysLoaded = false
+    private var isRepeatFourDaysLoaded = false
+    private var isLearnedLoaded = false
+    private var isKnowLoaded = false
+    private var isProgressLoaded = false
+
 
     private lateinit var progress: Progress
     private lateinit var categories : ArrayList<Category>
@@ -55,22 +71,28 @@ class LearnFragment : Fragment(), CardStackListener {
     private lateinit var adapter: WordCardStackAdapter
 
 
+    private lateinit var viewModel : MainViewModel
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_learn, null)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+        initializeObservers()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
     override fun onStart() {
         super.onStart()
-
-        if (!::learnToday.isInitialized || learnToday.isNullOrEmpty()) {
-            initializeWords()
-            initializeUserInfo()
-            initializeCardStackView()
+        if (::adapter.isInitialized) {
+            cardstack_words.adapter = adapter
         }
     }
 
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_learn, null)
+    }
 
     override fun onCardDisappeared(view: View?, position: Int) {
 
@@ -81,10 +103,11 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     override fun onCardSwiped(direction: Direction?) {
+        remain--
+
         when (direction) {
             Direction.Right -> {
                 again.add(currentWord)
-                remain--
 
                 if (progress == Progress.LEARN_TODAY && toLearn < 7) {
                     toLearn++
@@ -93,15 +116,13 @@ class LearnFragment : Fragment(), CardStackListener {
             }
 
             Direction.Left -> {
-                remain--
-
                 if (progress == Progress.LEARN_TODAY && toLearn < 7) {
                     newKnow.add(currentWord)
                 }
             }
 
             Direction.Bottom -> {
-                remain--
+
             }
         }
 
@@ -146,33 +167,6 @@ class LearnFragment : Fragment(), CardStackListener {
 
 
     /**
-     * Gets all words from bundle
-     */
-    private fun initializeWords() {
-        allWords = arguments?.getParcelableArrayList<Word>("allWords")!!
-        learned = arguments?.getParcelableArrayList<Word>("learned")!!
-        know = arguments?.getParcelableArrayList<Word>("know")!!
-        repeatFourDays = arguments?.getParcelableArrayList<Word>("repeatFourDays")!!
-        repeatThreeDays = arguments?.getParcelableArrayList<Word>("repeatThreeDays")!!
-        repeatTwoDays = arguments?.getParcelableArrayList<Word>("repeatTwoDays")!!
-        repeatYesterday = arguments?.getParcelableArrayList<Word>("repeatYesterday")!!
-
-        again = ArrayList()
-        learnedToRepeat = ArrayList()
-        current = ArrayList()
-        newKnow = ArrayList()
-    }
-
-
-    /**
-     * Gets progress level and categories
-     */
-    private fun initializeUserInfo() {
-        progress = arguments?.getSerializable("progress")!! as Progress
-        categories = arguments?.getSerializable("categories")!! as ArrayList<Category>
-    }
-
-    /**
      * Initialize CardStackView: adapter, manager, animation settings and words
      */
     private fun initializeCardStackView() {
@@ -190,8 +184,8 @@ class LearnFragment : Fragment(), CardStackListener {
             setOverlayInterpolator(LinearInterpolator())
         }
 
-        word_card_stack.layoutManager = manager
-        word_card_stack.itemAnimator.apply {
+        cardstack_words.layoutManager = manager
+        cardstack_words.itemAnimator.apply {
             if (this is DefaultItemAnimator) {
                 supportsChangeAnimations = false
             }
@@ -284,13 +278,21 @@ class LearnFragment : Fragment(), CardStackListener {
         when (progress) {
 
             Progress.LEARNED -> {
-                word_card_stack.visibility = View.GONE
+                cardstack_words.visibility = View.GONE
                 layout_learned.visibility = View.VISIBLE
             }
 
             Progress.LEARN_TODAY -> {
-                generateLearnTodayWords()
-                current = ArrayList(learnToday)
+                val liveData = viewModel.getLearnToday()
+                liveData.observe(this, Observer {
+                    learnToday = it
+                    if (learnToday.isNullOrEmpty()) {
+                        generateLearnTodayWords()
+                    }
+                    current = ArrayList(learnToday)
+                    initializeCardStackAdapter()
+                })
+
             }
 
             Progress.REPEAT_YESTERDAY -> {
@@ -310,8 +312,16 @@ class LearnFragment : Fragment(), CardStackListener {
             }
 
             Progress.REPEAT_LONG -> {
-                generateRepeatLongWords()
-                current = ArrayList(repeatLong)
+                val liveData = viewModel.getRepeatLong()
+                liveData.observe(this, Observer {
+                    repeatLong = it
+                    if (repeatLong.isNullOrEmpty()) {
+                        generateRepeatLongWords()
+                    }
+                    current = ArrayList(repeatLong)
+                    initializeCardStackAdapter()
+                })
+
             }
 
         }
@@ -327,7 +337,7 @@ class LearnFragment : Fragment(), CardStackListener {
         val variants = this.allWords.filter { categories.contains(it.category) }
 
         adapter = WordCardStackAdapter(current, ArrayList(variants))
-        word_card_stack.adapter = adapter
+        cardstack_words.adapter = adapter
 
         remain = current.size
     }
@@ -338,80 +348,87 @@ class LearnFragment : Fragment(), CardStackListener {
     private fun updateCardStack() {
         // If card stack are empty, but learned not 7 words, then generate new learn words
         if (progress == Progress.LEARN_TODAY && toLearn < 7 && remain == 0) {
-            word_card_stack.visibility = View.GONE
+            cardstack_words.visibility = View.GONE
 
             generateLearnTodayWords()
             setDataAndNotify(learnToday)
 
-            UiHelper.showView(word_card_stack)
+            UiHelper.showView(cardstack_words)
         }
 
         // If learned 7 words, let's repeat them
         if (toLearn == 7) {
-            word_card_stack.visibility = View.GONE
+            cardstack_words.visibility = View.GONE
 
             setDataAndNotify(learnedToRepeat)
             current = ArrayList(learnedToRepeat)
             toLearn++
 
-            UiHelper.showView(word_card_stack)
+            UiHelper.showView(cardstack_words)
         }
 
         // If day is repeated, come to next day
         if (remain == 0 && again.isEmpty()) {
-            word_card_stack.visibility = View.GONE
+            cardstack_words.visibility = View.GONE
 
             when (progress) {
                 Progress.REPEAT_LONG -> {
                     progress = Progress.REPEAT_FOUR_DAYS
+
                     setDataAndNotify(repeatFourDays)
                 }
 
                 Progress.REPEAT_FOUR_DAYS -> {
-                    writeWordsToFirestore(Progress.LEARNED, repeatFourDays)
+                    FirebaseHelper.writeWordsByProgress(firestore, repeatFourDays, Progress.LEARNED)
                     progress = Progress.REPEAT_THREE_DAYS
+
                     setDataAndNotify(repeatThreeDays)
                 }
 
                 Progress.REPEAT_THREE_DAYS -> {
-                    rewriteWordsToFirestore(Progress.REPEAT_FOUR_DAYS, repeatThreeDays)
+                    FirebaseHelper.rewriteWordsByProgress(firestore, repeatThreeDays, Progress.REPEAT_FOUR_DAYS)
                     progress = Progress.REPEAT_TWO_DAYS
+
                     setDataAndNotify(repeatTwoDays)
                 }
 
                 Progress.REPEAT_TWO_DAYS -> {
-                    rewriteWordsToFirestore(Progress.REPEAT_THREE_DAYS, repeatTwoDays)
+                    FirebaseHelper.rewriteWordsByProgress(firestore, repeatTwoDays, Progress.REPEAT_THREE_DAYS)
                     progress = Progress.REPEAT_YESTERDAY
-                    writeProgressToFirestore(progress)
+
                     setDataAndNotify(repeatYesterday)
                 }
 
                 Progress.REPEAT_YESTERDAY -> {
-                    rewriteWordsToFirestore(Progress.REPEAT_TWO_DAYS, repeatYesterday)
+                    FirebaseHelper.rewriteWordsByProgress(firestore, repeatYesterday, Progress.REPEAT_TWO_DAYS)
                     progress = Progress.LEARN_TODAY
+
                     generateLearnTodayWords()
                     setDataAndNotify(learnToday)
                 }
 
                 Progress.LEARN_TODAY -> {
                     // TODO: learn today allWords
-                    rewriteWordsToFirestore(Progress.REPEAT_YESTERDAY, learnedToRepeat)
-                    writeKnownToFirestore()
+                    FirebaseHelper.rewriteWordsByProgress(firestore, learnedToRepeat, Progress.REPEAT_YESTERDAY)
+                    FirebaseHelper.writeKnown(firestore, newKnow, know.size)
                     progress = Progress.LEARNED
 
-                    UiHelper.hideView(word_card_stack)
+                    UiHelper.hideView(cardstack_words)
                     UiHelper.showView(layout_learned)
+                }
+                else -> {
+
                 }
             }
 
-            writeProgressToFirestore(progress)
-            UiHelper.showView(word_card_stack)
+            FirebaseHelper.writeProgress(firestore, progress)
+            UiHelper.showView(cardstack_words)
         }
 
         if (again.isNotEmpty() && remain == 0) {
-            word_card_stack.visibility = View.GONE
+            cardstack_words.visibility = View.GONE
             setDataAndNotify(again)
-            UiHelper.showView(word_card_stack)
+            UiHelper.showView(cardstack_words)
         }
     }
 
@@ -437,7 +454,7 @@ class LearnFragment : Fragment(), CardStackListener {
             .build()
 
         manager.setSwipeAnimationSetting(setting)
-        word_card_stack.swipe()
+        cardstack_words.swipe()
     }
 
     /**
@@ -457,6 +474,8 @@ class LearnFragment : Fragment(), CardStackListener {
                 learnToday.add(word)
             }
         }
+
+        viewModel.setLearnToday(learnToday)
     }
 
     /**
@@ -476,6 +495,8 @@ class LearnFragment : Fragment(), CardStackListener {
                 repeatLong.add(it)
             }
         }
+
+        viewModel.setRepeatLong(repeatLong)
     }
 
 
@@ -598,33 +619,126 @@ class LearnFragment : Fragment(), CardStackListener {
 
 
 
-    private fun rewriteWordsToFirestore(p : Progress, words: ArrayList<Word>) {
-        var index = 0
-        val collection = StringHelper.upperSnakeToLowerCamel(p.name)
 
-        words.forEach {
-            firestore.document("users/${user?.uid}/$collection/word-${index++}").set(it)
+
+
+
+
+
+    private fun initializeObservers() {
+        initializeAllWordsObserver()
+        initializeRepeatYesterdayWordsObserver()
+        initializeRepeatTwoDaysWordsObserver()
+        initializeRepeatThreeDaysWordsObserver()
+        initializeRepeatFourDaysWordsObserver()
+        initializeLearnedWordsObserver()
+        initializeKnowWordsObserver()
+        initializeCategoriesObserver()
+        initializeProgressObserver()
+    }
+
+    private fun initializeAllWordsObserver() {
+        val file = File(activity?.applicationContext?.filesDir, "allWords")
+        if (file.exists()) {
+            val type = object : TypeToken<ArrayList<Word>>() {}.type
+            allWords = Gson().fromJson(file.readText(), type)
+
+            viewModel.setAllWords(allWords)
         }
+
+        val allWordsLiveData = viewModel.getAllWords()
+        allWordsLiveData.observe(this, Observer {
+            allWords = it
+
+            file.writeText(Gson().toJson(allWords))
+
+            isAllWordsLoaded = true
+            afterLoad()
+        })
     }
 
-    private fun writeWordsToFirestore(p : Progress, words: ArrayList<Word>) {
-        var index = words.size
-        val collection = StringHelper.upperSnakeToLowerCamel(p.name)
-
-        words.forEach {
-            firestore.document("users/${user?.uid}/$collection/word-${index++}").set(it)
-        }
+    private fun initializeRepeatYesterdayWordsObserver() {
+        val repeatYesterdayWordsLiveData = viewModel.getRepeatYesterdayWords()
+        repeatYesterdayWordsLiveData.observe(this, Observer {
+            repeatYesterday = it
+            isRepeatYesterdayLoaded = true
+            afterLoad()
+        })
     }
 
-    private fun writeProgressToFirestore(p : Progress) {
-        firestore.document("users/${user?.uid}").update("progress", StringHelper.upperSnakeToLowerCamel(p.name))
+    private fun initializeRepeatTwoDaysWordsObserver() {
+        val repeatTwoDaysWordsLiveData = viewModel.getRepeatTwoDaysWords()
+        repeatTwoDaysWordsLiveData.observe(this, Observer {
+            repeatTwoDays = it
+            isRepeatTwoDaysLoaded = true
+            afterLoad()
+        })
     }
 
-    private fun writeKnownToFirestore() {
-        var index = know.size
+    private fun initializeRepeatThreeDaysWordsObserver() {
+        val repeatThreeDaysWordsLiveData = viewModel.getRepeatThreeDaysWords()
+        repeatThreeDaysWordsLiveData.observe(this, Observer {
+            repeatThreeDays = it
+            isRepeatThreeDaysLoaded = true
+            afterLoad()
+        })
+    }
 
-        newKnow.forEach {
-            firestore.document("users/${user?.uid}/know/word-${index++}").set(it)
+    private fun initializeRepeatFourDaysWordsObserver() {
+        val repeatFourDaysWordsLiveData = viewModel.getRepeatFourDaysWords()
+        repeatFourDaysWordsLiveData.observe(this, Observer {
+            repeatFourDays = it
+            isRepeatFourDaysLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeLearnedWordsObserver() {
+        val learnedLiveData = viewModel.getLearnedWords()
+        learnedLiveData.observe(this, Observer {
+            learned = it
+            isLearnedLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeKnowWordsObserver() {
+        val knowLiveData = viewModel.getKnowWords()
+        knowLiveData.observe(this, Observer {
+            know = it
+            isKnowLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeProgressObserver() {
+        val progressLiveData = viewModel.getProgress()
+        progressLiveData.observe(this, Observer {
+            progress = it
+            isProgressLoaded = true
+            afterLoad()
+        })
+    }
+
+    private fun initializeCategoriesObserver() {
+        val categoriesLiveData = viewModel.getCategories()
+        categoriesLiveData.observe(this, Observer {
+            categories = it
+            isCategoriesLoaded = true
+            afterLoad()
+        })
+    }
+
+
+    private fun afterLoad() {
+        if (isAllWordsLoaded && isLearnedLoaded && isKnowLoaded && isProgressLoaded &&
+            isCategoriesLoaded && isRepeatFourDaysLoaded && isLearnedLoaded &&
+            isRepeatThreeDaysLoaded && isRepeatTwoDaysLoaded && isRepeatYesterdayLoaded) {
+
+            initializeCardStackView()
+
+            UiHelper.hideView(progressbar_learn)
+            UiHelper.showView(cardstack_words)
         }
     }
 }

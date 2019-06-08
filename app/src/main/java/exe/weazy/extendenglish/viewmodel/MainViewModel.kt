@@ -22,6 +22,8 @@ class MainViewModel : ViewModel() {
     private lateinit var learned : MutableLiveData<ArrayList<Word>>
     private lateinit var allWords : MutableLiveData<ArrayList<Word>>
     private lateinit var know : MutableLiveData<ArrayList<Word>>
+    private lateinit var repeatLong : MutableLiveData<ArrayList<Word>>
+    private lateinit var learnToday : MutableLiveData<ArrayList<Word>>
 
     private lateinit var level : MutableLiveData<String>
     private lateinit var progress : MutableLiveData<Progress>
@@ -119,14 +121,52 @@ class MainViewModel : ViewModel() {
         return categories
     }
 
-    fun setCategories(categories : ArrayList<Category>) {
-        this.categories = MutableLiveData()
-        this.categories.postValue(categories)
+    fun getLearnToday() : LiveData<ArrayList<Word>> {
+        if (!::learnToday.isInitialized) {
+            learnToday = MutableLiveData()
+            learnToday.postValue(ArrayList())
+        }
+
+        return learnToday
     }
 
-    fun setAllWords(allWords : ArrayList<Word>) {
-        this.allWords = MutableLiveData()
-        this.allWords.postValue(allWords)
+    fun getRepeatLong() : LiveData<ArrayList<Word>> {
+        if (!::repeatLong.isInitialized) {
+            repeatLong = MutableLiveData()
+            repeatLong.postValue(ArrayList())
+        }
+
+        return repeatLong
+    }
+
+
+
+    fun setCategories(ctgrs : ArrayList<Category>) {
+        if (!::categories.isInitialized) {
+            categories = MutableLiveData()
+        }
+        categories.postValue(ctgrs)
+    }
+
+    fun setAllWords(words : ArrayList<Word>) {
+        if (!::allWords.isInitialized) {
+            allWords = MutableLiveData()
+        }
+        allWords.postValue(words)
+    }
+
+    fun setLearnToday(words : ArrayList<Word>) {
+        if (!::learnToday.isInitialized) {
+            learnToday = MutableLiveData()
+        }
+        learnToday.postValue(words)
+    }
+
+    fun setRepeatLong(words : ArrayList<Word>) {
+        if (!::repeatLong.isInitialized) {
+            repeatLong = MutableLiveData()
+        }
+        repeatLong.postValue(words)
     }
 
 
