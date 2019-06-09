@@ -1,10 +1,15 @@
 <resources>
+
+    <!--SHARED-->
     <string name="app_name">Exteng</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="loading">Loading…</string>
+
+
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_learn">Learn</string>
-    <string name="title_account">Account</string>
     <string name="greeting">Hey! Log in or sign up, please</string>
-    <string name="categories">Categories</string>
+    <string name="categories">CATEGORIES</string>
     <string name="edit_categories">Edit categories</string>
     <string name="basics">Basics</string>
     <string name="house">House</string>
@@ -42,9 +47,11 @@
     <string name="you_already_learn_today">You already learn words today.\nCome tomorrow</string>
     <string name="wrong_answer">Wrong answer</string>
     <string name="save_info">Save information</string>
+    <string name="account">Account</string>
+    <string name="settings">Settings</string>
+    <string name="learn">Learn</string>
 
     <!--SETTINGS FRAGMENT-->
-    <string name="title_settings">Settings</string>
     <string name="logout">Log out</string>
     <string name="enable_dark_mode">Enable dark mode</string>
     <string name="color_theme">Color theme</string>
@@ -68,4 +75,14 @@
     <string name="email">E-mail</string>
     <string name="passwords_do_not_match">Passwords do not match</string>
     <string name="confirm_password">Confirm password</string>
+
+
+    <!--USER ACTIVITY-->
+    <string name="change_username">Change username</string>
+    <string name="change_password">Change password</string>
+    <string name="change_email">Change email address</string>
+    <string name="new_email">New email</string>
+    <string name="new_username">New username</string>
+    <string name="email_has_been_changed">Your e-mail has been changed</string>
+    <string name="username_has_been_changed">Your username has been changed</string>
 </resources>

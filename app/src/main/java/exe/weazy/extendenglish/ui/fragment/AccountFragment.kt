@@ -1,7 +1,11 @@
 package exe.weazy.extendenglish.ui.fragment
 
+import android.app.Activity
+import android.app.ActivityOptions
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.util.Pair
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -12,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.CategoriesRecyclerViewAdapter
 import exe.weazy.extendenglish.model.Category
+import exe.weazy.extendenglish.ui.activity.UserActivity
 import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_account.*
 
@@ -49,6 +54,20 @@ class AccountFragment : Fragment() {
             auth.currentUser?.email
         } else {
             auth.currentUser?.displayName
+        }
+
+        card_account.setOnClickListener {
+            val intent = Intent(context, UserActivity::class.java)
+            val options = ActivityOptions.makeSceneTransitionAnimation(activity as Activity,
+                Pair.create<View, String>(imageview_avatar,"trtext_avatar"),
+                Pair.create<View, String>(text_username,"trtext_username"),
+                Pair.create<View, String>(text_level,"trtext_level"),
+                Pair.create<View, String>(card_account,"trtext_card"),
+                Pair.create<View, String>(card_categories,"trtext_second_card"))
+
+            intent.putExtra("level", level)
+
+            startActivity(intent, options.toBundle())
         }
     }
 

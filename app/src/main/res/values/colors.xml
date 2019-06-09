@@ -8,6 +8,7 @@
     <color name="colorLightGrey">#CACACA</color>
     <color name="colorRed">#D67A8A</color>
     <color name="colorGreen">#A2E094</color>
+    <color name="colorBlack">#000</color>
 
     <color name="colorPrimaryDT">#2D2D2D</color>
     <color name="colorPrimaryDarkDT">#282828</color>
