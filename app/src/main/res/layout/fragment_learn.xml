@@ -6,12 +6,31 @@
         android:layout_height="match_parent"
         xmlns:tools="http://schemas.android.com/tools">
 
-    <com.yuyakaido.android.cardstackview.CardStackView
-            android:id="@+id/cardstack_words"
+    <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    </com.yuyakaido.android.cardstackview.CardStackView>
+        <TextView
+                android:id="@+id/text_header"
+                android:text="@string/learn"
+                android:textColor="@color/colorAccent"
+                android:fontFamily="@font/pacifico"
+                android:textSize="26sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
+        <com.yuyakaido.android.cardstackview.CardStackView
+                android:id="@+id/cardstack_words"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        </com.yuyakaido.android.cardstackview.CardStackView>
+
+    </LinearLayout>
+
 
     <ProgressBar
             android:id="@+id/progressbar_learn"

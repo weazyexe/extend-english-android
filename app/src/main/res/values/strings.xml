@@ -5,6 +5,8 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="loading">Loading…</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 
     <string name="title_activity_main">MainActivity</string>
@@ -85,4 +87,5 @@
     <string name="new_username">New username</string>
     <string name="email_has_been_changed">Your e-mail has been changed</string>
     <string name="username_has_been_changed">Your username has been changed</string>
+    <string name="logout_message">Are you sure you want to log out?</string>
 </resources>

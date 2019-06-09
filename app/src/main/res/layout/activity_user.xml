@@ -147,7 +147,8 @@
                     android:padding="16dp"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:clickable="true"
-                    android:focusable="true"/>
+                    android:focusable="true"
+                    android:onClick="onLogOutButtonClick"/>
 
 
         </androidx.cardview.widget.CardView>

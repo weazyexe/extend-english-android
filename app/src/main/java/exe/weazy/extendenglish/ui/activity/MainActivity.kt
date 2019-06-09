@@ -62,13 +62,6 @@ class MainActivity : AppCompatActivity() {
         loadFragments()
     }
 
-    fun onLogOutButtonClick(v: View) {
-        auth.signOut()
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
 
     private fun loadFragments() {
         learnFragment = LearnFragment()

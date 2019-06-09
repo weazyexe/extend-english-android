@@ -1,5 +1,8 @@
 package exe.weazy.extendenglish.ui.activity
 
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -81,6 +84,22 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener {
 
     fun onPasswordChangeClickButton(view : View) {
 
+    }
+
+    fun onLogOutButtonClick(v: View) {
+        val dialog = AlertDialog.Builder(this)
+        dialog.setMessage(R.string.logout_message)
+            .setNegativeButton(R.string.no) { _, _ ->
+
+            }
+            .setPositiveButton(R.string.yes) { _, _ ->
+                auth.signOut()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+        dialog.show()
     }
 
     private fun updateUsername() {
