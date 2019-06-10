@@ -27,6 +27,14 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"/>
 
+            <TextView
+                    android:text="@string/notifications"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="16dp"/>
+
             <androidx.cardview.widget.CardView
                     android:id="@+id/notifications_card"
                     android:layout_width="match_parent"
@@ -91,6 +99,14 @@
 
             </androidx.cardview.widget.CardView>
 
+            <TextView
+                    android:text="@string/dark_theme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="16dp"/>
+
             <androidx.cardview.widget.CardView
                     android:id="@+id/colors_card"
                     android:layout_width="match_parent"
@@ -153,6 +169,14 @@
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+
+            <TextView
+                    android:text="@string/about_caps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="16dp"/>
 
             <androidx.cardview.widget.CardView
                     android:id="@+id/about_card"

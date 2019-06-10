@@ -61,6 +61,10 @@
     <string name="enable_notifications">Enable notifications</string>
     <string name="config_notifications">Configure notifications</string>
     <string name="user_settings">User settings</string>
+    <string name="dark_theme_by_schedule">Dark theme by schedule</string>
+    <string name="dark_theme">DARK THEME</string>
+    <string name="notifications">NOTIFICATIONS</string>
+    <string name="about_caps">ABOUT</string>
 
 
     <!--LOGIN ACTIVITY-->
@@ -85,7 +89,10 @@
     <string name="change_email">Change email address</string>
     <string name="new_email">New email</string>
     <string name="new_username">New username</string>
+    <string name="new_password">New password</string>
+    <string name="old_password">Old password</string>
     <string name="email_has_been_changed">Your e-mail has been changed</string>
     <string name="username_has_been_changed">Your username has been changed</string>
     <string name="logout_message">Are you sure you want to log out?</string>
+    <string name="password_has_been_changed">Your password has been changed</string>
 </resources>

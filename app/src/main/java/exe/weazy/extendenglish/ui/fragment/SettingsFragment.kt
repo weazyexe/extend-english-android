@@ -17,12 +17,12 @@ class SettingsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        button_enable_notifications.setOnClickListener {
+        /*button_enable_notifications.setOnClickListener {
             switch_enable_notifications.isChecked = !switch_enable_notifications.isChecked
         }
 
         button_enable_dark_mode.setOnClickListener {
             switch_enable_dark_mode.isChecked = !switch_enable_dark_mode.isChecked
-        }
+        }*/
     }
 }

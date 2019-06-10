@@ -14,11 +14,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import exe.weazy.extendenglish.R
+import exe.weazy.extendenglish.ui.dialog.NewPasswordDialog
 import exe.weazy.extendenglish.ui.dialog.TextDialog
 import kotlinx.android.synthetic.main.activity_user.*
 
 
-class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener {
+class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPasswordDialog.NewPasswordDialogListener {
 
     private lateinit var level : String
     private lateinit var type : String
@@ -44,7 +45,26 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener {
         text_level.text = level
     }
 
-    override fun applyText(text: String) {
+    override fun applyPassword(password : String, repeat : String) {
+        if (password == repeat) {
+            val bar = Snackbar.make(layout_user, R.string.loading, Snackbar.LENGTH_INDEFINITE)
+            val contentLay = bar.view.findViewById<View>(R.id.snackbar_text).parent as LinearLayout
+            val item = ProgressBar(this)
+
+            contentLay.gravity = Gravity.CENTER_VERTICAL
+            contentLay.addView(item, 70, 70)
+            bar.show()
+
+            auth.currentUser?.updatePassword(password)?.addOnCompleteListener {
+                bar.dismiss()
+                Snackbar.make(layout_user, R.string.password_has_been_changed, Snackbar.LENGTH_LONG).show()
+            }
+        } else {
+            Snackbar.make(layout_user, R.string.passwords_do_not_match, Snackbar.LENGTH_LONG).show()
+        }
+    }
+
+    override fun applyText(text : String) {
         val bar = Snackbar.make(layout_user, R.string.loading, Snackbar.LENGTH_INDEFINITE)
         val contentLay = bar.view.findViewById<View>(R.id.snackbar_text).parent as LinearLayout
         val item = ProgressBar(this)
@@ -52,6 +72,7 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener {
         contentLay.gravity = Gravity.CENTER_VERTICAL
         contentLay.addView(item, 70, 70)
         bar.show()
+
 
         if (type == "Email") {
             auth.currentUser?.updateEmail(text)?.addOnCompleteListener {
@@ -83,12 +104,16 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener {
     }
 
     fun onPasswordChangeClickButton(view : View) {
-
+        type = "Password"
+        val dialog = NewPasswordDialog()
+        dialog.show(supportFragmentManager, "Password change dialog")
     }
 
     fun onLogOutButtonClick(v: View) {
         val dialog = AlertDialog.Builder(this)
-        dialog.setMessage(R.string.logout_message)
+        dialog
+            .setTitle(R.string.logout)
+            .setMessage(R.string.logout_message)
             .setNegativeButton(R.string.no) { _, _ ->
 
             }
