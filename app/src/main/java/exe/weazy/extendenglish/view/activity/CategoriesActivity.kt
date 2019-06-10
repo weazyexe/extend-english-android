@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.ui.activity
+package exe.weazy.extendenglish.view.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

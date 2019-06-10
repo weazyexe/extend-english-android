@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.ui.fragment
+package exe.weazy.extendenglish.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,9 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import exe.weazy.extendenglish.R
 
-class EmailFragment : Fragment() {
-
+class CategoriesFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_email, null)
+        return inflater.inflate(R.layout.fragment_categories, null)
     }
 }

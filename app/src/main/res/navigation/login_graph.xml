@@ -3,7 +3,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools" android:id="@+id/login_graph" app:startDestination="@id/welcomeFragment">
 
-    <fragment android:id="@+id/welcomeFragment" android:name="exe.weazy.extendenglish.ui.fragment.WelcomeFragment"
+    <fragment android:id="@+id/welcomeFragment" android:name="exe.weazy.extendenglish.view.fragment.WelcomeFragment"
               android:label="WelcomeFragment">
         <action
                 android:id="@+id/action_welcomeFragment_to_emailFragment"
@@ -13,7 +13,7 @@
                 app:popEnterAnim="@anim/slide_in_right"
                 app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
-    <fragment android:id="@+id/emailFragment" android:name="exe.weazy.extendenglish.ui.fragment.EmailFragment"
+    <fragment android:id="@+id/emailFragment" android:name="exe.weazy.extendenglish.view.fragment.EmailFragment"
               android:label="EmailFragment">
         <action
                 android:id="@+id/action_emailFragment_to_passwordFragment"
@@ -23,7 +23,7 @@
                 app:popEnterAnim="@anim/slide_in_right"
                 app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
-    <fragment android:id="@+id/passwordFragment" android:name="exe.weazy.extendenglish.ui.fragment.PasswordFragment"
+    <fragment android:id="@+id/passwordFragment" android:name="exe.weazy.extendenglish.view.fragment.PasswordFragment"
               android:label="PasswordFragment">
         <action android:id="@+id/action_passwordFragment_to_confirmPasswordFragment"
                 app:destination="@id/confirmPasswordFragment"
@@ -33,7 +33,7 @@
                 app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment android:id="@+id/confirmPasswordFragment"
-              android:name="exe.weazy.extendenglish.ui.fragment.ConfirmPasswordFragment"
+              android:name="exe.weazy.extendenglish.view.fragment.ConfirmPasswordFragment"
               android:label="ConfirmPasswordFragment">
         <action
                 android:id="@+id/action_confirmPasswordFragment_to_categoriesFragment"
@@ -43,6 +43,6 @@
                 app:popEnterAnim="@anim/slide_in_right"
                 app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
-    <fragment android:id="@+id/categoriesFragment" android:name="exe.weazy.extendenglish.ui.fragment.CategoriesFragment"
+    <fragment android:id="@+id/categoriesFragment" android:name="exe.weazy.extendenglish.view.fragment.CategoriesFragment"
               android:label="CategoriesFragment"/>
 </navigation>

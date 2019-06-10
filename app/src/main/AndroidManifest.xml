@@ -9,15 +9,15 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".ui.activity.CategoriesActivity">
+        <activity android:name=".view.activity.CategoriesActivity">
         </activity>
-        <activity android:name=".ui.activity.UserActivity">
+        <activity android:name=".view.activity.UserActivity">
         </activity>
         <activity
-                android:name=".ui.activity.MainActivity"
+                android:name=".view.activity.MainActivity"
                 android:label="@string/title_activity_main">
         </activity>
-        <activity android:name=".ui.activity.LoginActivity"
+        <activity android:name=".view.activity.LoginActivity"
                   android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

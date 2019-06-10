@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.ui.fragment
+package exe.weazy.extendenglish.view.fragment
 
 import android.content.Context
 import android.os.Bundle

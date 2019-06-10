@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.ui.fragment
+package exe.weazy.extendenglish.view.fragment
 
 import android.app.Activity
 import android.app.ActivityOptions
@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.CategoriesRecyclerViewAdapter
 import exe.weazy.extendenglish.model.Category
-import exe.weazy.extendenglish.ui.activity.UserActivity
+import exe.weazy.extendenglish.view.activity.UserActivity
 import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_account.*
 

@@ -1,12 +1,10 @@
-package exe.weazy.extendenglish.ui.activity
+package exe.weazy.extendenglish.view.activity
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
@@ -14,8 +12,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.ui.dialog.NewPasswordDialog
-import exe.weazy.extendenglish.ui.dialog.TextDialog
+import exe.weazy.extendenglish.view.dialog.NewPasswordDialog
+import exe.weazy.extendenglish.view.dialog.TextDialog
 import kotlinx.android.synthetic.main.activity_user.*
 
 
@@ -125,6 +123,10 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPass
             }
 
         dialog.show()
+    }
+
+    fun onBackButtonClick(view : View) {
+        onBackPressed()
     }
 
     private fun updateUsername() {

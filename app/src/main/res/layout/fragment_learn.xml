@@ -14,7 +14,7 @@
         <TextView
                 android:id="@+id/text_header"
                 android:text="@string/learn"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorOrange"
                 android:fontFamily="@font/pacifico"
                 android:textSize="26sp"
                 android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:textSize="32sp"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorOrange"
                 android:textStyle="bold"/>
 
         <TextView

@@ -1,17 +1,15 @@
-package exe.weazy.extendenglish.ui.activity
+package exe.weazy.extendenglish.view.activity
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.ui.fragment.AccountFragment
-import exe.weazy.extendenglish.ui.fragment.LearnFragment
-import exe.weazy.extendenglish.ui.fragment.SettingsFragment
+import exe.weazy.extendenglish.view.fragment.AccountFragment
+import exe.weazy.extendenglish.view.fragment.LearnFragment
+import exe.weazy.extendenglish.view.fragment.SettingsFragment
 import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 

@@ -1,15 +1,13 @@
-package exe.weazy.extendenglish.ui.dialog
+package exe.weazy.extendenglish.view.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDialogFragment
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import exe.weazy.extendenglish.R
-import kotlinx.android.synthetic.main.activity_user.*
 
 class NewPasswordDialog : AppCompatDialogFragment() {
 

@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FAFAFA</color>
-    <color name="colorPrimaryDark">#F2923F</color>
-    <color name="colorAccent">#F7B142</color>
-    <color name="colorWhite">#F6F9FA</color>
+    <color name="colorWhite">#FAFAFA</color>
+    <color name="colorDarkOrange">#F2923F</color>
+    <color name="colorOrange">#F7B142</color>
     <color name="colorGrey">#757575</color>
     <color name="colorLightGrey">#CACACA</color>
     <color name="colorRed">#D67A8A</color>
     <color name="colorGreen">#A2E094</color>
     <color name="colorBlack">#000</color>
 
-    <color name="colorPrimaryDT">#2D2D2D</color>
-    <color name="colorPrimaryDarkDT">#282828</color>
-    <color name="colorGreyDT">#FAFAFA</color>
-    <color name="colorLightGreyDT">#686868</color>
+    <color name="colorDarkGrey">#2D2D2D</color>
+    <color name="colorNearlyBlack">#282828</color>
+    <!--<color name="colorGreyDT">#FAFAFA</color>
+    <color name="colorLightGreyDT">#686868</color>-->
 </resources>

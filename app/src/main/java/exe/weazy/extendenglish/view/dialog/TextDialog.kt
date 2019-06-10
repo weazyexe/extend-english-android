@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.ui.dialog
+package exe.weazy.extendenglish.view.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog

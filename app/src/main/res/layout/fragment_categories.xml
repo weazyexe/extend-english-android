@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:text="@string/categories"
             android:fontFamily="@font/pacifico"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorOrange"
             android:textSize="24sp"
             android:layout_marginTop="8dp"
             android:layout_gravity="center_horizontal"/>
