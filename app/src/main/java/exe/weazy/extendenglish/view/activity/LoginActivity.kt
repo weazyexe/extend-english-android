@@ -249,6 +249,7 @@ class LoginActivity : AppCompatActivity() {
         val hashMap = HashMap<String, String>()
         hashMap["level"] = StringHelper.upperSnakeToUpperCamel(Level.NEWBIE.name)
         hashMap["progress"] = "learnToday"
+        hashMap["avatar"] = "default_avatars/placeholder.png"
 
         val user = auth.currentUser
         if (user != null) {

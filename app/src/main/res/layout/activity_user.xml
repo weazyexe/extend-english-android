@@ -36,6 +36,7 @@
                 android:layout_marginBottom="8dp"/>
 
         <androidx.cardview.widget.CardView
+                android:id="@+id/card_avatar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:transitionName="trtext_card"
@@ -54,7 +55,7 @@
                         android:id="@+id/imageview_avatar"
                         android:layout_width="128dp"
                         android:layout_height="128dp"
-                        android:src="@drawable/jonsnow"
+                        android:src="@drawable/avatar_placeholder"
                         app:civ_border_color="@color/colorOrange"
                         app:civ_border_width="2dp"
                         android:layout_gravity="center_horizontal"

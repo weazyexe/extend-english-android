@@ -87,6 +87,7 @@
     <string name="change_username">Change username</string>
     <string name="change_password">Change password</string>
     <string name="change_email">Change email address</string>
+    <string name="change_avatar">Change avatar</string>
     <string name="new_email">New email</string>
     <string name="new_username">New username</string>
     <string name="new_password">New password</string>

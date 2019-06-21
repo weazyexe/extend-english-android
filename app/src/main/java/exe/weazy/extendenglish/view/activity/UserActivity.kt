@@ -11,24 +11,34 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import exe.weazy.extendenglish.R
+import exe.weazy.extendenglish.tools.GlideApp
+import exe.weazy.extendenglish.view.dialog.AvatarDialog
 import exe.weazy.extendenglish.view.dialog.NewPasswordDialog
 import exe.weazy.extendenglish.view.dialog.TextDialog
 import kotlinx.android.synthetic.main.activity_user.*
 
 
-class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPasswordDialog.NewPasswordDialogListener {
+class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPasswordDialog.NewPasswordDialogListener,
+        AvatarDialog.AvatarDialogListener {
+
+    private val firestore = FirebaseFirestore.getInstance()
+    private val storage = FirebaseStorage.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     private lateinit var level : String
     private lateinit var type : String
+    private var avatarPath = "default_avatars/placeholder.png"
 
-    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
 
         level = intent.getStringExtra("level")
+        avatarPath = intent.getStringExtra("avatar_path")
     }
 
     override fun onStart() {
@@ -41,6 +51,13 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPass
         }
 
         text_level.text = level
+
+        setAvatar()
+
+        card_avatar.setOnClickListener {
+            val dialog = AvatarDialog()
+            dialog.show(supportFragmentManager, "Avatar change dialog")
+        }
     }
 
     override fun applyPassword(password : String, repeat : String) {
@@ -135,5 +152,27 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPass
         } else {
             auth.currentUser?.displayName
         }
+    }
+
+    private fun setAvatar() {
+
+        val ref = storage.getReference(avatarPath)
+
+        GlideApp.with(this)
+            .load(ref)
+            .placeholder(R.drawable.avatar_placeholder)
+            .into(imageview_avatar)
+
+    }
+
+    override fun applyAvatar(chosen: String) {
+        val ref = storage.getReference(chosen)
+
+        GlideApp.with(this)
+            .load(ref)
+            .placeholder(R.drawable.avatar_placeholder)
+            .into(imageview_avatar)
+
+        firestore.document("users/${auth.currentUser?.uid}").update("avatar", chosen)
     }
 }

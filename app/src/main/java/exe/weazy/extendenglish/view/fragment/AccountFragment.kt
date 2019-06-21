@@ -4,8 +4,8 @@ import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.util.Pair
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -13,16 +13,22 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.CategoriesRecyclerViewAdapter
 import exe.weazy.extendenglish.model.Category
+import exe.weazy.extendenglish.tools.GlideApp
 import exe.weazy.extendenglish.view.activity.UserActivity
 import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_account.*
 
 class AccountFragment : Fragment() {
 
+    private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val storage = FirebaseStorage.getInstance()
+    private var avatarPath = "default_avatars/placeholder.png"
 
     private lateinit var level : String
     private lateinit var categories : ArrayList<Category>
@@ -66,9 +72,12 @@ class AccountFragment : Fragment() {
                 Pair.create<View, String>(card_categories,"trtext_second_card"))
 
             intent.putExtra("level", level)
+            intent.putExtra("avatar_path", avatarPath)
 
             startActivity(intent, options.toBundle())
         }
+
+        setAvatar()
     }
 
     private fun initializeLevelObserver() {
@@ -104,5 +113,22 @@ class AccountFragment : Fragment() {
             progressbar_account.visibility = View.GONE
             layout_account.visibility = View.VISIBLE
         }
+    }
+
+    private fun setAvatar() {
+
+        firestore.document("users/${auth.currentUser?.uid}").get().addOnCompleteListener {
+            val path = it.result?.get("avatar").toString()
+
+            val ref = storage.getReference(path)
+
+            GlideApp.with(this)
+                .load(ref)
+                .placeholder(R.drawable.avatar_placeholder)
+                .into(imageview_avatar)
+
+            avatarPath = path
+        }
+
     }
 }
