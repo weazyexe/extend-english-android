@@ -56,6 +56,12 @@ class AccountFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
+        if (!isCategoriesLoaded && !isLevelLoaded) {
+            layout_account.visibility = View.GONE
+            progressbar_account.visibility = View.VISIBLE
+        }
+
         text_username.text = if (auth.currentUser?.displayName.isNullOrEmpty()) {
             auth.currentUser?.email
         } else {
@@ -68,8 +74,8 @@ class AccountFragment : Fragment() {
                 Pair.create<View, String>(imageview_avatar,"trtext_avatar"),
                 Pair.create<View, String>(text_username,"trtext_username"),
                 Pair.create<View, String>(text_level,"trtext_level"),
-                Pair.create<View, String>(card_account,"trtext_card"),
-                Pair.create<View, String>(card_categories,"trtext_second_card"))
+                Pair.create<View, String>(card_account,"trtext_card")
+                /*Pair.create<View, String>(card_categories,"trtext_second_card")*/)
 
             intent.putExtra("level", level)
             intent.putExtra("avatar_path", avatarPath)
@@ -86,6 +92,7 @@ class AccountFragment : Fragment() {
             level = it
             text_level.text = level
 
+            isLevelLoaded = true
             afterLoad()
         })
     }
@@ -103,6 +110,8 @@ class AccountFragment : Fragment() {
             } else {
                 adapter.setCategories(categories)
             }
+
+            isCategoriesLoaded = true
 
             afterLoad()
         })

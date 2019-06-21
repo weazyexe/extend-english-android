@@ -74,11 +74,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun changeFragment(fragment : Fragment) {
-        if (startingPosition > newPosition) {
-            supportFragmentManager.beginTransaction()/*.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right)*/.show(fragment).hide(active).commit()
-        } else {
-            supportFragmentManager.beginTransaction()/*.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left)*/.show(fragment).hide(active).commit()
-        }
+        supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.top_level_in, R.anim.top_level_out).show(fragment).hide(active).commit()
         startingPosition = newPosition
         active = fragment
     }
