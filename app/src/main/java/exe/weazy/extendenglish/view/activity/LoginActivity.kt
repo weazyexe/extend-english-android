@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.adapter.CategoriesRecyclerViewAdapter
+import exe.weazy.extendenglish.adapter.CategoriesAdapter
 import exe.weazy.extendenglish.model.Category
 import exe.weazy.extendenglish.model.Level
 import exe.weazy.extendenglish.model.Step
@@ -42,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var email : String
     private lateinit var password : String
 
-    private lateinit var adapter : CategoriesRecyclerViewAdapter
+    private lateinit var adapter : CategoriesAdapter
     private lateinit var manager: LinearLayoutManager
 
     private var isSignIn = true
@@ -259,7 +259,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initializeRecyclerView() {
         if (!::adapter.isInitialized && !::manager.isInitialized) {
-            adapter = CategoriesRecyclerViewAdapter(allCategories)
+            adapter = CategoriesAdapter(allCategories)
             manager = LinearLayoutManager(this)
             recyclerview_categories_login.adapter = adapter
             recyclerview_categories_login.layoutManager = manager

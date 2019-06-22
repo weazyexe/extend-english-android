@@ -12,11 +12,7 @@ import exe.weazy.extendenglish.model.Category
 import exe.weazy.extendenglish.tools.StringHelper
 import java.util.ArrayList
 
-class CategoriesRecyclerViewAdapter(private var categories : List<Category>) : RecyclerView.Adapter<CategoriesRecyclerViewAdapter.ViewHolder>() {
-
-    private var initializedChecks = false
-
-    private var checks = ArrayList<Boolean>()
+class CategoriesAdapter(private var categories : List<Category>, private var checks : ArrayList<Boolean> = ArrayList()) : RecyclerView.Adapter<CategoriesAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.element_category, parent, false))
 
@@ -24,11 +20,10 @@ class CategoriesRecyclerViewAdapter(private var categories : List<Category>) : R
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        if (!initializedChecks) {
+        if (checks.isEmpty()) {
             categories.forEach { _ ->
                 checks.add(false)
             }
-            initializedChecks = true
         }
 
         val category = categories[position]

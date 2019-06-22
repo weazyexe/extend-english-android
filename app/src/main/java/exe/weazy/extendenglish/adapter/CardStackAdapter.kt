@@ -12,8 +12,8 @@ import exe.weazy.extendenglish.model.Word
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-class WordCardStackAdapter(var words : ArrayList<Word>, var variants : ArrayList<Word>)
-    : RecyclerView.Adapter<WordCardStackAdapter.ViewHolder>() {
+class CardStackAdapter(var words : ArrayList<Word>, var variants : ArrayList<Word>)
+    : RecyclerView.Adapter<CardStackAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.card_word, parent, false))

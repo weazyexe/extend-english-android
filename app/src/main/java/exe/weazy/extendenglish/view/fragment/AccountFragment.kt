@@ -11,14 +11,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.adapter.CategoriesRecyclerViewAdapter
+import exe.weazy.extendenglish.adapter.CategoriesWidgetAdapter
 import exe.weazy.extendenglish.model.Category
 import exe.weazy.extendenglish.tools.GlideApp
+import exe.weazy.extendenglish.view.activity.CategoriesActivity
 import exe.weazy.extendenglish.view.activity.UserActivity
 import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_account.*
@@ -32,12 +34,15 @@ class AccountFragment : Fragment() {
 
     private lateinit var level : String
     private lateinit var categories : ArrayList<Category>
+    private lateinit var showedCategories : ArrayList<Category>
+    private lateinit var allCategories : ArrayList<Category>
 
-    private lateinit var manager : LinearLayoutManager
-    private lateinit var adapter : CategoriesRecyclerViewAdapter
+    private lateinit var manager : GridLayoutManager
+    private lateinit var adapter : CategoriesWidgetAdapter
 
     private var isCategoriesLoaded = false
     private var isLevelLoaded = false
+    private var isAllCategoriesLoaded = false
 
     private lateinit var viewModel : MainViewModel
 
@@ -47,6 +52,7 @@ class AccountFragment : Fragment() {
 
         initializeLevelObserver()
         initializeCategoriesObserver()
+        initializeAllCategoriesObserver()
     }
 
 
@@ -74,8 +80,7 @@ class AccountFragment : Fragment() {
                 Pair.create<View, String>(imageview_avatar,"trtext_avatar"),
                 Pair.create<View, String>(text_username,"trtext_username"),
                 Pair.create<View, String>(text_level,"trtext_level"),
-                Pair.create<View, String>(card_account,"trtext_card")
-                /*Pair.create<View, String>(card_categories,"trtext_second_card")*/)
+                Pair.create<View, String>(card_account,"trtext_card"))
 
             intent.putExtra("level", level)
             intent.putExtra("avatar_path", avatarPath)
@@ -97,18 +102,42 @@ class AccountFragment : Fragment() {
         })
     }
 
+    private fun initializeAllCategoriesObserver() {
+        val allCategoriesLiveData = viewModel.getAllCategories()
+        allCategoriesLiveData.observe(this, Observer {
+            allCategories = it
+
+            isAllCategoriesLoaded = true
+            afterLoad()
+        })
+    }
+
     private fun initializeCategoriesObserver() {
         val categoriesLiveData = viewModel.getCategories()
         categoriesLiveData.observe(this, Observer {
             categories = it
 
             if (!::adapter.isInitialized) {
-                adapter = CategoriesRecyclerViewAdapter(categories)
+                getShowedCategories()
+
+                val mOnClickListener = View.OnClickListener {
+                    val intent = Intent(activity, CategoriesActivity::class.java)
+
+                    val bundle = Bundle()
+                    bundle.putSerializable("categories", categories)
+                    bundle.putSerializable("allCategories", allCategories)
+
+                    intent.putExtras(bundle)
+
+                    startActivityForResult(intent, 100)
+                }
+
+                adapter = CategoriesWidgetAdapter(showedCategories, mOnClickListener)
                 recyclerview_categories_account.adapter = adapter
-                manager = LinearLayoutManager(activity?.applicationContext)
+                manager = GridLayoutManager(activity, 3)
                 recyclerview_categories_account.layoutManager = manager
             } else {
-                adapter.setCategories(categories)
+                adapter.setCategories(showedCategories)
             }
 
             isCategoriesLoaded = true
@@ -118,7 +147,7 @@ class AccountFragment : Fragment() {
     }
 
     private fun afterLoad() {
-        if (isCategoriesLoaded && isLevelLoaded) {
+        if (isCategoriesLoaded && isLevelLoaded && isAllCategoriesLoaded && isCategoriesLoaded) {
             progressbar_account.visibility = View.GONE
             layout_account.visibility = View.VISIBLE
         }
@@ -139,5 +168,14 @@ class AccountFragment : Fragment() {
             avatarPath = path
         }
 
+    }
+
+    private fun getShowedCategories() {
+        /*showedCategories = if (categories.size > 6) {
+            arrayListOf(categories[0], categories[1], categories[2], categories[3], categories[4], categories[5])
+        } else {
+            ArrayList(categories)
+        }*/
+        showedCategories = ArrayList(categories)
     }
 }

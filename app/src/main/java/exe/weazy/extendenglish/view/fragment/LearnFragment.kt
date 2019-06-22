@@ -1,6 +1,8 @@
 package exe.weazy.extendenglish.view.fragment
 
 import android.content.Context
+import android.icu.util.Calendar
+import android.icu.util.TimeZone
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +22,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.yuyakaido.android.cardstackview.*
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.adapter.WordCardStackAdapter
+import exe.weazy.extendenglish.adapter.CardStackAdapter
 import exe.weazy.extendenglish.model.Category
 import exe.weazy.extendenglish.model.Progress
 import exe.weazy.extendenglish.model.Word
@@ -29,6 +31,8 @@ import exe.weazy.extendenglish.tools.UiHelper
 import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_learn.*
 import java.io.File
+import java.util.Date
+import kotlin.collections.ArrayList
 
 class LearnFragment : Fragment(), CardStackListener {
 
@@ -59,16 +63,18 @@ class LearnFragment : Fragment(), CardStackListener {
     private var isLearnedLoaded = false
     private var isKnowLoaded = false
     private var isProgressLoaded = false
+    private var isLastActivityLoaded = false
 
 
     private lateinit var progress: Progress
     private lateinit var categories : ArrayList<Category>
+    private lateinit var lastActivity : Date
 
     private var remain = 0
     private var toLearn = 0
 
     private val manager by lazy { CardStackLayoutManager(activity?.applicationContext, this) }
-    private lateinit var adapter: WordCardStackAdapter
+    private lateinit var adapter: CardStackAdapter
 
 
     private lateinit var viewModel : MainViewModel
@@ -77,10 +83,6 @@ class LearnFragment : Fragment(), CardStackListener {
         super.onAttach(context)
         viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
         initializeObservers()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onStart() {
@@ -330,13 +332,13 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     /**
-     * Initialize WordCardStackAdapter first time
+     * Initialize CardStackAdapter first time
      */
     private fun initializeCardStackAdapter() {
         this.allWords.shuffle()
         val variants = this.allWords.filter { categories.contains(it.category) }
 
-        adapter = WordCardStackAdapter(current, ArrayList(variants))
+        adapter = CardStackAdapter(current, ArrayList(variants))
         cardstack_words.adapter = adapter
 
         remain = current.size
@@ -635,6 +637,7 @@ class LearnFragment : Fragment(), CardStackListener {
         initializeKnowWordsObserver()
         initializeCategoriesObserver()
         initializeProgressObserver()
+        initializeLastActivityObserver()
     }
 
     private fun initializeAllWordsObserver() {
@@ -729,11 +732,40 @@ class LearnFragment : Fragment(), CardStackListener {
         })
     }
 
+    private fun initializeLastActivityObserver() {
+        val lastActivityData = viewModel.getLastActivity()
+        lastActivityData.observe(this, Observer {
+            lastActivity = it
+            isLastActivityLoaded = true
+            afterLoad()
+        })
+    }
+
 
     private fun afterLoad() {
         if (isAllWordsLoaded && isLearnedLoaded && isKnowLoaded && isProgressLoaded &&
             isCategoriesLoaded && isRepeatFourDaysLoaded && isLearnedLoaded &&
-            isRepeatThreeDaysLoaded && isRepeatTwoDaysLoaded && isRepeatYesterdayLoaded) {
+            isRepeatThreeDaysLoaded && isRepeatTwoDaysLoaded && isRepeatYesterdayLoaded && isLastActivityLoaded) {
+
+            val timeZone = TimeZone.getTimeZone("UTC")
+            val now = Calendar.getInstance(timeZone).time
+            val diff = now.time - lastActivity.time
+
+            if (diff > 86400 && progress == Progress.LEARNED) {
+                progress = if (!repeatFourDays.isNullOrEmpty()) {
+                    Progress.REPEAT_FOUR_DAYS
+                } else if (!repeatThreeDays.isNullOrEmpty()) {
+                    Progress.REPEAT_THREE_DAYS
+                } else if (!repeatTwoDays.isNullOrEmpty()) {
+                    Progress.REPEAT_TWO_DAYS
+                } else if (!repeatYesterday.isNullOrEmpty()) {
+                    Progress.REPEAT_YESTERDAY
+                } else if (progress != Progress.LEARN_TODAY) {
+                    Progress.REPEAT_LONG
+                } else {
+                    Progress.LEARN_TODAY
+                }
+            }
 
             initializeCardStackView()
 

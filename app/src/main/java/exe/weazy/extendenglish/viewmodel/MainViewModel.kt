@@ -1,5 +1,6 @@
 package exe.weazy.extendenglish.viewmodel
 
+import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,9 @@ import exe.weazy.extendenglish.model.Category
 import exe.weazy.extendenglish.model.Progress
 import exe.weazy.extendenglish.model.Word
 import exe.weazy.extendenglish.tools.StringHelper
+import java.time.LocalDateTime
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainViewModel : ViewModel() {
 
@@ -28,8 +32,19 @@ class MainViewModel : ViewModel() {
     private lateinit var level : MutableLiveData<String>
     private lateinit var progress : MutableLiveData<Progress>
     private lateinit var categories : MutableLiveData<ArrayList<Category>>
+    private lateinit var lastActivity : MutableLiveData<Date>
+    private lateinit var allCategories : MutableLiveData<ArrayList<Category>>
 
 
+
+    fun getAllCategories() : LiveData<ArrayList<Category>> {
+        if (!::allCategories.isInitialized) {
+            allCategories = MutableLiveData()
+            loadAllCategories()
+        }
+
+        return allCategories
+    }
 
     fun getAllWords() : LiveData<ArrayList<Word>> {
         if (!::allWords.isInitialized) {
@@ -137,6 +152,15 @@ class MainViewModel : ViewModel() {
         }
 
         return repeatLong
+    }
+
+    fun getLastActivity() : LiveData<Date> {
+        if (!::lastActivity.isInitialized) {
+            lastActivity = MutableLiveData()
+            loadLastActivity()
+        }
+
+        return lastActivity
     }
 
 
@@ -307,6 +331,32 @@ class MainViewModel : ViewModel() {
             }
 
             categories.postValue(c)
+        }
+    }
+
+    private fun loadLastActivity() {
+        firestore.document("users/${user?.uid}").get().addOnCompleteListener { querySnapshot ->
+            val result = querySnapshot.result
+            val format = SimpleDateFormat("MM dd yyyy HH:mm")
+
+            lastActivity.postValue(format.parse(result?.get("lastActivity").toString()))
+        }
+    }
+
+    private fun loadAllCategories() {
+        firestore.collection("categories").get().addOnCompleteListener { querySnapshot ->
+            val result = querySnapshot.result?.documents
+
+            val c = ArrayList<Category>()
+
+            result?.forEach {
+
+                val name = it.getString("name")
+                if (name != null)
+                    c.add(Category.getCategoryByString(name))
+            }
+
+            allCategories.postValue(c)
         }
     }
 }

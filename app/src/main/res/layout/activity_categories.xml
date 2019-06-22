@@ -7,4 +7,89 @@
         android:layout_height="match_parent"
         tools:context=".view.activity.CategoriesActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <androidx.appcompat.widget.Toolbar
+                    android:layout_width="match_parent"
+                    android:layout_height="68dp"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    app:layout_collapseMode="pin">
+
+                <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    <Button
+                            android:id="@+id/button_back"
+                            android:layout_width="48dp"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_arrow_back_black_24dp"
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="-16dp"
+                            android:onClick="onBackButtonClick"/>
+
+                    <TextView
+                            android:id="@+id/text_header"
+                            android:text="@string/categories"
+                            android:textColor="@color/colorOrange"
+                            android:fontFamily="@font/pacifico"
+                            android:textSize="26sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal|center_vertical"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginStart="-16dp"/>
+
+                </FrameLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="70dp"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview_categories"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/button_done"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_done_white_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onDoneButtonClick"/>
+
+    <ProgressBar
+            android:elevation="16dp"
+            android:id="@+id/progressbar_categories"
+            android:layout_gravity="center_horizontal|bottom"
+            android:indeterminateTint="@color/colorWhite"
+            android:layout_margin="32dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:visibility="gone"/>
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
