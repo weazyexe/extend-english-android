@@ -1,12 +1,17 @@
 package exe.weazy.extendenglish.view.fragment
 
+import android.app.Activity
+import android.app.ActivityOptions
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import android.util.Pair
 import androidx.fragment.app.Fragment
 import exe.weazy.extendenglish.R
+import exe.weazy.extendenglish.view.activity.AboutActivity
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 class SettingsFragment : Fragment() {
@@ -18,22 +23,12 @@ class SettingsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        switch_enable_dark_mode.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+        button_about.setOnClickListener {
+            val intent = Intent(activity, AboutActivity::class.java)
+            val options = ActivityOptions.makeSceneTransitionAnimation(activity as Activity,
+                Pair.create<View, String>(about_card, "trtext_about"))
 
-        button_enable_notifications.setOnClickListener {
-            switch_enable_notifications.isChecked = !switch_enable_notifications.isChecked
-        }
-
-        button_enable_dark_mode.setOnClickListener {
-            switch_enable_dark_mode.isChecked = !switch_enable_dark_mode.isChecked
-        }
-
-        switch_enable_dark_mode.setOnCheckedChangeListener { compoundButton, enabled ->
-            if (enabled) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
+            startActivity(intent, options.toBundle())
         }
     }
 }

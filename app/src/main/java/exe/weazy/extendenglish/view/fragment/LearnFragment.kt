@@ -38,6 +38,8 @@ class LearnFragment : Fragment(), CardStackListener {
 
     private val firestore = FirebaseFirestore.getInstance()
 
+    private val LIMIT_TIME = 86_400_000
+
     private lateinit var learnToday: ArrayList<Word>
     private lateinit var repeatYesterday: ArrayList<Word>
     private lateinit var repeatTwoDays: ArrayList<Word>
@@ -747,11 +749,10 @@ class LearnFragment : Fragment(), CardStackListener {
             isCategoriesLoaded && isRepeatFourDaysLoaded && isLearnedLoaded &&
             isRepeatThreeDaysLoaded && isRepeatTwoDaysLoaded && isRepeatYesterdayLoaded && isLastActivityLoaded) {
 
-            val timeZone = TimeZone.getTimeZone("UTC")
-            val now = Calendar.getInstance(timeZone).time
+            val now = Calendar.getInstance(TimeZone.GMT_ZONE).time
             val diff = now.time - lastActivity.time
 
-            if (diff > 86400 && progress == Progress.LEARNED) {
+            if (diff > LIMIT_TIME && progress == Progress.LEARNED) {
                 progress = if (!repeatFourDays.isNullOrEmpty()) {
                     Progress.REPEAT_FOUR_DAYS
                 } else if (!repeatThreeDays.isNullOrEmpty()) {

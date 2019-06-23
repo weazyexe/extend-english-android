@@ -171,11 +171,6 @@ class AccountFragment : Fragment() {
     }
 
     private fun getShowedCategories() {
-        /*showedCategories = if (categories.size > 6) {
-            arrayListOf(categories[0], categories[1], categories[2], categories[3], categories[4], categories[5])
-        } else {
-            ArrayList(categories)
-        }*/
         showedCategories = ArrayList(categories)
     }
 }

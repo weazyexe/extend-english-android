@@ -57,7 +57,53 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         bottom_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
         loadFragments()
+
+        if (savedInstanceState != null) {
+            newPosition = savedInstanceState["new_position"] as Int
+            startingPosition = savedInstanceState["starting_position"] as Int
+
+            when (startingPosition) {
+                0 -> {
+                    changeFragment(learnFragment)
+                    bottom_navigation.selectedItemId = R.id.navigation_learn
+                }
+                1 -> {
+                    changeFragment(accountFragment)
+                    bottom_navigation.selectedItemId = R.id.navigation_account
+                }
+                2 -> {
+                    changeFragment(settingsFragment)
+                    bottom_navigation.selectedItemId = R.id.navigation_settings
+                }
+            }
+        }
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        supportFragmentManager.beginTransaction()
+            .show(active)
+            .commit()
+    }
+
+    override fun onStop() {
+        supportFragmentManager.beginTransaction()
+            .hide(active)
+            .commit()
+
+        super.onStop()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.clear()
+
+        outState.putInt("starting_position", startingPosition)
+        outState.putInt("new_position", newPosition)
+
+        super.onSaveInstanceState(outState)
     }
 
 

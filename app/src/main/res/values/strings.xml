@@ -58,7 +58,8 @@
     <string name="logout">Log out</string>
     <string name="enable_dark_mode">Enable dark mode</string>
     <string name="color_theme">Color theme</string>
-    <string name="about">About application</string>
+    <string name="about">About</string>
+    <string name="about_application">About application</string>
     <string name="enable_notifications">Enable notifications</string>
     <string name="config_notifications">Configure notifications</string>
     <string name="user_settings">User settings</string>
@@ -96,5 +97,29 @@
     <string name="email_has_been_changed">Your e-mail has been changed</string>
     <string name="username_has_been_changed">Your username has been changed</string>
     <string name="logout_message">Are you sure you want to log out?</string>
-    <string name="password_has_been_changed">Your password has been changed</string>
+    <string name="password_has_been_changed">Your password has been changed</string>\
+
+
+    <!--ABOUT ACTIVITY-->
+    <string name="developer_caps">DEVELOPER</string>
+    <string name="application_caps">APPLICATION</string>
+    <string name="extend_english">Extend English</string>
+    <string name="app_version">v0.5.0</string>
+    <string name="me">Timur Zadvornov</string>
+    <string name="android_developer">Android Developer</string>
+    <string name="twitter">Twitter</string>
+    <string name="instagram">Instagram</string>
+    <string name="telegram">Telegram</string>
+    <string name="weazyexe">\@weazyexe</string>
+    <string name="open_source_libraries_caps">OPEN SOURCE LIBRARIES</string>
+    <string name="gson">GSON</string>
+    <string name="gson_desc">JSON parser • v2.8.5 • Google</string>
+    <string name="guava">Guava</string>
+    <string name="guava_desc">Google core libraries • v26.0 • Google</string>
+    <string name="circle_image_view">CircleImageView</string>
+    <string name="circle_image_view_desc">Just circle ImageView • v3.0.0 • hdodenhof</string>
+    <string name="glide">Glide</string>
+    <string name="glide_desc">Media management • v4.9.0 • bumptech</string>
+    <string name="card_stack_view">CardStackView</string>
+    <string name="card_stack_view_desc">Tinder like swipeable cards • v2.3.2 • yuyakaido</string>
 </resources>

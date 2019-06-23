@@ -28,149 +28,6 @@
                     android:layout_marginBottom="8dp"/>
 
             <TextView
-                    android:text="@string/notifications"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="16dp"/>
-
-            <androidx.cardview.widget.CardView
-                    android:id="@+id/notifications_card"
-                    android:layout_width="match_parent"
-                    app:cardCornerRadius="10dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp">
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                    <FrameLayout
-                            android:id="@+id/button_enable_notifications"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:foreground="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                        <TextView
-                                android:text="@string/enable_notifications"
-                                android:textSize="16sp"
-                                android:textColor="@color/colorBlack"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:layout_margin="16dp"/>
-
-                        <Switch
-                                android:id="@+id/switch_enable_notifications"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="16dp"
-                                android:layout_gravity="center_vertical|end"
-                                android:checked="true"/>
-
-                    </FrameLayout>
-
-                    <FrameLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:foreground="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                        <TextView
-                                android:text="@string/config_notifications"
-                                android:textSize="16sp"
-                                android:textColor="@color/colorBlack"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:layout_margin="16dp"/>
-
-                    </FrameLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                    android:text="@string/dark_theme"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="16dp"/>
-
-            <androidx.cardview.widget.CardView
-                    android:id="@+id/colors_card"
-                    android:layout_width="match_parent"
-                    app:cardCornerRadius="10dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp">
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                    <FrameLayout
-                            android:id="@+id/button_enable_dark_mode"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:foreground="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                        <TextView
-                                android:text="@string/enable_dark_mode"
-                                android:textSize="16sp"
-                                android:textColor="@color/colorBlack"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:layout_margin="16dp"/>
-
-                        <Switch
-                                android:id="@+id/switch_enable_dark_mode"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="16dp"
-                                android:layout_gravity="center_vertical|end"/>
-
-                    </FrameLayout>
-
-                    <FrameLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:foreground="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                        <TextView
-                                android:text="@string/color_theme"
-                                android:textSize="16sp"
-                                android:textColor="@color/colorBlack"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:layout_margin="16dp"/>
-
-                    </FrameLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <TextView
                     android:text="@string/about_caps"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -186,9 +43,11 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="8dp"
+                    android:transitionName="trtext_about">
 
                 <FrameLayout
+                        android:id="@+id/button_about"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:foreground="?android:attr/selectableItemBackground"
@@ -196,13 +55,15 @@
                         android:focusable="true">
 
                     <TextView
-                            android:text="@string/about"
+                            android:id="@+id/text_about"
+                            android:text="@string/about_application"
                             android:textSize="16sp"
                             android:textColor="@color/colorBlack"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:layout_margin="16dp"/>
+                            android:layout_margin="16dp"
+                            android:transitionName="trtext_name"/>
 
                 </FrameLayout>
 

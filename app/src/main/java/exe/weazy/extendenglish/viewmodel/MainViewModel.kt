@@ -1,6 +1,7 @@
 package exe.weazy.extendenglish.viewmodel
 
 import android.icu.text.SimpleDateFormat
+import android.icu.util.TimeZone
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -338,6 +339,7 @@ class MainViewModel : ViewModel() {
         firestore.document("users/${user?.uid}").get().addOnCompleteListener { querySnapshot ->
             val result = querySnapshot.result
             val format = SimpleDateFormat("MM dd yyyy HH:mm")
+            format.timeZone = TimeZone.GMT_ZONE
 
             lastActivity.postValue(format.parse(result?.get("lastActivity").toString()))
         }
