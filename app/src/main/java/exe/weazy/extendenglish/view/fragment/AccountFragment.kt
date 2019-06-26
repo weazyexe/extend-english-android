@@ -9,49 +9,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.CategoriesWidgetAdapter
+import exe.weazy.extendenglish.arch.AccountContract
 import exe.weazy.extendenglish.entity.Category
+import exe.weazy.extendenglish.presenter.AccountPresenter
 import exe.weazy.extendenglish.tools.GlideApp
 import exe.weazy.extendenglish.view.activity.CategoriesActivity
 import exe.weazy.extendenglish.view.activity.UserActivity
-import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_account.*
 
-class AccountFragment : Fragment() {
+class AccountFragment : Fragment(), AccountContract.View {
 
-    private val firestore = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
-    private val storage = FirebaseStorage.getInstance()
-    private var avatarPath = "default_avatars/placeholder.png"
+    private var presenter = AccountPresenter()
 
-    private lateinit var level : String
-    private lateinit var categories : ArrayList<Category>
-    private lateinit var showedCategories : ArrayList<Category>
-    private lateinit var allCategories : ArrayList<Category>
-
-    private lateinit var manager : GridLayoutManager
+    private var manager = GridLayoutManager(activity, 3)
     private lateinit var adapter : CategoriesWidgetAdapter
-
-    private var isCategoriesLoaded = false
-    private var isLevelLoaded = false
-    private var isAllCategoriesLoaded = false
-
-    private lateinit var viewModel : MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
 
-        initializeLevelObserver()
-        initializeCategoriesObserver()
-        initializeAllCategoriesObserver()
+        presenter.attach(this)
     }
 
 
@@ -62,15 +42,8 @@ class AccountFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        if (!isCategoriesLoaded && !isLevelLoaded) {
-            layout_account.visibility = View.GONE
-            progressbar_account.visibility = View.VISIBLE
-        }
-
-        text_username.text = if (auth.currentUser?.displayName.isNullOrEmpty()) {
-            auth.currentUser?.email
-        } else {
-            auth.currentUser?.displayName
+        if (!::adapter.isInitialized) {
+            presenter.getAllData()
         }
 
         card_account.setOnClickListener {
@@ -81,95 +54,67 @@ class AccountFragment : Fragment() {
                 Pair.create<View, String>(text_level,"trtext_level"),
                 Pair.create<View, String>(card_account,"trtext_card"))
 
-            intent.putExtra("level", level)
-            intent.putExtra("avatar_path", avatarPath)
+
+            val bundle = presenter.getUserActivityBundle()
+            intent.putExtras(bundle)
 
             startActivity(intent, options.toBundle())
         }
-
-        setAvatar()
     }
 
-    private fun initializeLevelObserver() {
-        val levelLiveData = viewModel.getLevel()
-        levelLiveData.observe(this, Observer {
-            level = it
-            text_level.text = level
+    override fun updateCategories(categories : ArrayList<Category>, allCategories: ArrayList<Category>) {
 
-            isLevelLoaded = true
-            afterLoad()
-        })
-    }
+        val mOnClickListener = View.OnClickListener {
+            val intent = Intent(activity, CategoriesActivity::class.java)
 
-    private fun initializeAllCategoriesObserver() {
-        val allCategoriesLiveData = viewModel.getAllCategories()
-        allCategoriesLiveData.observe(this, Observer {
-            allCategories = it
+            val bundle = Bundle()
+            bundle.putSerializable("categories", categories)
+            bundle.putSerializable("allCategories", allCategories)
 
-            isAllCategoriesLoaded = true
-            afterLoad()
-        })
-    }
+            intent.putExtras(bundle)
 
-    private fun initializeCategoriesObserver() {
-        val categoriesLiveData = viewModel.getCategories()
-        categoriesLiveData.observe(this, Observer {
-            categories = it
+            startActivityForResult(intent, 100)
+        }
 
-            if (!::adapter.isInitialized) {
-                getShowedCategories()
-
-                val mOnClickListener = View.OnClickListener {
-                    val intent = Intent(activity, CategoriesActivity::class.java)
-
-                    val bundle = Bundle()
-                    bundle.putSerializable("categories", categories)
-                    bundle.putSerializable("allCategories", allCategories)
-
-                    intent.putExtras(bundle)
-
-                    startActivityForResult(intent, 100)
-                }
-
-                adapter = CategoriesWidgetAdapter(showedCategories, mOnClickListener)
-                recyclerview_categories_account.adapter = adapter
-                manager = GridLayoutManager(activity, 3)
-                recyclerview_categories_account.layoutManager = manager
-            } else {
-                adapter.setCategories(showedCategories)
-            }
-
-            isCategoriesLoaded = true
-
-            afterLoad()
-        })
-    }
-
-    private fun afterLoad() {
-        if (isCategoriesLoaded && isLevelLoaded && isAllCategoriesLoaded && isCategoriesLoaded) {
-            progressbar_account.visibility = View.GONE
-            layout_account.visibility = View.VISIBLE
+        if (!::adapter.isInitialized) {
+            adapter = CategoriesWidgetAdapter(categories, mOnClickListener)
+            recyclerview_categories_account.adapter = adapter
+            recyclerview_categories_account.layoutManager = manager
+        } else {
+            adapter.setCategories(categories)
         }
     }
 
-    private fun setAvatar() {
-
-        firestore.document("users/${auth.currentUser?.uid}").get().addOnCompleteListener {
-            val path = it.result?.get("avatar").toString()
-
-            val ref = storage.getReference(path)
-
-            GlideApp.with(this)
-                .load(ref)
-                .placeholder(R.drawable.avatar_placeholder)
-                .into(imageview_avatar)
-
-            avatarPath = path
-        }
-
+    override fun setAvatar(reference : StorageReference) {
+        GlideApp.with(this)
+            .load(reference)
+            .placeholder(R.drawable.avatar_placeholder)
+            .into(imageview_avatar)
     }
 
-    private fun getShowedCategories() {
-        showedCategories = ArrayList(categories)
+    override fun setLevel(level: String) {
+        text_level.text = level
+    }
+
+    override fun setUsername(username: String) {
+        text_username.text = username
+    }
+
+    override fun showLoading() {
+        layout_account.visibility = View.GONE
+        progressbar_account.visibility = View.VISIBLE
+        layout_error.visibility = View.GONE
+    }
+
+    override fun showError() {
+        layout_account.visibility = View.GONE
+        progressbar_account.visibility = View.GONE
+        layout_error.visibility = View.VISIBLE
+    }
+
+    override fun showScreen() {
+        layout_account.visibility = View.VISIBLE
+        progressbar_account.visibility = View.GONE
+        layout_error.visibility = View.GONE
     }
 }

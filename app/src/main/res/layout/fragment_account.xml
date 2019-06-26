@@ -11,6 +11,40 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"/>
 
+    <FrameLayout
+            android:id="@+id/layout_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+        <ImageView
+                android:src="@drawable/ic_error_outline_orange_24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:textSize="32sp"
+                android:textColor="@color/colorOrange"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_marginTop="50dp"
+                android:text="@string/network_error"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:textAlignment="center"
+                android:layout_height="wrap_content"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_refresh_white_24dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_margin="16dp"/>
+
+    </FrameLayout>
+
     <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="70dp">
@@ -125,7 +159,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerview_categories_account"
-                    android:layout_margin="8dp"
+                    android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 

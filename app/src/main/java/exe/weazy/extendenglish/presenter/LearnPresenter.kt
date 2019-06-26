@@ -5,7 +5,6 @@ import android.icu.util.TimeZone
 import android.view.View
 import com.yuyakaido.android.cardstackview.Direction
 import exe.weazy.extendenglish.arch.LearnContract
-import exe.weazy.extendenglish.arch.LearnLoadingListener
 import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.entity.Progress
 import exe.weazy.extendenglish.entity.Word
@@ -14,8 +13,9 @@ import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
-class LearnPresenter(private var view : LearnContract.View) : LearnContract.Presenter, LearnLoadingListener {
+class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
+    private lateinit var view : LearnContract.View
     private val model = LearnModel(this)
 
     private val LIMIT_TIME = 86_400_000
@@ -54,6 +54,11 @@ class LearnPresenter(private var view : LearnContract.View) : LearnContract.Pres
     private var isProgressLoaded = false
     private var isLastActivityLoaded = false
 
+
+
+    override fun attach(view: LearnContract.View) {
+        this.view = view
+    }
 
     override fun cardSwiped(direction: Direction) {
         remain--
@@ -130,35 +135,40 @@ class LearnPresenter(private var view : LearnContract.View) : LearnContract.Pres
 
             Progress.LEARNED -> {
                 view.showEnd()
-                return
             }
 
             Progress.LEARN_TODAY -> {
                 generateLearnTodayWords()
                 view.updateCardStack(learnToday)
                 current = ArrayList(learnToday)
+                view.showCardStack()
             }
 
             Progress.REPEAT_YESTERDAY -> {
                 current = ArrayList(repeatYesterday)
+                view.showCardStack()
             }
 
             Progress.REPEAT_TWO_DAYS -> {
                 current = ArrayList(repeatTwoDays)
+                view.showCardStack()
             }
 
             Progress.REPEAT_THREE_DAYS -> {
                 current = ArrayList(repeatThreeDays)
+                view.showCardStack()
             }
 
             Progress.REPEAT_FOUR_DAYS -> {
                 current = ArrayList(repeatFourDays)
+                view.showCardStack()
             }
 
             Progress.REPEAT_LONG -> {
                 generateRepeatLongWords()
                 view.updateCardStack(repeatLong)
                 current = ArrayList(repeatLong)
+                view.showCardStack()
             }
 
         }
@@ -167,8 +177,6 @@ class LearnPresenter(private var view : LearnContract.View) : LearnContract.Pres
         val variants = this.allWords.filter { categories.contains(it.category) } as ArrayList
         view.initializeCardStackAdapter(current, variants)
         remain = current.size
-
-        view.showCardStack()
     }
 
     override fun getAllData(file : File) {
@@ -442,8 +450,13 @@ class LearnPresenter(private var view : LearnContract.View) : LearnContract.Pres
                 }
             }
 
-            view.setupCardStack()
-            view.showCardStack()
+            if (diff > LIMIT_TIME && progress == Progress.LEARNED) {
+                view.showError()
+            } else if (progress != Progress.LEARNED) {
+                view.setupCardStack()
+            } else {
+                view.showEnd()
+            }
         }
     }
 

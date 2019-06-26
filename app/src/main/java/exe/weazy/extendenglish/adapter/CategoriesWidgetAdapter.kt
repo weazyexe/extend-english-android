@@ -9,7 +9,7 @@ import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.tools.StringHelper
 
-class CategoriesWidgetAdapter(private var categories : List<Category>, private var mOnClickListener: View.OnClickListener) : RecyclerView.Adapter<CategoriesWidgetAdapter.ViewHolder>() {
+class CategoriesWidgetAdapter(private var categories : List<Category>, private var mOnClickListener: View.OnClickListener?) : RecyclerView.Adapter<CategoriesWidgetAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(

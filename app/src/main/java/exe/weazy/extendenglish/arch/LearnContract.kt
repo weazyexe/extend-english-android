@@ -1,10 +1,11 @@
 package exe.weazy.extendenglish.arch
 
-import android.view.View
 import com.yuyakaido.android.cardstackview.Direction
+import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.entity.Progress
 import exe.weazy.extendenglish.entity.Word
 import java.io.File
+import java.util.*
 
 interface LearnContract {
 
@@ -24,6 +25,7 @@ interface LearnContract {
     }
 
     interface Presenter {
+        fun attach(view : View)
         fun cardSwiped(direction : Direction)
         fun cardAppeared(position : Int, cardView : android.view.View?)
         fun checkWord(word : String, cardView : android.view.View)
@@ -48,5 +50,37 @@ interface LearnContract {
         fun writeWordsByProgress(words: ArrayList<Word>, p : Progress)
         fun writeProgress(p : Progress)
         fun writeKnown(newKnow : ArrayList<Word>, knowCount : Int)
+    }
+
+    interface LoadingListener {
+        fun onLoadAllWordsFinished(words : ArrayList<Word>)
+        fun onLoadAllWordsFailure(exception : Exception?)
+
+        fun onLoadKnowWordsFinished(words : ArrayList<Word>)
+        fun onLoadKnowWordsFailure(exception : Exception?)
+
+        fun onLoadLearnedWordsFinished(words : ArrayList<Word>)
+        fun onLoadLearnedWordsFailure(exception : Exception?)
+
+        fun onLoadRepeatYesterdayWordsFinished(words : ArrayList<Word>)
+        fun onLoadRepeatYesterdayWordsFailure(exception : Exception?)
+
+        fun onLoadRepeatTwoDaysWordsFinished(words : ArrayList<Word>)
+        fun onLoadRepeatTwoDaysWordsFailure(exception : Exception?)
+
+        fun onLoadRepeatThreeDaysWordsFinished(words : ArrayList<Word>)
+        fun onLoadRepeatThreeDaysWordsFailure(exception : Exception?)
+
+        fun onLoadRepeatFourDaysWordsFinished(words : ArrayList<Word>)
+        fun onLoadRepeatFourDaysWordsFailure(exception : Exception?)
+
+        fun onLoadProgressFinished(progress : Progress)
+        fun onLoadProgressFailure(exception : Exception?)
+
+        fun onLoadCategoriesFinished(categories : ArrayList<Category>)
+        fun onLoadCategoriesFailure(exception : Exception?)
+
+        fun onLoadLastActivityFinished(lastActivity : Date)
+        fun onLoadLastActivityFailure(exception : Exception?)
     }
 }

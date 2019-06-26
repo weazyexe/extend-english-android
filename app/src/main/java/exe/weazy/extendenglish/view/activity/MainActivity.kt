@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val auth = FirebaseAuth.getInstance()
     private lateinit var viewModel: MainViewModel
 
     private lateinit var learnFragment : LearnFragment
@@ -32,17 +31,23 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.navigation_learn -> {
                 newPosition = 0
-                changeFragment(learnFragment)
+                if (startingPosition != newPosition) {
+                    changeFragment(learnFragment)
+                }
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_account -> {
                 newPosition = 1
-                changeFragment(accountFragment)
+                if (startingPosition != newPosition) {
+                    changeFragment(accountFragment)
+                }
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_settings -> {
                 newPosition = 2
-                changeFragment(settingsFragment)
+                if (startingPosition != newPosition) {
+                    changeFragment(settingsFragment)
+                }
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -59,6 +64,8 @@ class MainActivity : AppCompatActivity() {
         bottom_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         loadFragments()
+
+        active = accountFragment
 
         if (savedInstanceState != null) {
             newPosition = savedInstanceState["new_position"] as Int

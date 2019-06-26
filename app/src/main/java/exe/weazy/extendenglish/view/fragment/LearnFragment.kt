@@ -24,7 +24,7 @@ import java.io.File
 
 class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
 
-    private lateinit var presenter : LearnPresenter
+    private var presenter = LearnPresenter()
 
     private val manager by lazy { CardStackLayoutManager(activity?.applicationContext, this) }
     private lateinit var adapter: CardStackAdapter
@@ -34,12 +34,12 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        presenter = LearnPresenter(this)
+        presenter.attach(this)
     }
 
     override fun onStart() {
         super.onStart()
-        if (::adapter.isInitialized) {
+        if (!::adapter.isInitialized) {
             adapter = CardStackAdapter(ArrayList(), ArrayList())
             cardstack_words.adapter = adapter
         }
@@ -181,7 +181,7 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
     }
 
     override fun initializeCardStackAdapter(words : ArrayList<Word>, variants : ArrayList<Word>) {
-        adapter = CardStackAdapter(words, ArrayList(variants))
+        adapter = CardStackAdapter(words, variants)
         cardstack_words.adapter = adapter
     }
 
