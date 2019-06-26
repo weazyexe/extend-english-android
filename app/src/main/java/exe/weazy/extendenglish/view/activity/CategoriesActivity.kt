@@ -3,15 +3,12 @@ package exe.weazy.extendenglish.view.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.CategoriesAdapter
-import exe.weazy.extendenglish.model.Category
+import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.tools.FirebaseHelper
-import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_categories.*
 
 class CategoriesActivity : AppCompatActivity() {

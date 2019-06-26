@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.model.Category
+import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.tools.StringHelper
 
 class CategoriesWidgetAdapter(private var categories : List<Category>, private var mOnClickListener: View.OnClickListener) : RecyclerView.Adapter<CategoriesWidgetAdapter.ViewHolder>() {

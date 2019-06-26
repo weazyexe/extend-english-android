@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.model
+package exe.weazy.extendenglish.entity
 
 enum class Progress(name : String) {
     REPEAT_LONG("repeatLong"), REPEAT_FOUR_DAYS("repeatFourDays"),

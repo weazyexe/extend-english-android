@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.model.Category
+import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.tools.StringHelper
 import java.util.ArrayList
 

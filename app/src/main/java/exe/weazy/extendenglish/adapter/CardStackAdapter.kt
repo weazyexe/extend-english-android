@@ -8,11 +8,11 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.model.Word
+import exe.weazy.extendenglish.entity.Word
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-class CardStackAdapter(var words : ArrayList<Word>, var variants : ArrayList<Word>)
+class CardStackAdapter(private var words : ArrayList<Word>, var variants : ArrayList<Word>)
     : RecyclerView.Adapter<CardStackAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -91,6 +91,10 @@ class CardStackAdapter(var words : ArrayList<Word>, var variants : ArrayList<Wor
         return list.filter { it.word != w.word && it.category == w.category } as ArrayList<Word>
     }
 
+    fun setWords(words : ArrayList<Word>) {
+        this.words = words
+        notifyDataSetChanged()
+    }
 
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

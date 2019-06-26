@@ -12,13 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.CategoriesWidgetAdapter
-import exe.weazy.extendenglish.model.Category
+import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.tools.GlideApp
 import exe.weazy.extendenglish.view.activity.CategoriesActivity
 import exe.weazy.extendenglish.view.activity.UserActivity

@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.model
+package exe.weazy.extendenglish.entity
 
 enum class Level(name : String) {
     NEWBIE("Newbie"), ELEMENTARY("Elementary"), INTERMEDIATE("Intermediate"),

@@ -1,4 +1,4 @@
-package exe.weazy.extendenglish.model
+package exe.weazy.extendenglish.entity
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -10,9 +10,9 @@ class Word : Parcelable {
     lateinit var category: Category
 
     constructor(parcel: Parcel) : this() {
-        word = parcel.readString()
-        translate = parcel.readString()
-        transcription = parcel.readString()
+        word = parcel.readString()!!
+        translate = parcel.readString()!!
+        transcription = parcel.readString()!!
     }
 
     constructor()

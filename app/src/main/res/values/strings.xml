@@ -7,6 +7,7 @@
     <string name="loading">Loading…</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="network_error">Network error</string>
 
 
     <string name="title_activity_main">MainActivity</string>

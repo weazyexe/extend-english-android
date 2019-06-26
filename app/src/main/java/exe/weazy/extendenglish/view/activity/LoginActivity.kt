@@ -15,9 +15,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.CategoriesAdapter
-import exe.weazy.extendenglish.model.Category
-import exe.weazy.extendenglish.model.Level
-import exe.weazy.extendenglish.model.Step
+import exe.weazy.extendenglish.entity.Category
+import exe.weazy.extendenglish.entity.Level
+import exe.weazy.extendenglish.entity.Step
 import exe.weazy.extendenglish.tools.FirebaseHelper
 import exe.weazy.extendenglish.tools.StringHelper
 import exe.weazy.extendenglish.tools.UiHelper
