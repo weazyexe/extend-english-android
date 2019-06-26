@@ -9,11 +9,10 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import exe.weazy.extendenglish.R
+import exe.weazy.extendenglish.arch.UserContract
+import exe.weazy.extendenglish.presenter.UserPresenter
 import exe.weazy.extendenglish.tools.GlideApp
 import exe.weazy.extendenglish.view.dialog.AvatarDialog
 import exe.weazy.extendenglish.view.dialog.NewPasswordDialog
@@ -22,37 +21,27 @@ import kotlinx.android.synthetic.main.activity_user.*
 
 
 class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPasswordDialog.NewPasswordDialogListener,
-        AvatarDialog.AvatarDialogListener {
+        AvatarDialog.AvatarDialogListener, UserContract.View {
 
-    private val firestore = FirebaseFirestore.getInstance()
-    private val storage = FirebaseStorage.getInstance()
-    private val auth = FirebaseAuth.getInstance()
+    private var presenter = UserPresenter()
 
-    private lateinit var level : String
+    private lateinit var loadingSnackbar : Snackbar
+
     private lateinit var type : String
-    private var avatarPath = "default_avatars/placeholder.png"
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
 
-        level = intent.getStringExtra("level")
-        avatarPath = intent.getStringExtra("avatar_path")
+        presenter.attach(this)
+        presenter.setAvatar(intent.getStringExtra("avatar_path")!!)
+        presenter.setLevel(intent.getStringExtra("level")!!)
     }
 
     override fun onStart() {
         super.onStart()
-
-        text_username.text = if (auth.currentUser?.displayName.isNullOrEmpty()) {
-            auth.currentUser?.email
-        } else {
-            auth.currentUser?.displayName
-        }
-
-        text_level.text = level
-
-        setAvatar()
 
         card_avatar.setOnClickListener {
             val dialog = AvatarDialog()
@@ -60,51 +49,69 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPass
         }
     }
 
+
+
     override fun applyPassword(password : String, repeat : String) {
         if (password == repeat) {
-            val bar = Snackbar.make(layout_user, R.string.loading, Snackbar.LENGTH_INDEFINITE)
-            val contentLay = bar.view.findViewById<View>(R.id.snackbar_text).parent as LinearLayout
-            val item = ProgressBar(this)
+            loadingSnackbar = buildLoadingSnackbar()
+            loadingSnackbar.show()
 
-            contentLay.gravity = Gravity.CENTER_VERTICAL
-            contentLay.addView(item, 70, 70)
-            bar.show()
-
-            auth.currentUser?.updatePassword(password)?.addOnCompleteListener {
-                bar.dismiss()
-                Snackbar.make(layout_user, R.string.password_has_been_changed, Snackbar.LENGTH_LONG).show()
-            }
+            presenter.updatePassword(password)
         } else {
             Snackbar.make(layout_user, R.string.passwords_do_not_match, Snackbar.LENGTH_LONG).show()
         }
     }
 
     override fun applyText(text : String) {
-        val bar = Snackbar.make(layout_user, R.string.loading, Snackbar.LENGTH_INDEFINITE)
-        val contentLay = bar.view.findViewById<View>(R.id.snackbar_text).parent as LinearLayout
-        val item = ProgressBar(this)
-
-        contentLay.gravity = Gravity.CENTER_VERTICAL
-        contentLay.addView(item, 70, 70)
-        bar.show()
-
+        loadingSnackbar = buildLoadingSnackbar()
+        loadingSnackbar.show()
 
         if (type == "Email") {
-            auth.currentUser?.updateEmail(text)?.addOnCompleteListener {
-                bar.dismiss()
-                Snackbar.make(layout_user, R.string.email_has_been_changed, Snackbar.LENGTH_LONG).show()
-                updateUsername()
-            }
+            presenter.updateEmail(text)
         } else {
-            val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(text).build()
-
-            auth.currentUser?.updateProfile(profileUpdates)?.addOnCompleteListener {
-                bar.dismiss()
-                Snackbar.make(layout_user, R.string.username_has_been_changed, Snackbar.LENGTH_LONG).show()
-                updateUsername()
-            }
+            presenter.updateUsername(text)
         }
     }
+
+    override fun applyAvatar(chosen: String) {
+        loadingSnackbar = buildLoadingSnackbar()
+        loadingSnackbar.show()
+
+        presenter.updateAvatar(chosen)
+    }
+
+
+
+    override fun setUsername(username: String) {
+        text_username.text = username
+    }
+
+    override fun setAvatar(ref: StorageReference) {
+        GlideApp.with(layout_user)
+            .load(ref)
+            .placeholder(R.drawable.avatar_placeholder)
+            .into(imageview_avatar)
+    }
+
+    override fun setLevel(level: String) {
+        text_level.text = level
+    }
+
+
+
+    override fun showError() {
+        if (::loadingSnackbar.isInitialized && loadingSnackbar.isShown) {
+            loadingSnackbar.dismiss()
+        }
+        Snackbar.make(layout_user, R.string.error, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun showSuccessSnackbar(stringResId : Int) {
+        loadingSnackbar.dismiss()
+        Snackbar.make(layout_user, stringResId, Snackbar.LENGTH_LONG).show()
+    }
+
+
 
     fun onEmailChangeClickButton(view : View) {
         type = "Email"
@@ -133,7 +140,8 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPass
 
             }
             .setPositiveButton(R.string.yes) { _, _ ->
-                auth.signOut()
+                presenter.logOut()
+
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -146,33 +154,16 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPass
         onBackPressed()
     }
 
-    private fun updateUsername() {
-        text_username.text = if (auth.currentUser?.displayName.isNullOrEmpty()) {
-            auth.currentUser?.email
-        } else {
-            auth.currentUser?.displayName
-        }
-    }
 
-    private fun setAvatar() {
 
-        val ref = storage.getReference(avatarPath)
+    private fun buildLoadingSnackbar() : Snackbar {
+        val bar = Snackbar.make(layout_user, R.string.loading, Snackbar.LENGTH_INDEFINITE)
+        val contentLay = bar.view.findViewById<View>(R.id.snackbar_text).parent as LinearLayout
+        val item = ProgressBar(this)
 
-        GlideApp.with(this)
-            .load(ref)
-            .placeholder(R.drawable.avatar_placeholder)
-            .into(imageview_avatar)
+        contentLay.gravity = Gravity.CENTER_VERTICAL
+        contentLay.addView(item, 70, 70)
 
-    }
-
-    override fun applyAvatar(chosen: String) {
-        val ref = storage.getReference(chosen)
-
-        GlideApp.with(this)
-            .load(ref)
-            .placeholder(R.drawable.avatar_placeholder)
-            .into(imageview_avatar)
-
-        firestore.document("users/${auth.currentUser?.uid}").update("avatar", chosen)
+        return bar
     }
 }

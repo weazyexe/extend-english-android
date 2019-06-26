@@ -8,6 +8,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="network_error">Network error</string>
+    <string name="error">Oops, error, wutt?</string>
 
 
     <string name="title_activity_main">MainActivity</string>
@@ -29,7 +30,7 @@
     <string name="username">Username</string>
     <string name="choose_image">Choose image</string>
     <string name="set_an_image">Set an image</string>
-    <string name="error">Unable to create user. Try again</string>
+    <string name="error_user">Unable to create user. Try again</string>
     <string-array name="levels">
         <item>Newbie</item>
         <item>Elementary</item>
@@ -98,7 +99,8 @@
     <string name="email_has_been_changed">Your e-mail has been changed</string>
     <string name="username_has_been_changed">Your username has been changed</string>
     <string name="logout_message">Are you sure you want to log out?</string>
-    <string name="password_has_been_changed">Your password has been changed</string>\
+    <string name="password_has_been_changed">Your password has been changed</string>
+    <string name="avatar_has_been_changed">Your avatar has been changed</string>
 
 
     <!--ABOUT ACTIVITY-->
