@@ -65,7 +65,7 @@ class AccountFragment : Fragment(), AccountContract.View {
         }
     }
 
-    override fun updateCategories(categories : ArrayList<Category>, allCategories: ArrayList<Category>) {
+    override fun updateAdapter(categories : ArrayList<Category>, allCategories: ArrayList<Category>) {
 
         val mOnClickListener = View.OnClickListener {
             val intent = Intent(activity, CategoriesActivity::class.java)
@@ -79,13 +79,9 @@ class AccountFragment : Fragment(), AccountContract.View {
             startActivityForResult(intent, CATEGORIES_ACTIVITY_CODE)
         }
 
-        if (!::adapter.isInitialized) {
-            adapter = CategoriesWidgetAdapter(categories, mOnClickListener)
-            recyclerview_categories_account.adapter = adapter
-            recyclerview_categories_account.layoutManager = manager
-        } else {
-            adapter.setCategories(categories)
-        }
+        adapter = CategoriesWidgetAdapter(categories, mOnClickListener)
+        recyclerview_categories_account.adapter = adapter
+        recyclerview_categories_account.layoutManager = manager
     }
 
     override fun setAvatar(reference : StorageReference) {
@@ -128,10 +124,14 @@ class AccountFragment : Fragment(), AccountContract.View {
 
         when (requestCode) {
             CATEGORIES_ACTIVITY_CODE -> {
+                if (data != null && resultCode == Activity.RESULT_OK) {
+                    val categories = data.getSerializableExtra("categories") as ArrayList<Category>
 
+                    presenter.updateCategories(categories)
+                }
             }
             USER_ACTIVITY_CODE -> {
-                if (data != null) {
+                if (data != null && resultCode == Activity.RESULT_OK) {
                     val username = data.getStringExtra("username")!!
                     val avatar = data.getStringExtra("avatar")!!
                     val level = data.getStringExtra("level")!!

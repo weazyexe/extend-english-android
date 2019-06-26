@@ -1,38 +1,72 @@
 package exe.weazy.extendenglish.view.activity
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.android.material.snackbar.Snackbar
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.CategoriesAdapter
+import exe.weazy.extendenglish.arch.CategoriesContract
 import exe.weazy.extendenglish.entity.Category
-import exe.weazy.extendenglish.tools.FirebaseHelper
+import exe.weazy.extendenglish.presenter.CategoriesPresenter
 import kotlinx.android.synthetic.main.activity_categories.*
 
-class CategoriesActivity : AppCompatActivity() {
+class CategoriesActivity : AppCompatActivity(), CategoriesContract.View {
 
-    private val firestore = FirebaseFirestore.getInstance()
+    private var presenter = CategoriesPresenter()
 
-    private lateinit var categories : ArrayList<Category>
-    private lateinit var allCategories : ArrayList<Category>
     private lateinit var adapter : CategoriesAdapter
     private lateinit var manager : LinearLayoutManager
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
 
-        categories = intent.getSerializableExtra("categories") as ArrayList<Category>
-        allCategories = intent.getSerializableExtra("allCategories") as ArrayList<Category>
+        presenter.attach(this)
     }
 
     override fun onStart() {
         super.onStart()
-        initializeRecyclerView()
+
+        val categories = intent.getSerializableExtra("categories") as ArrayList<Category>
+        val allCategories = intent.getSerializableExtra("allCategories") as ArrayList<Category>
+
+        presenter.setCategories(categories)
+        presenter.setAllCategories(allCategories)
+
+        initializeAdapter(categories, allCategories)
     }
+
+
+
+    override fun showError() {
+        Snackbar.make(layout_categories, R.string.error, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun showLoadingFAB() {
+        button_done.setImageDrawable(null)
+        progressbar_categories.visibility = View.VISIBLE
+    }
+
+    override fun showDoneFAB() {
+        button_done.setImageDrawable(getDrawable(R.drawable.ic_done_white_24dp))
+        progressbar_categories.visibility = View.GONE
+    }
+
+    override fun sendDataBackAndClose(categories : ArrayList<Category>) {
+        val intent = Intent()
+        intent.putExtra("categories", categories)
+
+        setResult(Activity.RESULT_OK, intent)
+        onBackPressed()
+    }
+
+
 
     fun onBackButtonClick(view : View) {
         onBackPressed()
@@ -40,23 +74,12 @@ class CategoriesActivity : AppCompatActivity() {
 
     fun onDoneButtonClick(view: View) {
         val checks = adapter.getChecks()
-        val selectedCategories = ArrayList<Category>()
-        for (i in 0 until (checks.size - 1)) {
-            if (checks[i]) {
-                selectedCategories.add(allCategories[i])
-            }
-        }
-
-        val run = fun() {
-            finishActivity(100)
-        }
-
-        button_done.setImageDrawable(null)
-        progressbar_categories.visibility = View.VISIBLE
-        FirebaseHelper.writeCategories(firestore, selectedCategories, run)
+        presenter.done(checks)
     }
 
-    private fun initializeRecyclerView() {
+
+
+    private fun initializeAdapter(categories: ArrayList<Category>, allCategories : ArrayList<Category>) {
 
         val checks = Array(allCategories.size) { false }
 

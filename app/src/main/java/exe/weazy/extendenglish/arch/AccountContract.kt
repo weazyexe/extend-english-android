@@ -14,7 +14,7 @@ interface AccountContract {
     }
 
     interface View {
-        fun updateCategories(categories: ArrayList<Category>, allCategories: ArrayList<Category>)
+        fun updateAdapter(categories: ArrayList<Category>, allCategories: ArrayList<Category>)
         fun setAvatar(reference : StorageReference)
         fun setUsername(username : String)
         fun setLevel(level : String)
@@ -29,6 +29,7 @@ interface AccountContract {
         fun getUserActivityBundle() : Bundle
         fun setAvatar(path : String)
         fun setLevel(level : String)
+        fun updateCategories(categories: ArrayList<Category>)
     }
 
     interface LoadingListener {

@@ -109,6 +109,12 @@ class AccountPresenter : AccountContract.Presenter, AccountContract.LoadingListe
         view.showError()
     }
 
+    override fun updateCategories(categories: ArrayList<Category>) {
+        this.categories = categories
+
+        view.updateAdapter(categories, allCategories)
+    }
+
 
 
     private fun afterLoad() {
@@ -117,7 +123,7 @@ class AccountPresenter : AccountContract.Presenter, AccountContract.LoadingListe
 
             view.setAvatar(ref)
             view.setLevel(level)
-            view.updateCategories(categories, allCategories)
+            view.updateAdapter(categories, allCategories)
 
             view.showScreen()
         }
