@@ -1,5 +1,6 @@
 package exe.weazy.extendenglish.presenter
 
+import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import exe.weazy.extendenglish.R
@@ -15,6 +16,7 @@ class UserPresenter : UserContract.Presenter, UserContract.LoadingListener {
     private val auth = FirebaseAuth.getInstance()
 
     private lateinit var level : String
+    private lateinit var username : String
     private var avatarPath = "default_avatars/placeholder.png"
 
 
@@ -31,24 +33,26 @@ class UserPresenter : UserContract.Presenter, UserContract.LoadingListener {
 
     override fun setLevel(level: String) {
         this.level = level
+
+        view.setLevel(level)
     }
 
     override fun setAvatar(path: String) {
         avatarPath = path
+
+        val ref = storage.getReference(avatarPath)
+
+        view.setAvatar(ref)
     }
 
     override fun setupUsername() {
-        val username = if (auth.currentUser?.displayName.isNullOrEmpty()) {
-            auth.currentUser?.email
+        username = if (auth.currentUser?.displayName.isNullOrEmpty()) {
+            auth.currentUser?.email!!
         } else {
-            auth.currentUser?.displayName
+            auth.currentUser?.displayName!!
         }
 
-        if (username != null) {
-            view.setUsername(username)
-        } else {
-            view.showError()
-        }
+        view.setUsername(username)
     }
 
 
@@ -74,9 +78,21 @@ class UserPresenter : UserContract.Presenter, UserContract.LoadingListener {
     }
 
 
+    override fun getAccountBundle(): Bundle {
+        val bundle = Bundle()
+
+        bundle.putString("username", username)
+        bundle.putString("avatar", avatarPath)
+        bundle.putString("level", level)
+
+        return bundle
+    }
+
+
 
     override fun onAvatarUpdateFinished() {
         view.showSuccessSnackbar(R.string.avatar_has_been_changed)
+        setAvatar(avatarPath)
     }
 
     override fun onAvatarUpdateFailure() {
@@ -85,6 +101,7 @@ class UserPresenter : UserContract.Presenter, UserContract.LoadingListener {
 
     override fun onEmailUpdateFinished() {
         view.showSuccessSnackbar(R.string.email_has_been_changed)
+        setupUsername()
     }
 
     override fun onEmailUpdateFailure() {
@@ -93,6 +110,7 @@ class UserPresenter : UserContract.Presenter, UserContract.LoadingListener {
 
     override fun onUsernameUpdateFinished() {
         view.showSuccessSnackbar(R.string.username_has_been_changed)
+        setupUsername()
     }
 
     override fun onUsernameUpdateFailure() {

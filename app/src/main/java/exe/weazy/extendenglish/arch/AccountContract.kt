@@ -27,6 +27,8 @@ interface AccountContract {
         fun attach(view : View)
         fun getAllData()
         fun getUserActivityBundle() : Bundle
+        fun setAvatar(path : String)
+        fun setLevel(level : String)
     }
 
     interface LoadingListener {

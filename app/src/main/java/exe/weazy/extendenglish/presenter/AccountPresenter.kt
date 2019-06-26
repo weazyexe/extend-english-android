@@ -66,6 +66,18 @@ class AccountPresenter : AccountContract.Presenter, AccountContract.LoadingListe
 
 
 
+    override fun setAvatar(path: String) {
+        avatarPath = path
+        view.setAvatar(storage.getReference(avatarPath))
+    }
+
+    override fun setLevel(level: String) {
+        this.level = level
+        view.setLevel(level)
+    }
+
+
+
     override fun onCategoriesLoadFinished(categories: ArrayList<Category>) {
         isCategoriesLoaded = true
         this.categories = categories

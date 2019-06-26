@@ -1,5 +1,6 @@
 package exe.weazy.extendenglish.view.activity
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -38,6 +39,7 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPass
         presenter.attach(this)
         presenter.setAvatar(intent.getStringExtra("avatar_path")!!)
         presenter.setLevel(intent.getStringExtra("level")!!)
+        presenter.setupUsername()
     }
 
     override fun onStart() {
@@ -152,6 +154,16 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPass
 
     fun onBackButtonClick(view : View) {
         onBackPressed()
+    }
+
+    override fun onBackPressed() {
+        val bundle = presenter.getAccountBundle()
+
+        intent.putExtras(bundle)
+
+        setResult(RESULT_OK, intent)
+
+        super.onBackPressed()
     }
 
 

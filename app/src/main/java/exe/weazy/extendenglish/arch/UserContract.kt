@@ -1,5 +1,6 @@
 package exe.weazy.extendenglish.arch
 
+import android.os.Bundle
 import com.google.firebase.storage.StorageReference
 
 interface UserContract {
@@ -29,6 +30,7 @@ interface UserContract {
         fun updateUsername(username : String)
         fun updateEmail(email : String)
         fun updatePassword(password : String)
+        fun getAccountBundle() : Bundle
     }
 
     interface LoadingListener {

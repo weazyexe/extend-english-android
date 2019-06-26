@@ -23,6 +23,9 @@ import kotlinx.android.synthetic.main.fragment_account.*
 
 class AccountFragment : Fragment(), AccountContract.View {
 
+    private val CATEGORIES_ACTIVITY_CODE = 100
+    private val USER_ACTIVITY_CODE = 101
+
     private var presenter = AccountPresenter()
 
     private var manager = GridLayoutManager(activity, 3)
@@ -58,7 +61,7 @@ class AccountFragment : Fragment(), AccountContract.View {
             val bundle = presenter.getUserActivityBundle()
             intent.putExtras(bundle)
 
-            startActivity(intent, options.toBundle())
+            startActivityForResult(intent, USER_ACTIVITY_CODE, options.toBundle())
         }
     }
 
@@ -73,7 +76,7 @@ class AccountFragment : Fragment(), AccountContract.View {
 
             intent.putExtras(bundle)
 
-            startActivityForResult(intent, 100)
+            startActivityForResult(intent, CATEGORIES_ACTIVITY_CODE)
         }
 
         if (!::adapter.isInitialized) {
@@ -116,5 +119,28 @@ class AccountFragment : Fragment(), AccountContract.View {
         layout_account.visibility = View.VISIBLE
         progressbar_account.visibility = View.GONE
         layout_error.visibility = View.GONE
+    }
+
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            CATEGORIES_ACTIVITY_CODE -> {
+
+            }
+            USER_ACTIVITY_CODE -> {
+                if (data != null) {
+                    val username = data.getStringExtra("username")!!
+                    val avatar = data.getStringExtra("avatar")!!
+                    val level = data.getStringExtra("level")!!
+
+                    setUsername(username)
+                    presenter.setLevel(level)
+                    presenter.setAvatar(avatar)
+                }
+            }
+        }
     }
 }
