@@ -1,19 +1,10 @@
 package exe.weazy.extendenglish.entity
 
-import android.os.Parcel
-import android.os.Parcelable
-
-class Word : Parcelable {
+class Word {
     lateinit var word: String
     lateinit var transcription : String
     lateinit var translate: String
     lateinit var category: Category
-
-    constructor(parcel: Parcel) : this() {
-        word = parcel.readString()!!
-        translate = parcel.readString()!!
-        transcription = parcel.readString()!!
-    }
 
     constructor()
 
@@ -22,27 +13,6 @@ class Word : Parcelable {
         this.translate = translate
         this.transcription = transcription
         this.category = category
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(word)
-        parcel.writeString(translate)
-        parcel.writeString(transcription)
-        parcel.writeString(category.name)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<Word> {
-        override fun createFromParcel(parcel: Parcel): Word {
-            return Word(parcel)
-        }
-
-        override fun newArray(size: Int): Array<Word?> {
-            return arrayOfNulls(size)
-        }
     }
 
     override fun equals(other: Any?): Boolean {

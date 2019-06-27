@@ -2,267 +2,266 @@ package exe.weazy.extendenglish.view.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.CategoriesAdapter
+import exe.weazy.extendenglish.arch.LoginContract
 import exe.weazy.extendenglish.entity.Category
-import exe.weazy.extendenglish.entity.Level
-import exe.weazy.extendenglish.entity.Step
-import exe.weazy.extendenglish.tools.FirebaseHelper
-import exe.weazy.extendenglish.tools.StringHelper
+import exe.weazy.extendenglish.presenter.LoginPresenter
 import exe.weazy.extendenglish.tools.UiHelper
-import exe.weazy.extendenglish.viewmodel.LoginViewModel
+import exe.weazy.extendenglish.view.fragment.*
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_login.button_back
+import kotlinx.android.synthetic.main.activity_user.*
+import kotlinx.android.synthetic.main.fragment_account.*
 import kotlinx.android.synthetic.main.fragment_categories.*
 import kotlinx.android.synthetic.main.fragment_confirm_password.*
 import kotlinx.android.synthetic.main.fragment_email.*
 import kotlinx.android.synthetic.main.fragment_password.*
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), LoginContract.View {
 
-    private lateinit var viewModel: LoginViewModel
+    private lateinit var welcomeFragment: WelcomeFragment
+    private lateinit var emailFragment: EmailFragment
+    private lateinit var passwordFragment: PasswordFragment
+    private lateinit var confirmPasswordFragment: ConfirmPasswordFragment
+    private lateinit var categoriesFragment : CategoriesFragment
+    private var active = Fragment()
 
-    private val firestore = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
+    private var newPosition = 0
+    private var startingPosition = 0
 
-    private lateinit var navController : NavController
-
-    private lateinit var allCategories : ArrayList<Category>
-
-    private lateinit var email : String
-    private lateinit var password : String
+    private var presenter = LoginPresenter()
 
     private lateinit var adapter : CategoriesAdapter
     private lateinit var manager: LinearLayoutManager
-
-    private var isSignIn = true
-    private var step = Step.WELCOME
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
-        navController = Navigation.findNavController(this, R.id.nav_fragment_login)
+        loadFragments()
+
+        presenter.attach(this)
     }
 
     override fun onStart() {
         super.onStart()
-        updateUI(auth.currentUser)
+
+        presenter.checkAccount()
     }
 
     override fun onBackPressed() {
-        goBack()
+        presenter.back()
     }
 
 
-    fun onSignInButtonClick(view : View) {
-        startLogIn(true)
+    override fun showBackButton() {
+        button_back.visibility = View.VISIBLE
     }
 
-    fun onBackButtonClick(view : View) {
-        goBack()
+    override fun showWelcome() {
+        newPosition = 0
+        supportFragmentManager.beginTransaction().show(welcomeFragment).commit()
     }
 
-    fun onCreateButtonClick(view: View) {
-        startLogIn(false)
-    }
-
-    fun onNextButtonClick(view : View) {
-        when (step) {
-            Step.WELCOME -> {
-                goToEmail()
-            }
-
-            Step.EMAIL -> {
-                goToPassword()
-            }
-
-            Step.PASSWORD -> {
-                passwordHandle()
-            }
-
-            Step.CONFIRM_PASSWORD -> {
-                confirmPasswordHandle()
-            }
-
-            Step.CATEGORIES -> {
-                categoriesHandle()
-            }
-        }
-    }
-
-
-    private fun initializeAllCategoriesObserver() {
-        val allCategoriesLiveData = viewModel.getCategories()
-        allCategoriesLiveData.observe(this, Observer {
-            allCategories = it
-
-            initializeRecyclerView()
-            recyclerview_categories_login.visibility = View.VISIBLE
-            UiHelper.hideView(progressbar_categories)
-        })
-    }
-
-
-
-    private fun updateUI(user : FirebaseUser?) {
-        if (user != null) {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-    }
-
-
-
-
-    private fun startLogIn(isSignIn : Boolean) {
-        this.isSignIn = isSignIn
-
-        step = Step.EMAIL
-
-        navController.navigate(R.id.action_welcomeFragment_to_emailFragment)
-
+    override fun showEmail() {
         button_next.show()
         UiHelper.showView(button_back)
+
+        newPosition++
+        changeFragment(emailFragment)
+        edittext_email.requestFocus()
     }
 
-
-    private fun goBack() {
-        when (step) {
-            Step.WELCOME -> {
-                step = Step.WELCOME
-                onBackPressed()
-            }
-
-            Step.EMAIL -> {
-                step = Step.WELCOME
-                navController.popBackStack()
-
-                button_next.hide()
-                UiHelper.hideView(button_back)
-            }
-
-            Step.PASSWORD -> {
-                step = Step.EMAIL
-                navController.popBackStack()
-            }
-
-            Step.CONFIRM_PASSWORD -> {
-                step = Step.PASSWORD
-                navController.popBackStack()
-            }
-
-            Step.CATEGORIES -> {
-                step = Step.CONFIRM_PASSWORD
-                navController.popBackStack()
-            }
-        }
+    override fun showPassword() {
+        newPosition++
+        changeFragment(passwordFragment)
+        edittext_password.requestFocus()
     }
 
-    private fun goToEmail() {
-        step = Step.EMAIL
-
-        navController.navigate(R.id.action_welcomeFragment_to_emailFragment)
+    override fun showConfirmPassword() {
+        newPosition++
+        changeFragment(confirmPasswordFragment)
+        edittext_confirm_password.setText("", TextView.BufferType.EDITABLE)
+        edittext_confirm_password.requestFocus()
     }
 
-    private fun goToPassword() {
-        step = Step.PASSWORD
+    override fun showCategories(categories: ArrayList<Category>) {
+        newPosition++
+        UiHelper.hideKeyboard(layout_login, this)
+        changeFragment(categoriesFragment)
 
-        email = edittext_email.text.toString()
-        navController.navigate(R.id.action_emailFragment_to_passwordFragment)
-    }
-
-    private fun passwordHandle() {
-        password = edittext_password.text.toString()
-
-        if (!isSignIn) {
-            step = Step.CONFIRM_PASSWORD
-            navController.navigate(R.id.action_passwordFragment_to_confirmPasswordFragment)
-        } else {
-            button_next.setImageDrawable(null)
-            progressbar_sign_in.visibility = View.VISIBLE
-
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    updateUI(auth.currentUser)
-                } else {
-                    progressbar_sign_in.visibility = View.GONE
-                    Snackbar.make(layout_login, R.string.wrong_email_or_password, Snackbar.LENGTH_SHORT).show()
-                    button_next.setImageDrawable(getDrawable(R.drawable.ic_arrow_forward_white_24dp))
-                }
-            }
-        }
-    }
-
-    private fun confirmPasswordHandle() {
-        // If passwords don't match
-        if (password != edittext_confirm_password.text.toString()) {
-            Snackbar.make(layout_login, R.string.passwords_do_not_match, Snackbar.LENGTH_SHORT).show()
-        } else {
-            step = Step.CATEGORIES
-            navController.navigate(R.id.action_confirmPasswordFragment_to_categoriesFragment)
-
-            UiHelper.hideKeyboard(layout_login, this)
-
-            // Create user and write init info: level (Newbie) and progress (learnToday)
-            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-                initializeAllCategoriesObserver()
-                writeInitAccountInfo()
-            }
-        }
-    }
-
-    private fun categoriesHandle() {
-        val checks = adapter.getChecks()
-        val selectedCategories = ArrayList<Category>()
-        for (i in 0..(checks.size - 1)) {
-            if (checks[i]) selectedCategories.add(allCategories[i])
-        }
-
-        val run = fun() {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-        button_next.setImageDrawable(null)
-        progressbar_sign_in.visibility = View.VISIBLE
-        FirebaseHelper.writeCategories(firestore, selectedCategories, run)
-    }
-
-
-
-    private fun writeInitAccountInfo() {
-        val hashMap = HashMap<String, String>()
-        hashMap["level"] = StringHelper.upperSnakeToUpperCamel(Level.NEWBIE.name)
-        hashMap["progress"] = "learnToday"
-        hashMap["avatar"] = "default_avatars/placeholder.png"
-
-        val user = auth.currentUser
-        if (user != null) {
-            firestore.document("users/${user.uid}").set(hashMap)
-        }
-    }
-
-    private fun initializeRecyclerView() {
         if (!::adapter.isInitialized && !::manager.isInitialized) {
-            adapter = CategoriesAdapter(allCategories)
+            adapter = CategoriesAdapter(categories)
             manager = LinearLayoutManager(this)
             recyclerview_categories_login.adapter = adapter
             recyclerview_categories_login.layoutManager = manager
+
+            progressbar_categories.visibility = View.GONE
+            recyclerview_categories_login.visibility = View.VISIBLE
         }
+    }
+
+    override fun updateUI() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    override fun goBack(toWelcome : Boolean) {
+        if (toWelcome) {
+            button_next.hide()
+            UiHelper.hideView(button_back)
+        }
+
+        when {
+            active == welcomeFragment -> {
+                super.onBackPressed()
+            }
+
+            active == emailFragment -> {
+                newPosition--
+                changeFragment(welcomeFragment)
+            }
+
+            active == passwordFragment -> {
+                newPosition--
+                changeFragment(emailFragment)
+                edittext_email.requestFocus()
+            }
+
+            active == confirmPasswordFragment -> {
+                newPosition--
+                changeFragment(passwordFragment)
+                edittext_password.requestFocus()
+            }
+
+            active == categoriesFragment -> {
+                super.onBackPressed()
+            }
+            else -> {
+                showErrorSnackbar()
+            }
+        }
+    }
+
+
+
+    override fun readEmail() {
+        val email = edittext_email.text.toString()
+        presenter.setEmail(email)
+    }
+
+    override fun readPassword() {
+        val password = edittext_password.text.toString()
+        presenter.setPassword(password)
+    }
+
+    override fun readConfirmation() {
+        val confirmation = edittext_confirm_password.text.toString()
+        presenter.setConfirmation(confirmation)
+    }
+
+
+
+    override fun showDefaultFAB() {
+        progressbar_sign_in.visibility = View.GONE
+        button_next.setImageDrawable(getDrawable(R.drawable.ic_arrow_forward_white_24dp))
+    }
+
+    override fun showLoadingFAB() {
+        button_next.setImageDrawable(null)
+        progressbar_sign_in.visibility = View.VISIBLE
+    }
+
+    override fun showDoneFAB() {
+        button_next.show()
+
+        progressbar_sign_in.visibility = View.GONE
+        button_next.setImageDrawable(getDrawable(R.drawable.ic_done_white_24dp))
+
+        val dp = resources.displayMetrics.density
+        val centerX = resources.displayMetrics.widthPixels / dp
+
+        button_next.animate()
+            .setDuration(400)
+            .translationX(-centerX - 10)
+            .start()
+    }
+
+
+
+    override fun showWrongEmailOrPasswordSnackbar() {
+        Snackbar.make(layout_login, R.string.wrong_email_or_password, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun showPasswordsDoNotMatchSnackbar() {
+        Snackbar.make(layout_login, R.string.passwords_do_not_match, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun showErrorSnackbar() {
+        Snackbar.make(layout_login, R.string.error, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun showChooseCategoriesSnackbar() {
+        Snackbar.make(layout_login, R.string.choose_categories, Snackbar.LENGTH_LONG).show()
+    }
+
+
+
+    fun onSignInButtonClick(view : View) {
+        presenter.logInToAccount()
+    }
+
+    fun onBackButtonClick(view : View) {
+        onBackPressed()
+    }
+
+    fun onCreateButtonClick(view: View) {
+        presenter.createAccount()
+    }
+
+    fun onNextButtonClick(view : View) {
+        if (::adapter.isInitialized) {
+            presenter.next(adapter.getChecks())
+        } else {
+            presenter.next()
+        }
+    }
+
+
+    private fun loadFragments() {
+        welcomeFragment = WelcomeFragment()
+        emailFragment = EmailFragment()
+        passwordFragment = PasswordFragment()
+        confirmPasswordFragment = ConfirmPasswordFragment()
+        categoriesFragment = CategoriesFragment()
+
+        supportFragmentManager.beginTransaction().add(R.id.layout_fragment, categoriesFragment).hide(categoriesFragment).commit()
+        supportFragmentManager.beginTransaction().add(R.id.layout_fragment, confirmPasswordFragment).hide(confirmPasswordFragment).commit()
+        supportFragmentManager.beginTransaction().add(R.id.layout_fragment, passwordFragment).hide(passwordFragment).commit()
+        supportFragmentManager.beginTransaction().add(R.id.layout_fragment, emailFragment).hide(emailFragment).commit()
+        supportFragmentManager.beginTransaction().add(R.id.layout_fragment, welcomeFragment).hide(welcomeFragment).commit()
+
+        active = welcomeFragment
+    }
+
+    private fun changeFragment(fragment : Fragment) {
+        if (startingPosition > newPosition) {
+            supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right).show(fragment).hide(active).commit()
+        } else {
+            supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left).show(fragment).hide(active).commit()
+        }
+
+        startingPosition = newPosition
+        active = fragment
     }
 }
