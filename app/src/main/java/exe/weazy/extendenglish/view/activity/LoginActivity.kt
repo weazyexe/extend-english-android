@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import exe.weazy.extendenglish.R
@@ -16,6 +18,7 @@ import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.presenter.LoginPresenter
 import exe.weazy.extendenglish.tools.UiHelper
 import exe.weazy.extendenglish.view.fragment.*
+import exe.weazy.extendenglish.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.button_back
 import kotlinx.android.synthetic.main.activity_user.*
@@ -37,7 +40,9 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
     private var newPosition = 0
     private var startingPosition = 0
 
-    private var presenter = LoginPresenter()
+    private lateinit var presenter : LoginPresenter
+
+    private lateinit var viewModel : LoginViewModel
 
     private lateinit var adapter : CategoriesAdapter
     private lateinit var manager: LinearLayoutManager
@@ -47,15 +52,15 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
+        val presenterLiveData = viewModel.getPresenter()
+        presenterLiveData.observe(this, Observer {
+            presenter = it
+            presenter.attach(this)
+            presenter.checkAccount()
+        })
+
         loadFragments()
-
-        presenter.attach(this)
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        presenter.checkAccount()
     }
 
     override fun onBackPressed() {

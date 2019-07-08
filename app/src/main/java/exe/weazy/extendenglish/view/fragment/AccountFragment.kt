@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.storage.StorageReference
 import exe.weazy.extendenglish.R
@@ -19,6 +21,7 @@ import exe.weazy.extendenglish.presenter.AccountPresenter
 import exe.weazy.extendenglish.tools.GlideApp
 import exe.weazy.extendenglish.view.activity.CategoriesActivity
 import exe.weazy.extendenglish.view.activity.UserActivity
+import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_account.*
 
 class AccountFragment : Fragment(), AccountContract.View {
@@ -26,7 +29,8 @@ class AccountFragment : Fragment(), AccountContract.View {
     private val CATEGORIES_ACTIVITY_CODE = 100
     private val USER_ACTIVITY_CODE = 101
 
-    private var presenter = AccountPresenter()
+    private lateinit var presenter : AccountPresenter
+    private lateinit var viewModel : MainViewModel
 
     private var manager = GridLayoutManager(activity, 3)
     private lateinit var adapter : CategoriesWidgetAdapter
@@ -34,35 +38,26 @@ class AccountFragment : Fragment(), AccountContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        presenter.attach(this)
+        viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+
+        val presenterLiveData = viewModel.getAccountPresenter()
+        presenterLiveData.observe(this, Observer {
+            presenter = it
+            presenter.attach(this)
+
+            if (!::adapter.isInitialized) {
+                presenter.getAllData()
+            }
+
+            card_account.setOnClickListener {
+                openUserActivity()
+            }
+        })
     }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_account, null)
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        if (!::adapter.isInitialized) {
-            presenter.getAllData()
-        }
-
-        card_account.setOnClickListener {
-            val intent = Intent(context, UserActivity::class.java)
-            val options = ActivityOptions.makeSceneTransitionAnimation(activity as Activity,
-                Pair.create<View, String>(imageview_avatar,"trtext_avatar"),
-                Pair.create<View, String>(text_username,"trtext_username"),
-                Pair.create<View, String>(text_level,"trtext_level"),
-                Pair.create<View, String>(card_account,"trtext_card"))
-
-
-            val bundle = presenter.getUserActivityBundle()
-            intent.putExtras(bundle)
-
-            startActivityForResult(intent, USER_ACTIVITY_CODE, options.toBundle())
-        }
     }
 
     override fun updateAdapter(categories : ArrayList<Category>, allCategories: ArrayList<Category>) {
@@ -142,5 +137,20 @@ class AccountFragment : Fragment(), AccountContract.View {
                 }
             }
         }
+    }
+
+    private fun openUserActivity() {
+        val intent = Intent(context, UserActivity::class.java)
+        val options = ActivityOptions.makeSceneTransitionAnimation(activity as Activity,
+            Pair.create<View, String>(imageview_avatar,"trtext_avatar"),
+            Pair.create<View, String>(text_username,"trtext_username"),
+            Pair.create<View, String>(text_level,"trtext_level"),
+            Pair.create<View, String>(card_account,"trtext_card"))
+
+
+        val bundle = presenter.getUserActivityBundle()
+        intent.putExtras(bundle)
+
+        startActivityForResult(intent, USER_ACTIVITY_CODE, options.toBundle())
     }
 }

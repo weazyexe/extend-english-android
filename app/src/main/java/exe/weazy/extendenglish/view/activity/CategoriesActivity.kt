@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import exe.weazy.extendenglish.R
@@ -12,11 +14,14 @@ import exe.weazy.extendenglish.adapter.CategoriesAdapter
 import exe.weazy.extendenglish.arch.CategoriesContract
 import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.presenter.CategoriesPresenter
+import exe.weazy.extendenglish.viewmodel.CategoriesViewModel
 import kotlinx.android.synthetic.main.activity_categories.*
 
 class CategoriesActivity : AppCompatActivity(), CategoriesContract.View {
 
-    private var presenter = CategoriesPresenter()
+    private lateinit var presenter : CategoriesPresenter
+
+    private lateinit var viewModel : CategoriesViewModel
 
     private lateinit var adapter : CategoriesAdapter
     private lateinit var manager : LinearLayoutManager
@@ -27,21 +32,24 @@ class CategoriesActivity : AppCompatActivity(), CategoriesContract.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
 
-        presenter.attach(this)
+        viewModel = ViewModelProviders.of(this).get(CategoriesViewModel::class.java)
+
+        val presenterLiveData = viewModel.getPresenter()
+        presenterLiveData.observe(this, Observer {
+            presenter = it
+            presenter.attach(this)
+
+            if (intent != null) {
+                val categories = intent.getSerializableExtra("categories") as ArrayList<Category>
+                val allCategories = intent.getSerializableExtra("allCategories") as ArrayList<Category>
+
+                presenter.setCategories(categories)
+                presenter.setAllCategories(allCategories)
+
+                initializeAdapter(categories, allCategories)
+            }
+        })
     }
-
-    override fun onStart() {
-        super.onStart()
-
-        val categories = intent.getSerializableExtra("categories") as ArrayList<Category>
-        val allCategories = intent.getSerializableExtra("allCategories") as ArrayList<Category>
-
-        presenter.setCategories(categories)
-        presenter.setAllCategories(allCategories)
-
-        initializeAdapter(categories, allCategories)
-    }
-
 
 
     override fun showError() {

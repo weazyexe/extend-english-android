@@ -9,6 +9,7 @@ import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.view.fragment.AccountFragment
 import exe.weazy.extendenglish.view.fragment.LearnFragment
 import exe.weazy.extendenglish.view.fragment.SettingsFragment
+import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -18,6 +19,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var accountFragment : AccountFragment
     private lateinit var settingsFragment : SettingsFragment
     private var active = Fragment()
+
+    private lateinit var viewModel : MainViewModel
 
     private var newPosition = 1
     private var startingPosition = 1
@@ -54,6 +57,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         bottom_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 

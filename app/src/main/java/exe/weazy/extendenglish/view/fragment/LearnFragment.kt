@@ -11,6 +11,8 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
 import exe.weazy.extendenglish.R
@@ -19,12 +21,15 @@ import exe.weazy.extendenglish.arch.LearnContract
 import exe.weazy.extendenglish.entity.Word
 import exe.weazy.extendenglish.presenter.LearnPresenter
 import exe.weazy.extendenglish.tools.UiHelper
+import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_learn.*
 import java.io.File
 
 class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
 
-    private var presenter = LearnPresenter()
+    private lateinit var presenter : LearnPresenter
+
+    private lateinit var viewModel : MainViewModel
 
     private val manager by lazy { CardStackLayoutManager(activity?.applicationContext, this) }
     private lateinit var adapter: CardStackAdapter
@@ -34,22 +39,24 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        presenter.attach(this)
-    }
+        viewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+        val presenterLiveDate = viewModel.getLearnPresenter()
+        presenterLiveDate.observe(this, Observer {
+            presenter = it
+            presenter.attach(this)
 
-    override fun onStart() {
-        super.onStart()
-        if (!::adapter.isInitialized) {
-            adapter = CardStackAdapter(ArrayList(), ArrayList())
-            cardstack_words.adapter = adapter
-        }
+            if (!::adapter.isInitialized) {
+                adapter = CardStackAdapter(ArrayList(), ArrayList())
+                cardstack_words.adapter = adapter
+            }
 
-        val file = File(activity?.applicationContext?.filesDir, "allWords")
-        presenter.getAllData(file)
-
-        fab_update.setOnClickListener {
+            val file = File(activity?.applicationContext?.filesDir, "allWords")
             presenter.getAllData(file)
-        }
+
+            fab_update.setOnClickListener {
+                presenter.getAllData(file)
+            }
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

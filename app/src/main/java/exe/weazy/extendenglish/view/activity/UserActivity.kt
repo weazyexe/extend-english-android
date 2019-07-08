@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.StorageReference
 import exe.weazy.extendenglish.R
@@ -18,13 +20,16 @@ import exe.weazy.extendenglish.tools.GlideApp
 import exe.weazy.extendenglish.view.dialog.AvatarDialog
 import exe.weazy.extendenglish.view.dialog.NewPasswordDialog
 import exe.weazy.extendenglish.view.dialog.TextDialog
+import exe.weazy.extendenglish.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_user.*
 
 
 class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPasswordDialog.NewPasswordDialogListener,
         AvatarDialog.AvatarDialogListener, UserContract.View {
 
-    private var presenter = UserPresenter()
+    private lateinit var presenter : UserPresenter
+
+    private lateinit var viewModel : UserViewModel
 
     private lateinit var loadingSnackbar : Snackbar
 
@@ -36,22 +41,24 @@ class UserActivity : AppCompatActivity(), TextDialog.TextDialogListener, NewPass
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
 
-        presenter.attach(this)
-        presenter.setAvatar(intent.getStringExtra("avatar_path")!!)
-        presenter.setLevel(intent.getStringExtra("level")!!)
-        presenter.setupUsername()
+        viewModel = ViewModelProviders.of(this).get(UserViewModel::class.java)
+        val presenterLiveData = viewModel.getPresenter()
+        presenterLiveData.observe(this, Observer {
+            presenter = it
+            presenter.attach(this)
+            presenter.setupUsername()
+
+            if (intent != null) {
+                presenter.setAvatar(intent.getStringExtra("avatar_path")!!)
+                presenter.setLevel(intent.getStringExtra("level")!!)
+            }
+
+            card_avatar.setOnClickListener {
+                val dialog = AvatarDialog()
+                dialog.show(supportFragmentManager, "Avatar change dialog")
+            }
+        })
     }
-
-    override fun onStart() {
-        super.onStart()
-
-        card_avatar.setOnClickListener {
-            val dialog = AvatarDialog()
-            dialog.show(supportFragmentManager, "Avatar change dialog")
-        }
-    }
-
-
 
     override fun applyPassword(password : String, repeat : String) {
         if (password == repeat) {
