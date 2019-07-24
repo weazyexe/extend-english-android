@@ -1,6 +1,12 @@
 package exe.weazy.extendenglish.view.fragment
 
+import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.icu.util.Calendar
+import android.icu.util.TimeZone
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +16,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -20,6 +29,7 @@ import exe.weazy.extendenglish.adapter.CardStackAdapter
 import exe.weazy.extendenglish.arch.LearnContract
 import exe.weazy.extendenglish.entity.Word
 import exe.weazy.extendenglish.presenter.LearnPresenter
+import exe.weazy.extendenglish.tools.AppHelper
 import exe.weazy.extendenglish.tools.UiHelper
 import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_learn.*
@@ -71,7 +81,8 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
 
 
     override fun onCardDisappeared(view: View?, position: Int) {
-
+        doneLayout?.alpha = 0f
+        againLayout?.alpha = 0f
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {
@@ -121,6 +132,9 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
         doneLayout = view?.findViewById(R.id.layout_done)
         againLayout = view?.findViewById(R.id.layout_again)
 
+        doneLayout?.alpha = 0f
+        againLayout?.alpha = 0f
+
         presenter.cardAppeared(position, view)
     }
 
@@ -129,7 +143,9 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
     }
 
 
-
+    override fun configNotifications(time : Long) {
+        //AppHelper.setupNotification(activity!!, Calendar.getInstance(TimeZone.GMT_ZONE).timeInMillis + 5000)
+    }
 
     override fun updateCardStack(words: ArrayList<Word>) {
         adapter.setWords(words)

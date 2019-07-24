@@ -2,9 +2,14 @@ package exe.weazy.extendenglish.tools
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.core.app.NotificationCompat
+import exe.weazy.extendenglish.R
 
 class UiHelper {
     companion object {
@@ -20,7 +25,7 @@ class UiHelper {
         }
 
         /**
-         * Set view's visibility to GONE with crossfade animation
+         * Set view's visibility to GONE with cross fade animation
          */
         fun hideView(view : View?) {
             view?.alpha = 1f
@@ -35,7 +40,7 @@ class UiHelper {
         }
 
         /**
-         * Set view's visibility to VISIBLE with crossfade animation
+         * Set view's visibility to VISIBLE with cross fade animation
          */
         fun showView(view : View?) {
             view?.alpha = 0f
@@ -44,6 +49,28 @@ class UiHelper {
                 ?.alpha(1f)
                 ?.setDuration(500L)
                 ?.setListener(null)
+        }
+
+        fun showNotification(context: Context, title : String, text : String) {
+            val builder = NotificationCompat.Builder(context, "notify_001")
+                .setSmallIcon(R.drawable.logo1)
+                .setContentTitle(title)
+                .setContentText(text)
+
+            val notification = builder.build()
+
+            val nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                    "notify_001",
+                    "Repeat reminder",
+                    NotificationManager.IMPORTANCE_DEFAULT)
+
+                nManager.createNotificationChannel(channel)
+            }
+
+            nManager.notify(1, notification)
         }
     }
 }

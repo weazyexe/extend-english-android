@@ -126,4 +126,9 @@
     <string name="glide_desc">Media management • v4.9.0 • bumptech</string>
     <string name="card_stack_view">CardStackView</string>
     <string name="card_stack_view_desc">Tinder like swipeable cards • v2.3.2 • yuyakaido</string>
+
+
+    <!--NOTIFICATIONS-->
+    <string name="words_words">Words, words, words!</string>
+    <string name="lets_repeat_and_learn">Let\'s repeat and learn new words!</string>
 </resources>

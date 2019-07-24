@@ -22,6 +22,7 @@ interface LearnContract {
         fun showChooseCard(cardView: android.view.View)
         fun initializeCardStackAdapter(words : ArrayList<Word>, variants : ArrayList<Word>)
         fun setupCardStack()
+        fun configNotifications(time : Long)
     }
 
     interface Presenter {

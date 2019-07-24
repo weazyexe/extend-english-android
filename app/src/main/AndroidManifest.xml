@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="exe.weazy.extendenglish">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
@@ -9,6 +12,23 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <service
+                android:label="Notification service"
+                android:name=".notifications.NotifyService"
+                android:exported="false">
+        </service>
+
+        <receiver
+                android:name=".notifications.NotifyReceiver"
+                android:enabled="true"
+                android:exported="true"
+                android:label="Reminder to learn receiver">
+            <intent-filter>
+                <action android:name="ALARM_MANAGER_SET"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
         <activity android:name=".view.activity.AboutActivity">
         </activity>
         <activity android:name=".view.activity.CategoriesActivity">

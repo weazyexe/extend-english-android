@@ -11,7 +11,7 @@ import java.io.InputStream
 
 
 @GlideModule
-class EEGlideAppModule : AppGlideModule() {
+class FirebaseGlideAppModule : AppGlideModule() {
 
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
         // Register FirebaseImageLoader to handle StorageReference

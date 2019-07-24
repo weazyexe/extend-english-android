@@ -81,8 +81,8 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
                 }
             }
 
-            Direction.Bottom -> {
-
+            else -> {
+                
             }
         }
 
@@ -405,6 +405,7 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
                 progress = Progress.LEARNED
 
                 view.showEnd()
+                view.configNotifications(Calendar.getInstance(TimeZone.GMT_ZONE).timeInMillis + 10000)
             }
             else -> {
                 view.showError()

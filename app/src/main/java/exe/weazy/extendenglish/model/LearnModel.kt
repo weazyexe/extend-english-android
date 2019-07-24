@@ -224,7 +224,6 @@ class LearnModel(private val presenter: LearnPresenter) : LearnContract.Model {
     }
 
     override fun writeWordsByProgress(words: ArrayList<Word>, p: Progress) {
-
         var index = 0
         val collection = StringHelper.upperSnakeToLowerCamel(p.name)
 
