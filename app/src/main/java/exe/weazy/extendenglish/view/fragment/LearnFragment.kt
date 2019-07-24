@@ -31,7 +31,11 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
 
     private lateinit var viewModel : MainViewModel
 
+    private var doneLayout : View? = null
+    private var againLayout : View? = null
+
     private val manager by lazy { CardStackLayoutManager(activity?.applicationContext, this) }
+
     private lateinit var adapter: CardStackAdapter
 
 
@@ -71,7 +75,32 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {
-
+        when (direction) {
+            Direction.Left -> {
+                if (ratio >= 0.1f) {
+                    doneLayout?.alpha = ratio - 0.1f
+                    againLayout?.alpha = 0f
+                }
+                if (ratio > 0.5f) {
+                    doneLayout?.alpha = 0.5f
+                    againLayout?.alpha = 0f
+                }
+            }
+            Direction.Right -> {
+                if (ratio >= 0.1f) {
+                    doneLayout?.alpha = 0f
+                    againLayout?.alpha = ratio - 0.1f
+                }
+                if (ratio > 0.5f) {
+                    doneLayout?.alpha = 0f
+                    againLayout?.alpha = 0.5f
+                }
+            }
+            else -> {
+                doneLayout?.alpha = 0f
+                againLayout?.alpha = 0f
+            }
+        }
     }
 
     override fun onCardSwiped(direction: Direction?) {
@@ -81,12 +110,17 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
     }
 
     override fun onCardCanceled() {
-
+        doneLayout?.alpha = 0f
+        againLayout?.alpha = 0f
     }
 
     override fun onCardAppeared(view: View?, position: Int) {
 
         // FIXME: word/translate issue
+
+        doneLayout = view?.findViewById(R.id.layout_done)
+        againLayout = view?.findViewById(R.id.layout_again)
+
         presenter.cardAppeared(position, view)
     }
 
@@ -207,9 +241,9 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
             setScaleInterval(0.95f)
             setSwipeThreshold(0.3f)
             setMaxDegree(20.0f)
-            setDirections(listOf(Direction.Bottom, Direction.Right, Direction.Left))
+            setDirections(listOf(Direction.Right, Direction.Left))
             setCanScrollHorizontal(true)
-            setCanScrollVertical(true)
+            setCanScrollVertical(false)
             setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
             setOverlayInterpolator(LinearInterpolator())
         }

@@ -36,6 +36,8 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
     private var newKnow = ArrayList<Word>()
     private var learnedToRepeat = ArrayList<Word>()
+
+    // Repeat words again
     private var again = ArrayList<Word>()
     private var current = ArrayList<Word>()
     private var currentWord = Word()

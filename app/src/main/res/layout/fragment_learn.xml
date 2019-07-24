@@ -16,19 +16,19 @@
             android:id="@+id/layout_error"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible">
+            android:visibility="gone">
 
         <ImageView
-                android:src="@drawable/ic_error_outline_orange_24dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:src="@drawable/error"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:textSize="32sp"
                 android:textColor="@color/colorOrange"
                 android:textStyle="bold"/>
 
         <TextView
-                android:layout_marginTop="50dp"
+                android:layout_marginBottom="-100dp"
                 android:text="@string/network_error"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:textSize="18sp"
@@ -52,17 +52,17 @@
             android:layout_height="match_parent"
             android:visibility="visible">
 
-        <TextView
-                android:text="@string/smile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+        <ImageView
+                android:src="@drawable/relax"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:textSize="32sp"
                 android:textColor="@color/colorOrange"
                 android:textStyle="bold"/>
 
         <TextView
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="130dp"
                 android:text="@string/you_already_learn_today"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:textSize="18sp"
