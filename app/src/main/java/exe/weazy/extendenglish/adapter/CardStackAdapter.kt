@@ -12,7 +12,7 @@ import exe.weazy.extendenglish.entity.Word
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-class CardStackAdapter(private var words : ArrayList<Word>, var variants : ArrayList<Word>)
+class CardStackAdapter(private var words : ArrayList<Word>, private var variants : ArrayList<Word>)
     : RecyclerView.Adapter<CardStackAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -92,8 +92,15 @@ class CardStackAdapter(private var words : ArrayList<Word>, var variants : Array
     }
 
     fun setWords(words : ArrayList<Word>) {
-        this.words = words
+        this.words.clear()
+        this.words.addAll(words)
+
         notifyDataSetChanged()
+    }
+
+    fun setVariants(words : ArrayList<Word>) {
+        variants.clear()
+        variants.addAll(words)
     }
 
 
@@ -118,10 +125,10 @@ class CardStackAdapter(private var words : ArrayList<Word>, var variants : Array
         var choose3Button : Button
         var choose4Button : Button
 
-        var layoutVariant : FrameLayout
-        var layoutShow : FrameLayout
-        var layoutWrite : FrameLayout
-        var layoutChoose : FrameLayout
+        var layoutVariant : ViewGroup
+        var layoutShow : ViewGroup
+        var layoutWrite : ViewGroup
+        var layoutChoose : ViewGroup
 
         init {
             super.itemView

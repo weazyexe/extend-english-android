@@ -100,15 +100,16 @@
 
             <ImageView
                     android:src="@drawable/relax"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginBottom="40dp"
                     android:layout_gravity="center_vertical|center_horizontal"
                     android:textSize="32sp"
                     android:textColor="@color/colorOrange"
                     android:textStyle="bold"/>
 
             <TextView
-                    android:layout_marginTop="130dp"
+                    android:layout_marginTop="70dp"
                     android:text="@string/you_already_learn_today"
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:textSize="18sp"

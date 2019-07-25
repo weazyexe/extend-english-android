@@ -61,6 +61,7 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
 
             if (!::adapter.isInitialized) {
                 adapter = CardStackAdapter(ArrayList(), ArrayList())
+                initializeCardStackView()
                 cardstack_words.adapter = adapter
             }
 
@@ -238,8 +239,8 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
     }
 
     override fun initializeCardStackAdapter(words : ArrayList<Word>, variants : ArrayList<Word>) {
-        adapter = CardStackAdapter(words, variants)
-        cardstack_words.adapter = adapter
+        adapter.setVariants(variants)
+        adapter.setWords(words)
     }
 
     override fun setupCardStack() {

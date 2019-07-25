@@ -64,6 +64,7 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
     override fun cardSwiped(direction: Direction) {
         remain--
+        current.removeAt(0)
 
         when (direction) {
             Direction.Right -> {
@@ -90,7 +91,7 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
     }
 
     override fun cardAppeared(position : Int, cardView: View?) {
-        currentWord = current[position]
+        currentWord = current[0]
 
         if (cardView != null) {
             when (progress) {
@@ -175,26 +176,33 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
         }
 
-        this.allWords.shuffle()
-        val variants = this.allWords.filter { categories.contains(it.category) } as ArrayList
-        view.initializeCardStackAdapter(current, variants)
+        view.initializeCardStackAdapter(current, generateVariants())
         remain = current.size
     }
 
     override fun getAllData(file : File) {
-        view.showLoading()
-        preLoad()
+        if (current.isEmpty() && (!::progress.isInitialized || progress != Progress.LEARNED)) {
+            view.showLoading()
+            preLoad()
 
-        model.loadAllWords(file)
-        model.loadCategories()
-        model.loadKnowWords()
-        model.loadLastActivity()
-        model.loadLearnedWords()
-        model.loadRepeatFourDaysWords()
-        model.loadRepeatThreeDaysWords()
-        model.loadRepeatTwoDaysWords()
-        model.loadRepeatYesterdayWords()
-        model.loadProgress()
+            model.loadAllWords(file)
+            model.loadCategories()
+            model.loadKnowWords()
+            model.loadLastActivity()
+            model.loadLearnedWords()
+            model.loadRepeatFourDaysWords()
+            model.loadRepeatThreeDaysWords()
+            model.loadRepeatTwoDaysWords()
+            model.loadRepeatYesterdayWords()
+            model.loadProgress()
+        } else {
+            if (current.isEmpty()) {
+                view.showEnd()
+            } else {
+                view.initializeCardStackAdapter(current, generateVariants())
+                view.showCardStack()
+            }
+        }
     }
 
     override fun onLoadAllWordsFinished(words: ArrayList<Word>) {
@@ -305,7 +313,7 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
         if (progress == Progress.LEARN_TODAY && toLearn < 7 && remain == 0) {
             view.showLoading()
 
-            generateLearnTodayWords()
+            generateLearnTodayWords(true)
             setCurrentWordList(learnToday)
 
             view.updateCardStack(learnToday)
@@ -324,7 +332,6 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
             comeNextDay()
 
             model.writeProgress(progress)
-            view.showCardStack()
         }
 
         if (again.isNotEmpty() && remain == 0) {
@@ -335,18 +342,20 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
         }
     }
 
-    private fun generateLearnTodayWords() {
-        val repeatWords = learned + repeatFourDays + repeatThreeDays + repeatTwoDays + repeatYesterday
-        var index = 0
+    private fun generateLearnTodayWords(isUpdate : Boolean = false) {
+        if (!::learnToday.isInitialized || isUpdate) {
+            val repeatWords = learned + repeatFourDays + repeatThreeDays + repeatTwoDays + repeatYesterday
+            var index = 0
 
-        val toLearnWordList = allWords.filter { categories.contains(it.category) } as ArrayList<Word>
-        toLearnWordList.shuffle()
+            val toLearnWordList = allWords.filter { categories.contains(it.category) } as ArrayList<Word>
+            toLearnWordList.shuffle()
 
-        learnToday = ArrayList()
-        while (learnToday.size < 7) {
-            val word = toLearnWordList[index++]
-            if (!repeatWords.contains(word) && !learnedToRepeat.contains(word)) {
-                learnToday.add(word)
+            learnToday = ArrayList()
+            while (learnToday.size < 7) {
+                val word = toLearnWordList[index++]
+                if (!repeatWords.contains(word) && !learnedToRepeat.contains(word)) {
+                    learnToday.add(word)
+                }
             }
         }
     }
@@ -358,6 +367,7 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
                 view.updateCardStack(repeatFourDays)
                 setCurrentWordList(repeatFourDays)
+                view.showCardStack()
             }
 
             Progress.REPEAT_FOUR_DAYS -> {
@@ -367,6 +377,7 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
                 view.updateCardStack(repeatThreeDays)
                 setCurrentWordList(repeatThreeDays)
+                view.showCardStack()
             }
 
             Progress.REPEAT_THREE_DAYS -> {
@@ -376,6 +387,7 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
                 view.updateCardStack(repeatTwoDays)
                 setCurrentWordList(repeatTwoDays)
+                view.showCardStack()
             }
 
             Progress.REPEAT_TWO_DAYS -> {
@@ -385,6 +397,7 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
                 view.updateCardStack(repeatYesterday)
                 setCurrentWordList(repeatYesterday)
+                view.showCardStack()
             }
 
             Progress.REPEAT_YESTERDAY -> {
@@ -395,6 +408,7 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
                 generateLearnTodayWords()
                 view.updateCardStack(learnToday)
                 setCurrentWordList(learnToday)
+                view.showCardStack()
             }
 
             Progress.LEARN_TODAY -> {
@@ -413,18 +427,20 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
         }
     }
 
-    private fun generateRepeatLongWords() {
-        learned.shuffle()
+    private fun generateRepeatLongWords(isUpdate: Boolean = false) {
+        if (!::repeatLong.isInitialized || isUpdate) {
+            learned.shuffle()
 
-        repeatLong = ArrayList()
+            repeatLong = ArrayList()
 
-        if (learned.size > 7) {
-            for (i in 0..6) {
-                repeatLong.add(learned[i])
-            }
-        } else {
-            learned.forEach {
-                repeatLong.add(it)
+            if (learned.size > 7) {
+                for (i in 0..6) {
+                    repeatLong.add(learned[i])
+                }
+            } else {
+                learned.forEach {
+                    repeatLong.add(it)
+                }
             }
         }
     }
@@ -480,5 +496,10 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
         current = ArrayList(words)
         again = ArrayList()
         remain = current.size
+    }
+
+    private fun generateVariants() : ArrayList<Word> {
+        allWords.shuffle()
+        return allWords.filter { categories.contains(it.category) } as ArrayList<Word>
     }
 }
