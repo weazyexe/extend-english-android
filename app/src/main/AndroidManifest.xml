@@ -36,10 +36,12 @@
         <activity android:name=".view.activity.UserActivity">
         </activity>
         <activity
+                android:theme="@style/AppTheme.Launcher"
                 android:name=".view.activity.MainActivity"
                 android:label="@string/title_activity_main">
         </activity>
         <activity
+                android:theme="@style/AppTheme.Launcher"
                 android:name=".view.activity.LoginActivity"
                 android:windowSoftInputMode="adjustResize">
             <intent-filter>

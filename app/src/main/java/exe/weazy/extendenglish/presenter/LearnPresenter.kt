@@ -34,15 +34,21 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
     private lateinit var categories : ArrayList<Category>
     private lateinit var lastActivity : Date
 
-    private var newKnow = ArrayList<Word>()
+    // Knew words for today
+    private var knew = ArrayList<Word>()
+
+    // Learned today to repeat
     private var learnedToRepeat = ArrayList<Word>()
 
     // Repeat words again
     private var again = ArrayList<Word>()
+
+    // Current words stack
     private var current = ArrayList<Word>()
+
+    // Current appeared word
     private var currentWord = Word()
 
-    private var remain = 0
     private var toLearn = 0
 
     private var isAllWordsLoaded = false
@@ -62,8 +68,32 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
         this.view = view
     }
 
+    override fun getAllData(file : File) {
+        if (current.isEmpty() && (!::progress.isInitialized || progress != Progress.LEARNED)) {
+            view.showLoading()
+            preLoad()
+
+            model.loadAllWords(file)
+            model.loadCategories()
+            model.loadKnowWords()
+            model.loadLastActivity()
+            model.loadLearnedWords()
+            model.loadRepeatFourDaysWords()
+            model.loadRepeatThreeDaysWords()
+            model.loadRepeatTwoDaysWords()
+            model.loadRepeatYesterdayWords()
+            model.loadProgress()
+        } else {
+            if (current.isEmpty()) {
+                view.showEnd()
+            } else {
+                view.initializeCardStackAdapter(current, generateVariants())
+                view.showCardStack()
+            }
+        }
+    }
+
     override fun cardSwiped(direction: Direction) {
-        remain--
         current.removeAt(0)
 
         when (direction) {
@@ -78,7 +108,7 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
             Direction.Left -> {
                 if (progress == Progress.LEARN_TODAY && toLearn < 7) {
-                    newKnow.add(currentWord)
+                    knew.add(currentWord)
                 }
             }
 
@@ -177,33 +207,197 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
         }
 
         view.initializeCardStackAdapter(current, generateVariants())
-        remain = current.size
     }
 
-    override fun getAllData(file : File) {
-        if (current.isEmpty() && (!::progress.isInitialized || progress != Progress.LEARNED)) {
-            view.showLoading()
-            preLoad()
 
-            model.loadAllWords(file)
-            model.loadCategories()
-            model.loadKnowWords()
-            model.loadLastActivity()
-            model.loadLearnedWords()
-            model.loadRepeatFourDaysWords()
-            model.loadRepeatThreeDaysWords()
-            model.loadRepeatTwoDaysWords()
-            model.loadRepeatYesterdayWords()
-            model.loadProgress()
-        } else {
-            if (current.isEmpty()) {
+
+    private fun updateCardStack() {
+        // If card stack are empty, but learned not 7 words, then generate new learn words
+        if (progress == Progress.LEARN_TODAY && toLearn < 7 && current.size == 0) {
+            generateLearnTodayWords(true)
+            setCurrentWordList(learnToday)
+
+            view.updateCardStack(learnToday)
+        } else if (toLearn == 7) {  // If learned 7 words, let's repeat them
+            view.updateCardStack(learnedToRepeat)
+            setCurrentWordList(learnedToRepeat)
+
+            toLearn++
+        } else if (current.size == 0 && again.isEmpty()) { // If day is repeated, come to next day
+            comeNextDay()
+            model.writeProgress(progress)
+        }
+
+        if (again.isNotEmpty() && current.size == 0) {
+            view.showLoading()
+            view.updateCardStack(again)
+            setCurrentWordList(again)
+            view.showCardStack()
+        }
+    }
+
+    private fun comeNextDay() {
+        when (progress) {
+            Progress.REPEAT_LONG -> {
+                progress = Progress.REPEAT_FOUR_DAYS
+
+                view.updateCardStack(repeatFourDays)
+                setCurrentWordList(repeatFourDays)
+            }
+
+            Progress.REPEAT_FOUR_DAYS -> {
+                model.writeLearned(repeatFourDays, learned.size)
+
+                progress = Progress.REPEAT_THREE_DAYS
+
+                view.updateCardStack(repeatThreeDays)
+                setCurrentWordList(repeatThreeDays)
+            }
+
+            Progress.REPEAT_THREE_DAYS -> {
+                model.writeWordsByProgress(repeatThreeDays, Progress.REPEAT_FOUR_DAYS)
+
+                progress = Progress.REPEAT_TWO_DAYS
+
+                view.updateCardStack(repeatTwoDays)
+                setCurrentWordList(repeatTwoDays)
+            }
+
+            Progress.REPEAT_TWO_DAYS -> {
+                model.writeWordsByProgress(repeatTwoDays, Progress.REPEAT_THREE_DAYS)
+
+                progress = Progress.REPEAT_YESTERDAY
+
+                view.updateCardStack(repeatYesterday)
+                setCurrentWordList(repeatYesterday)
+            }
+
+            Progress.REPEAT_YESTERDAY -> {
+                model.writeWordsByProgress(repeatYesterday, Progress.REPEAT_TWO_DAYS)
+
+                progress = Progress.LEARN_TODAY
+
+                generateLearnTodayWords()
+                view.updateCardStack(learnToday)
+                setCurrentWordList(learnToday)
+            }
+
+            Progress.LEARN_TODAY -> {
+                // TODO: learn today allWords
+                model.writeWordsByProgress(learnedToRepeat, Progress.REPEAT_YESTERDAY)
+                model.writeKnown(knew, know.size)
+
+                progress = Progress.LEARNED
+
                 view.showEnd()
-            } else {
-                view.initializeCardStackAdapter(current, generateVariants())
-                view.showCardStack()
+                view.configNotifications(Calendar.getInstance(TimeZone.GMT_ZONE).timeInMillis + 10000)
+            }
+            else -> {
+                view.showError()
             }
         }
     }
+
+    private fun setCurrentWordList(words : ArrayList<Word>) {
+        current.clear()
+        current.addAll(words)
+
+        again.clear()
+    }
+
+
+
+    private fun afterLoad() {
+        if (isAllWordsLoaded && isLearnedLoaded && isKnowLoaded && isProgressLoaded &&
+            isCategoriesLoaded && isRepeatFourDaysLoaded && isRepeatThreeDaysLoaded &&
+            isRepeatTwoDaysLoaded && isRepeatYesterdayLoaded && isLastActivityLoaded) {
+
+            val now = Calendar.getInstance(TimeZone.GMT_ZONE).time
+            val diff = now.time - lastActivity.time
+
+            if (diff > LIMIT_TIME && progress == Progress.LEARNED) {
+                progress = if (!repeatFourDays.isNullOrEmpty()) {
+                    Progress.REPEAT_FOUR_DAYS
+                } else if (!repeatThreeDays.isNullOrEmpty()) {
+                    Progress.REPEAT_THREE_DAYS
+                } else if (!repeatTwoDays.isNullOrEmpty()) {
+                    Progress.REPEAT_TWO_DAYS
+                } else if (!repeatYesterday.isNullOrEmpty()) {
+                    Progress.REPEAT_YESTERDAY
+                } else if (progress != Progress.LEARN_TODAY) {
+                    Progress.REPEAT_LONG
+                } else {
+                    Progress.LEARN_TODAY
+                }
+            }
+
+            if (diff > LIMIT_TIME && progress == Progress.LEARNED) {
+                view.showError()
+            } else if (progress != Progress.LEARNED) {
+                view.setupCardStack()
+            } else {
+                view.showEnd()
+            }
+        }
+    }
+
+    private fun preLoad() {
+        isAllWordsLoaded = false
+        isCategoriesLoaded = false
+        isRepeatYesterdayLoaded = false
+        isRepeatTwoDaysLoaded = false
+        isRepeatThreeDaysLoaded = false
+        isRepeatFourDaysLoaded = false
+        isLearnedLoaded = false
+        isKnowLoaded = false
+        isProgressLoaded = false
+        isLastActivityLoaded = false
+    }
+
+
+
+    private fun generateVariants() : ArrayList<Word> {
+        allWords.shuffle()
+        return allWords.filter { categories.contains(it.category) } as ArrayList<Word>
+    }
+
+    private fun generateRepeatLongWords(isUpdate: Boolean = false) {
+        if (!::repeatLong.isInitialized || isUpdate) {
+            learned.shuffle()
+
+            repeatLong = ArrayList()
+
+            if (learned.size > 7) {
+                for (i in 0..6) {
+                    repeatLong.add(learned[i])
+                }
+            } else {
+                learned.forEach {
+                    repeatLong.add(it)
+                }
+            }
+        }
+    }
+
+    private fun generateLearnTodayWords(isUpdate : Boolean = false) {
+        if (!::learnToday.isInitialized || isUpdate) {
+            val repeatWords = learned + repeatFourDays + repeatThreeDays + repeatTwoDays + repeatYesterday
+            var index = 0
+
+            val toLearnWordList = allWords.filter { categories.contains(it.category) } as ArrayList<Word>
+            toLearnWordList.shuffle()
+
+            learnToday = ArrayList()
+            while (learnToday.size < 7) {
+                val word = toLearnWordList[index++]
+                if (!repeatWords.contains(word) && !learnedToRepeat.contains(word)) {
+                    learnToday.add(word)
+                }
+            }
+        }
+    }
+
+
 
     override fun onLoadAllWordsFinished(words: ArrayList<Word>) {
         isAllWordsLoaded = true
@@ -303,203 +497,5 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
     override fun onLoadLastActivityFailure(exception : Exception?) {
         view.showError()
-    }
-
-
-
-
-    private fun updateCardStack() {
-        // If card stack are empty, but learned not 7 words, then generate new learn words
-        if (progress == Progress.LEARN_TODAY && toLearn < 7 && remain == 0) {
-            view.showLoading()
-
-            generateLearnTodayWords(true)
-            setCurrentWordList(learnToday)
-
-            view.updateCardStack(learnToday)
-            view.showCardStack()
-        } else if (toLearn == 7) {  // If learned 7 words, let's repeat them
-            view.showLoading()
-
-            view.updateCardStack(learnedToRepeat)
-            setCurrentWordList(learnedToRepeat)
-
-            toLearn++
-            view.showCardStack()
-        } else if (remain == 0 && again.isEmpty()) { // If day is repeated, come to next day
-            view.showLoading()
-
-            comeNextDay()
-
-            model.writeProgress(progress)
-        }
-
-        if (again.isNotEmpty() && remain == 0) {
-            view.showLoading()
-            view.updateCardStack(again)
-            setCurrentWordList(again)
-            view.showCardStack()
-        }
-    }
-
-    private fun generateLearnTodayWords(isUpdate : Boolean = false) {
-        if (!::learnToday.isInitialized || isUpdate) {
-            val repeatWords = learned + repeatFourDays + repeatThreeDays + repeatTwoDays + repeatYesterday
-            var index = 0
-
-            val toLearnWordList = allWords.filter { categories.contains(it.category) } as ArrayList<Word>
-            toLearnWordList.shuffle()
-
-            learnToday = ArrayList()
-            while (learnToday.size < 7) {
-                val word = toLearnWordList[index++]
-                if (!repeatWords.contains(word) && !learnedToRepeat.contains(word)) {
-                    learnToday.add(word)
-                }
-            }
-        }
-    }
-
-    private fun comeNextDay() {
-        when (progress) {
-            Progress.REPEAT_LONG -> {
-                progress = Progress.REPEAT_FOUR_DAYS
-
-                view.updateCardStack(repeatFourDays)
-                setCurrentWordList(repeatFourDays)
-                view.showCardStack()
-            }
-
-            Progress.REPEAT_FOUR_DAYS -> {
-                model.writeLearned(repeatFourDays, learned.size)
-
-                progress = Progress.REPEAT_THREE_DAYS
-
-                view.updateCardStack(repeatThreeDays)
-                setCurrentWordList(repeatThreeDays)
-                view.showCardStack()
-            }
-
-            Progress.REPEAT_THREE_DAYS -> {
-                model.writeWordsByProgress(repeatThreeDays, Progress.REPEAT_FOUR_DAYS)
-
-                progress = Progress.REPEAT_TWO_DAYS
-
-                view.updateCardStack(repeatTwoDays)
-                setCurrentWordList(repeatTwoDays)
-                view.showCardStack()
-            }
-
-            Progress.REPEAT_TWO_DAYS -> {
-                model.writeWordsByProgress(repeatTwoDays, Progress.REPEAT_THREE_DAYS)
-
-                progress = Progress.REPEAT_YESTERDAY
-
-                view.updateCardStack(repeatYesterday)
-                setCurrentWordList(repeatYesterday)
-                view.showCardStack()
-            }
-
-            Progress.REPEAT_YESTERDAY -> {
-                model.writeWordsByProgress(repeatYesterday, Progress.REPEAT_TWO_DAYS)
-
-                progress = Progress.LEARN_TODAY
-
-                generateLearnTodayWords()
-                view.updateCardStack(learnToday)
-                setCurrentWordList(learnToday)
-                view.showCardStack()
-            }
-
-            Progress.LEARN_TODAY -> {
-                // TODO: learn today allWords
-                model.writeWordsByProgress(learnedToRepeat, Progress.REPEAT_YESTERDAY)
-                model.writeKnown(newKnow, know.size)
-
-                progress = Progress.LEARNED
-
-                view.showEnd()
-                view.configNotifications(Calendar.getInstance(TimeZone.GMT_ZONE).timeInMillis + 10000)
-            }
-            else -> {
-                view.showError()
-            }
-        }
-    }
-
-    private fun generateRepeatLongWords(isUpdate: Boolean = false) {
-        if (!::repeatLong.isInitialized || isUpdate) {
-            learned.shuffle()
-
-            repeatLong = ArrayList()
-
-            if (learned.size > 7) {
-                for (i in 0..6) {
-                    repeatLong.add(learned[i])
-                }
-            } else {
-                learned.forEach {
-                    repeatLong.add(it)
-                }
-            }
-        }
-    }
-
-    private fun afterLoad() {
-        if (isAllWordsLoaded && isLearnedLoaded && isKnowLoaded && isProgressLoaded &&
-            isCategoriesLoaded && isRepeatFourDaysLoaded && isRepeatThreeDaysLoaded &&
-            isRepeatTwoDaysLoaded && isRepeatYesterdayLoaded && isLastActivityLoaded) {
-
-            val now = Calendar.getInstance(TimeZone.GMT_ZONE).time
-            val diff = now.time - lastActivity.time
-
-            if (diff > LIMIT_TIME && progress == Progress.LEARNED) {
-                progress = if (!repeatFourDays.isNullOrEmpty()) {
-                    Progress.REPEAT_FOUR_DAYS
-                } else if (!repeatThreeDays.isNullOrEmpty()) {
-                    Progress.REPEAT_THREE_DAYS
-                } else if (!repeatTwoDays.isNullOrEmpty()) {
-                    Progress.REPEAT_TWO_DAYS
-                } else if (!repeatYesterday.isNullOrEmpty()) {
-                    Progress.REPEAT_YESTERDAY
-                } else if (progress != Progress.LEARN_TODAY) {
-                    Progress.REPEAT_LONG
-                } else {
-                    Progress.LEARN_TODAY
-                }
-            }
-
-            if (diff > LIMIT_TIME && progress == Progress.LEARNED) {
-                view.showError()
-            } else if (progress != Progress.LEARNED) {
-                view.setupCardStack()
-            } else {
-                view.showEnd()
-            }
-        }
-    }
-
-    private fun preLoad() {
-        isAllWordsLoaded = false
-        isCategoriesLoaded = false
-        isRepeatYesterdayLoaded = false
-        isRepeatTwoDaysLoaded = false
-        isRepeatThreeDaysLoaded = false
-        isRepeatFourDaysLoaded = false
-        isLearnedLoaded = false
-        isKnowLoaded = false
-        isProgressLoaded = false
-        isLastActivityLoaded = false
-    }
-
-    private fun setCurrentWordList(words : ArrayList<Word>) {
-        current = ArrayList(words)
-        again = ArrayList()
-        remain = current.size
-    }
-
-    private fun generateVariants() : ArrayList<Word> {
-        allWords.shuffle()
-        return allWords.filter { categories.contains(it.category) } as ArrayList<Word>
     }
 }

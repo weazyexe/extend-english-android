@@ -1,6 +1,7 @@
 package exe.weazy.extendenglish.view.activity
 
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
@@ -73,6 +74,8 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
     }
 
     override fun showWelcome() {
+        window.setBackgroundDrawable(ColorDrawable(getColor(R.color.colorWhite)))
+        //setTheme(R.style.AppTheme)
         newPosition = 0
         supportFragmentManager.beginTransaction().show(welcomeFragment).commit()
     }
@@ -100,6 +103,7 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
     }
 
     override fun showCategories(categories: ArrayList<Category>) {
+        window.setBackgroundDrawable(ColorDrawable(getColor(R.color.colorWhite)))
         newPosition++
         UiHelper.hideKeyboard(layout_login, this)
         changeFragment(categoriesFragment)
