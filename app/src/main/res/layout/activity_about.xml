@@ -5,7 +5,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.activity.AboutActivity">
+        tools:context=".view.activity.AboutActivity"
+        android:background="?android:colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -55,7 +56,8 @@
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:orientation="vertical">
 
             <TextView
@@ -85,13 +87,13 @@
                             android:id="@+id/text_application"
                             android:textSize="16sp"
                             android:text="@string/extend_english"
-                            android:textColor="@color/colorBlack"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:transitionName="trtext_name"/>
 
                     <TextView
                             android:text="@string/app_version"
+                            android:alpha="0.6"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/text_application"/>
@@ -131,13 +133,13 @@
                                 android:id="@+id/text_name"
                                 android:textSize="16sp"
                                 android:text="@string/me"
-                                android:textColor="@color/colorBlack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
                         <TextView
                                 android:text="@string/android_developer"
                                 android:layout_width="wrap_content"
+                                android:alpha="0.6"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_name"/>
 
@@ -155,13 +157,13 @@
                                 android:id="@+id/text_twitter"
                                 android:textSize="16sp"
                                 android:text="@string/twitter"
-                                android:textColor="@color/colorBlack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
                         <TextView
                                 android:text="@string/weazyexe"
                                 android:layout_width="wrap_content"
+                                android:alpha="0.6"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_twitter"/>
 
@@ -179,13 +181,13 @@
                                 android:id="@+id/text_instagram"
                                 android:textSize="16sp"
                                 android:text="@string/instagram"
-                                android:textColor="@color/colorBlack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
                         <TextView
                                 android:text="@string/weazyexe"
                                 android:layout_width="wrap_content"
+                                android:alpha="0.6"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_instagram"/>
 
@@ -203,13 +205,13 @@
                                 android:id="@+id/text_telegram"
                                 android:textSize="16sp"
                                 android:text="@string/telegram"
-                                android:textColor="@color/colorBlack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
                         <TextView
                                 android:text="@string/weazyexe"
                                 android:layout_width="wrap_content"
+                                android:alpha="0.6"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_telegram"/>
 
@@ -250,13 +252,13 @@
                                 android:id="@+id/text_gson"
                                 android:textSize="16sp"
                                 android:text="@string/gson"
-                                android:textColor="@color/colorBlack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
                         <TextView
                                 android:text="@string/gson_desc"
                                 android:layout_width="wrap_content"
+                                android:alpha="0.6"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_gson"/>
 
@@ -274,13 +276,13 @@
                                 android:id="@+id/text_guava"
                                 android:textSize="16sp"
                                 android:text="@string/guava"
-                                android:textColor="@color/colorBlack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
                         <TextView
                                 android:text="@string/guava_desc"
                                 android:layout_width="wrap_content"
+                                android:alpha="0.6"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_guava"/>
 
@@ -298,13 +300,13 @@
                                 android:id="@+id/text_circle_image_view"
                                 android:textSize="16sp"
                                 android:text="@string/circle_image_view"
-                                android:textColor="@color/colorBlack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
                         <TextView
                                 android:text="@string/circle_image_view_desc"
                                 android:layout_width="wrap_content"
+                                android:alpha="0.6"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_circle_image_view"/>
 
@@ -322,13 +324,13 @@
                                 android:id="@+id/text_card_stack_view"
                                 android:textSize="16sp"
                                 android:text="@string/card_stack_view"
-                                android:textColor="@color/colorBlack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
                         <TextView
                                 android:text="@string/card_stack_view_desc"
                                 android:layout_width="wrap_content"
+                                android:alpha="0.6"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_card_stack_view"/>
 
@@ -346,13 +348,13 @@
                                 android:id="@+id/text_glide"
                                 android:textSize="16sp"
                                 android:text="@string/glide"
-                                android:textColor="@color/colorBlack"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
                         <TextView
                                 android:text="@string/glide_desc"
                                 android:layout_width="wrap_content"
+                                android:alpha="0.6"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_glide"/>
 

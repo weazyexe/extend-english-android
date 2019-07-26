@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
 
     <!-- Цвет фона, предпочтительно как в главной теме -->
-    <item android:drawable="@color/colorWhite"/>
+    <item android:drawable="?android:colorPrimary"/>
 
     <!-- Лого приложения - 144dp версия иконки приложения -->
     <item>

@@ -3,7 +3,6 @@ package exe.weazy.extendenglish.view.activity
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -22,8 +21,6 @@ import exe.weazy.extendenglish.view.fragment.*
 import exe.weazy.extendenglish.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.button_back
-import kotlinx.android.synthetic.main.activity_user.*
-import kotlinx.android.synthetic.main.fragment_account.*
 import kotlinx.android.synthetic.main.fragment_categories.*
 import kotlinx.android.synthetic.main.fragment_confirm_password.*
 import kotlinx.android.synthetic.main.fragment_email.*
@@ -74,7 +71,7 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
     }
 
     override fun showWelcome() {
-        window.setBackgroundDrawable(ColorDrawable(getColor(R.color.colorWhite)))
+        window.setBackgroundDrawable(ColorDrawable(getColor(R.color.colorNearlyWhite)))
         //setTheme(R.style.AppTheme)
         newPosition = 0
         supportFragmentManager.beginTransaction().show(welcomeFragment).commit()
@@ -103,7 +100,7 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
     }
 
     override fun showCategories(categories: ArrayList<Category>) {
-        window.setBackgroundDrawable(ColorDrawable(getColor(R.color.colorWhite)))
+        window.setBackgroundDrawable(ColorDrawable(getColor(R.color.colorNearlyWhite)))
         newPosition++
         UiHelper.hideKeyboard(layout_login, this)
         changeFragment(categoriesFragment)

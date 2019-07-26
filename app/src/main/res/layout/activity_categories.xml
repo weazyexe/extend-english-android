@@ -6,7 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.activity.CategoriesActivity"
-        android:id="@+id/layout_categories">
+        android:id="@+id/layout_categories"
+        android:background="?android:colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -86,7 +87,7 @@
             android:elevation="16dp"
             android:id="@+id/progressbar_categories"
             android:layout_gravity="center_horizontal|bottom"
-            android:indeterminateTint="@color/colorWhite"
+            android:indeterminateTint="@color/colorNearlyWhite"
             android:layout_margin="32dp"
             android:layout_width="24dp"
             android:layout_height="24dp"

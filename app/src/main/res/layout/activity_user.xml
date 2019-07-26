@@ -6,7 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.activity.UserActivity"
-        android:id="@+id/layout_user">
+        android:id="@+id/layout_user"
+        android:background="?android:colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -99,6 +100,7 @@
                     <TextView
                             android:id="@+id/text_username"
                             tools:text="your@email.com"
+                            android:alpha="0.7"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
@@ -111,6 +113,7 @@
                             android:id="@+id/text_level"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:alpha="0.7"
                             tools:text="Level"
                             android:textSize="18sp"
                             android:layout_gravity="center_horizontal"
@@ -137,7 +140,6 @@
                             android:id="@+id/button_change_email"
                             android:textSize="16sp"
                             android:text="@string/change_email"
-                            android:textColor="@color/colorBlack"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="16dp"
@@ -150,7 +152,6 @@
                             android:id="@+id/button_change_username"
                             android:textSize="16sp"
                             android:text="@string/change_username"
-                            android:textColor="@color/colorBlack"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="16dp"
@@ -163,7 +164,6 @@
                             android:id="@+id/button_change_password"
                             android:textSize="16sp"
                             android:text="@string/change_password"
-                            android:textColor="@color/colorBlack"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="16dp"

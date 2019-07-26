@@ -6,5 +6,10 @@
         <item name="colorAccent">@color/colorOrange</item>
         <item name="android:navigationBarColor">@color/colorDarkGrey</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+
+    <style name="AppTheme.Launcher" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
 </resources>

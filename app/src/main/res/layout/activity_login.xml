@@ -6,7 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.activity.LoginActivity"
-        android:id="@+id/layout_login">
+        android:id="@+id/layout_login"
+        android:background="?android:colorPrimary">
 
     <ProgressBar
             android:id="@+id/progressbar_login"
@@ -24,7 +25,7 @@
             android:elevation="16dp"
             android:id="@+id/progressbar_sign_in"
             android:layout_gravity="end|bottom"
-            android:indeterminateTint="@color/colorWhite"
+            android:indeterminateTint="@color/colorNearlyWhite"
             android:layout_margin="32dp"
             android:layout_width="24dp"
             android:layout_height="24dp"
