@@ -1,11 +1,13 @@
 package exe.weazy.extendenglish.view.activity
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -14,7 +16,9 @@ import com.google.android.material.snackbar.Snackbar
 import exe.weazy.extendenglish.R
 import exe.weazy.extendenglish.adapter.CategoriesAdapter
 import exe.weazy.extendenglish.arch.LoginContract
+import exe.weazy.extendenglish.entity.AppSettings
 import exe.weazy.extendenglish.entity.Category
+import exe.weazy.extendenglish.entity.Theme
 import exe.weazy.extendenglish.presenter.LoginPresenter
 import exe.weazy.extendenglish.tools.UiHelper
 import exe.weazy.extendenglish.view.fragment.*
@@ -47,6 +51,23 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        AppSettings.load(getSharedPreferences("app_settings", Context.MODE_PRIVATE))
+
+        when (AppSettings.theme) {
+            Theme.DAY -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+
+            Theme.NIGHT -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+
+            Theme.AUTO -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 

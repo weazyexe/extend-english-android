@@ -162,7 +162,7 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
     override fun showEnd() {
         cardstack_words.visibility = View.GONE
         progressbar_learn.visibility = View.GONE
-        layout_learned.visibility = View.VISIBLE
+        UiHelper.showView(layout_learned) // Smooth show view
         layout_error.visibility = View.GONE
     }
 

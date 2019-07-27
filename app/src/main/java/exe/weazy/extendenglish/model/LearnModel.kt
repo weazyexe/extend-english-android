@@ -94,6 +94,8 @@ class LearnModel(private val presenter: LearnPresenter) : LearnContract.Model {
                         words.add(it.toObject(Word::class.java)!!)
                     }
 
+                    words.shuffle()
+
                     presenter.onLoadRepeatYesterdayWordsFinished(words)
                 } else {
                     presenter.onLoadRepeatYesterdayWordsFailure(querySnapshot.exception)
@@ -112,6 +114,8 @@ class LearnModel(private val presenter: LearnPresenter) : LearnContract.Model {
                     result?.forEach {
                         words.add(it.toObject(Word::class.java)!!)
                     }
+
+                    words.shuffle()
 
                     presenter.onLoadRepeatTwoDaysWordsFinished(words)
                 } else {
@@ -132,6 +136,8 @@ class LearnModel(private val presenter: LearnPresenter) : LearnContract.Model {
                         words.add(it.toObject(Word::class.java)!!)
                     }
 
+                    words.shuffle()
+
                     presenter.onLoadRepeatThreeDaysWordsFinished(words)
                 } else {
                     presenter.onLoadRepeatThreeDaysWordsFailure(querySnapshot.exception)
@@ -150,6 +156,8 @@ class LearnModel(private val presenter: LearnPresenter) : LearnContract.Model {
                     result?.forEach {
                         words.add(it.toObject(Word::class.java)!!)
                     }
+
+                    words.shuffle()
 
                     presenter.onLoadRepeatFourDaysWordsFinished(words)
                 } else {

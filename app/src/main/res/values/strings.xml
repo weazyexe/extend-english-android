@@ -58,7 +58,7 @@
 
     <!--SETTINGS FRAGMENT-->
     <string name="logout">Log out</string>
-    <string name="enable_dark_mode">Enable dark mode</string>
+    <string name="setup_dark_theme">Setup dark theme</string>
     <string name="color_theme">Color theme</string>
     <string name="about">About</string>
     <string name="about_application">About application</string>
@@ -69,6 +69,9 @@
     <string name="dark_theme">DARK THEME</string>
     <string name="notifications">NOTIFICATIONS</string>
     <string name="about_caps">ABOUT</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
+    <string name="auto">Auto (system default)</string>
 
 
     <!--LOGIN ACTIVITY-->
