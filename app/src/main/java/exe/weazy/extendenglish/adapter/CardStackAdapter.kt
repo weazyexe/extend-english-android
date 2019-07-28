@@ -4,15 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import exe.weazy.extendenglish.R
-import exe.weazy.extendenglish.entity.Word
+import exe.weazy.extendenglish.entity.CardWord
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-class CardStackAdapter(private var words : ArrayList<Word>, private var variants : ArrayList<Word>)
+class CardStackAdapter(private var words : MutableList<CardWord>)
     : RecyclerView.Adapter<CardStackAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -21,86 +20,15 @@ class CardStackAdapter(private var words : ArrayList<Word>, private var variants
     override fun getItemCount() = words.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val w = words[position]
-
-        setWordOnHolder(w, holder)
-        setVariantsOnHolder(w, holder)
+        holder.bind(words[position])
     }
 
 
-
-    private fun setWordOnHolder(w : Word, holder : ViewHolder) {
-        holder.layoutShow.visibility = View.GONE
-        holder.layoutChoose.visibility = View.GONE
-        holder.layoutWrite.visibility = View.GONE
-        holder.layoutVariant.visibility = View.GONE
-
-        holder.wordShow.text = w.word
-        holder.wordWrite.text = w.word
-        holder.wordVariant.text = w.word
-        holder.wordChoose.text = w.word
-
-        holder.transcriptionShow.text = w.transcription
-        holder.transcriptionWrite.text = w.transcription
-        holder.transcriptionVariant.text = w.transcription
-        holder.transcriptionChoose.text = w.transcription
-
-        holder.translate.text = w.translate
-        holder.category.text = w.category.name
-    }
-
-    private fun setVariantsOnHolder(w : Word, holder : ViewHolder) {
-        val variants = getRandomWords(w)
-
-        // FIXME: word/translate issue
-        val random = Random.nextInt(0..3)
-        when (random) {
-            0 -> {
-                holder.choose1Button.text = w.translate
-                holder.choose2Button.text = variants[1].translate
-                holder.choose3Button.text = variants[2].translate
-                holder.choose4Button.text = variants[3].translate
-            }
-
-            1 -> {
-                holder.choose1Button.text = variants[0].translate
-                holder.choose2Button.text = w.translate
-                holder.choose3Button.text = variants[2].translate
-                holder.choose4Button.text = variants[3].translate
-            }
-
-            2 -> {
-                holder.choose1Button.text = variants[0].translate
-                holder.choose2Button.text = variants[1].translate
-                holder.choose3Button.text = w.translate
-                holder.choose4Button.text = variants[3].translate
-            }
-
-            3 -> {
-                holder.choose1Button.text = variants[0].translate
-                holder.choose2Button.text = variants[1].translate
-                holder.choose3Button.text = variants[2].translate
-                holder.choose4Button.text = w.translate
-            }
-        }
-    }
-
-    private fun getRandomWords(w : Word) : ArrayList<Word> {
-        val list = variants
-        list.shuffle()
-        return list.filter { it.word != w.word && it.category == w.category } as ArrayList<Word>
-    }
-
-    fun setWords(words : ArrayList<Word>) {
+    fun setWords(words : MutableList<CardWord>) {
         this.words.clear()
         this.words.addAll(words)
 
         notifyDataSetChanged()
-    }
-
-    fun setVariants(words : ArrayList<Word>) {
-        variants.clear()
-        variants.addAll(words)
     }
 
 
@@ -155,6 +83,64 @@ class CardStackAdapter(private var words : ArrayList<Word>, private var variants
             layoutWrite = itemView.findViewById(R.id.layout_write_word)
             layoutChoose = itemView.findViewById(R.id.layout_choose_word)
             layoutShow = itemView.findViewById(R.id.layout_show_word)
+        }
+
+        fun bind(cardWord : CardWord) {
+            setVariantsOnHolder(cardWord)
+            setWordOnHolder(cardWord)
+        }
+
+        private fun setVariantsOnHolder(cardWord: CardWord) {
+            // FIXME: word/translate issue
+            when (Random.nextInt(0..3)) {
+                0 -> {
+                    choose1Button.text = cardWord.word.translate
+                    choose2Button.text = cardWord.variants[1].translate
+                    choose3Button.text = cardWord.variants[2].translate
+                    choose4Button.text = cardWord.variants[3].translate
+                }
+
+                1 -> {
+                    choose1Button.text = cardWord.variants[0].translate
+                    choose2Button.text = cardWord.word.translate
+                    choose3Button.text = cardWord.variants[2].translate
+                    choose4Button.text = cardWord.variants[3].translate
+                }
+
+                2 -> {
+                    choose1Button.text = cardWord.variants[0].translate
+                    choose2Button.text = cardWord.variants[1].translate
+                    choose3Button.text = cardWord.word.translate
+                    choose4Button.text = cardWord.variants[3].translate
+                }
+
+                3 -> {
+                    choose1Button.text = cardWord.variants[0].translate
+                    choose2Button.text = cardWord.variants[1].translate
+                    choose3Button.text = cardWord.variants[2].translate
+                    choose4Button.text = cardWord.word.translate
+                }
+            }
+        }
+
+        private fun setWordOnHolder(cardWord : CardWord) {
+            layoutShow.visibility = View.GONE
+            layoutChoose.visibility = View.GONE
+            layoutWrite.visibility = View.GONE
+            layoutVariant.visibility = View.GONE
+
+            wordShow.text = cardWord.word.word
+            wordWrite.text = cardWord.word.word
+            wordVariant.text = cardWord.word.word
+            wordChoose.text = cardWord.word.word
+
+            transcriptionShow.text = cardWord.word.transcription
+            transcriptionWrite.text = cardWord.word.transcription
+            transcriptionVariant.text = cardWord.word.transcription
+            transcriptionChoose.text = cardWord.word.transcription
+
+            translate.text = cardWord.word.translate
+            category.text = cardWord.word.category.name
         }
     }
 }

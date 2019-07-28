@@ -5,6 +5,7 @@ import android.icu.util.TimeZone
 import android.view.View
 import com.yuyakaido.android.cardstackview.Direction
 import exe.weazy.extendenglish.arch.LearnContract
+import exe.weazy.extendenglish.entity.CardWord
 import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.entity.Progress
 import exe.weazy.extendenglish.entity.Word
@@ -87,7 +88,7 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
             if (current.isEmpty()) {
                 view.showEnd()
             } else {
-                view.initializeCardStackAdapter(current, generateVariants())
+                view.initializeCardStackAdapter(generateCardWords())
                 view.showCardStack()
             }
         }
@@ -172,41 +173,42 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
             Progress.LEARN_TODAY -> {
                 generateLearnTodayWords()
-                view.updateCardStack(learnToday)
-                current = ArrayList(learnToday)
+                setCurrentWordList(learnToday)
+
+                view.updateCardStack(generateCardWords())
                 view.showCardStack()
             }
 
             Progress.REPEAT_YESTERDAY -> {
-                current = ArrayList(repeatYesterday)
+                setCurrentWordList(repeatYesterday)
                 view.showCardStack()
             }
 
             Progress.REPEAT_TWO_DAYS -> {
-                current = ArrayList(repeatTwoDays)
+                setCurrentWordList(repeatTwoDays)
                 view.showCardStack()
             }
 
             Progress.REPEAT_THREE_DAYS -> {
-                current = ArrayList(repeatThreeDays)
+                setCurrentWordList(repeatThreeDays)
                 view.showCardStack()
             }
 
             Progress.REPEAT_FOUR_DAYS -> {
-                current = ArrayList(repeatFourDays)
+                setCurrentWordList(repeatFourDays)
                 view.showCardStack()
             }
 
             Progress.REPEAT_LONG -> {
                 generateRepeatLongWords()
-                view.updateCardStack(repeatLong)
-                current = ArrayList(repeatLong)
+                setCurrentWordList(repeatLong)
+                view.updateCardStack(generateCardWords())
                 view.showCardStack()
             }
 
         }
 
-        view.initializeCardStackAdapter(current, generateVariants())
+        view.initializeCardStackAdapter(generateCardWords())
     }
 
 
@@ -217,10 +219,10 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
             generateLearnTodayWords(true)
             setCurrentWordList(learnToday)
 
-            view.updateCardStack(learnToday)
+            view.updateCardStack(generateCardWords())
         } else if (toLearn == 7) {  // If learned 7 words, let's repeat them
-            view.updateCardStack(learnedToRepeat)
             setCurrentWordList(learnedToRepeat)
+            view.updateCardStack(generateCardWords())
 
             toLearn++
         } else if (current.size == 0 && again.isEmpty()) { // If day is repeated, come to next day
@@ -230,8 +232,10 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
         if (again.isNotEmpty() && current.size == 0) {
             view.showLoading()
-            view.updateCardStack(again)
+
             setCurrentWordList(again)
+            view.updateCardStack(generateCardWords())
+
             view.showCardStack()
         }
     }
@@ -241,8 +245,8 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
             Progress.REPEAT_LONG -> {
                 progress = Progress.REPEAT_FOUR_DAYS
 
-                view.updateCardStack(repeatFourDays)
                 setCurrentWordList(repeatFourDays)
+                view.updateCardStack(generateCardWords())
             }
 
             Progress.REPEAT_FOUR_DAYS -> {
@@ -250,8 +254,8 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
                 progress = Progress.REPEAT_THREE_DAYS
 
-                view.updateCardStack(repeatThreeDays)
                 setCurrentWordList(repeatThreeDays)
+                view.updateCardStack(generateCardWords())
             }
 
             Progress.REPEAT_THREE_DAYS -> {
@@ -259,8 +263,8 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
                 progress = Progress.REPEAT_TWO_DAYS
 
-                view.updateCardStack(repeatTwoDays)
                 setCurrentWordList(repeatTwoDays)
+                view.updateCardStack(generateCardWords())
             }
 
             Progress.REPEAT_TWO_DAYS -> {
@@ -268,8 +272,8 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
                 progress = Progress.REPEAT_YESTERDAY
 
-                view.updateCardStack(repeatYesterday)
                 setCurrentWordList(repeatYesterday)
+                view.updateCardStack(generateCardWords())
             }
 
             Progress.REPEAT_YESTERDAY -> {
@@ -278,8 +282,9 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
                 progress = Progress.LEARN_TODAY
 
                 generateLearnTodayWords()
-                view.updateCardStack(learnToday)
                 setCurrentWordList(learnToday)
+
+                view.updateCardStack(generateCardWords())
             }
 
             Progress.LEARN_TODAY -> {
@@ -356,9 +361,17 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
 
 
-    private fun generateVariants() : ArrayList<Word> {
-        allWords.shuffle()
-        return allWords.filter { categories.contains(it.category) } as ArrayList<Word>
+    private fun generateCardWords() : MutableList<CardWord> {
+        val variants = allWords.filter { categories.contains(it.category) } as MutableList
+        val cardWords = ArrayList<CardWord>()
+
+        current.forEach { word ->
+            variants.shuffle()
+            val cardWord = CardWord(word, variants.filter { it.word != word.word && it.category == word.category }.subList(0, 4))
+            cardWords.add(cardWord)
+        }
+
+        return cardWords
     }
 
     private fun generateRepeatLongWords(isUpdate: Boolean = false) {

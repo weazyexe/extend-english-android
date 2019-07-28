@@ -1,6 +1,7 @@
 package exe.weazy.extendenglish.arch
 
 import com.yuyakaido.android.cardstackview.Direction
+import exe.weazy.extendenglish.entity.CardWord
 import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.entity.Progress
 import exe.weazy.extendenglish.entity.Word
@@ -10,7 +11,7 @@ import java.util.*
 interface LearnContract {
 
     interface View {
-        fun updateCardStack(words : ArrayList<Word>)
+        fun updateCardStack(cardWords: MutableList<CardWord>)
         fun showLoading()
         fun showEnd()
         fun showError()
@@ -20,7 +21,7 @@ interface LearnContract {
         fun showVariantCard(cardView : android.view.View)
         fun showWriteCard(cardView : android.view.View)
         fun showChooseCard(cardView: android.view.View)
-        fun initializeCardStackAdapter(words : ArrayList<Word>, variants : ArrayList<Word>)
+        fun initializeCardStackAdapter(cardWords : MutableList<CardWord>)
         fun setupCardStack()
         fun configNotifications(time : Long)
     }
