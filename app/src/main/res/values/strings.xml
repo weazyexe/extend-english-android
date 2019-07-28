@@ -89,6 +89,8 @@
     <string name="passwords_do_not_match">Passwords do not match</string>
     <string name="confirm_password">Confirm password</string>
     <string name="choose_categories">Please, choose 5 categories as minimum</string>
+    <string name="pick_username">Pick your username, if you want of course</string>
+    <string name="skip">Skip</string>
 
 
     <!--USER ACTIVITY-->

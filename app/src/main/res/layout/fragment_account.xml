@@ -29,6 +29,7 @@
         <TextView
                 android:layout_marginTop="100dp"
                 android:text="@string/network_error"
+                android:textColor="?android:textColorPrimary"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:textSize="18sp"
                 android:layout_width="wrap_content"
@@ -124,6 +125,7 @@
 
                     <TextView
                             android:id="@+id/text_username"
+                            android:textColor="?android:textColorPrimary"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             tools:text="Username"
@@ -137,6 +139,7 @@
                     <TextView
                             android:id="@+id/text_level"
                             android:layout_width="wrap_content"
+                            android:textColor="?android:textColorPrimary"
                             android:layout_height="wrap_content"
                             tools:text="Level"
                             android:textSize="18sp"
@@ -156,6 +159,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
+                    android:textColor="?android:textColorPrimary"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"/>
 

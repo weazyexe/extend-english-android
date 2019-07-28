@@ -9,16 +9,22 @@ interface LoginContract {
         fun showEmail()
         fun showPassword()
         fun showConfirmPassword()
+        fun showUsername()
         fun showCategories(categories: ArrayList<Category>)
+
         fun updateUI()
         fun goBack(toWelcome : Boolean = false)
+
         fun readEmail()
         fun readPassword()
         fun readConfirmation()
+        fun readUsername()
+
         fun showLoadingFAB()
         fun showDefaultFAB()
         fun showDoneFAB()
         fun showBackButton()
+
         fun showWrongEmailOrPasswordSnackbar()
         fun showPasswordsDoNotMatchSnackbar()
         fun showErrorSnackbar()
@@ -31,6 +37,7 @@ interface LoginContract {
         fun writeCategories(categories: ArrayList<Category>)
         fun logIn(email : String, password: String)
         fun createAccount(email: String, password: String)
+        fun setUsername(username: String)
     }
 
     interface Presenter {
@@ -43,6 +50,7 @@ interface LoginContract {
         fun setEmail(email : String)
         fun setPassword(password : String)
         fun setConfirmation(confirmation : String)
+        fun setUsername(username : String)
     }
 
     interface LoadingListener {
@@ -60,5 +68,8 @@ interface LoginContract {
 
         fun onCreateAccountFinished()
         fun onCreateAccountFailure()
+
+        fun onUsernameUpdateFinished()
+        fun onUsernameUpdateFailure()
     }
 }

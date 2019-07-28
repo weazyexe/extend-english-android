@@ -19,16 +19,15 @@ import exe.weazy.extendenglish.arch.LoginContract
 import exe.weazy.extendenglish.entity.AppSettings
 import exe.weazy.extendenglish.entity.Category
 import exe.weazy.extendenglish.entity.Theme
-import exe.weazy.extendenglish.presenter.LoginPresenter
 import exe.weazy.extendenglish.tools.UiHelper
 import exe.weazy.extendenglish.view.fragment.*
 import exe.weazy.extendenglish.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_login.button_back
 import kotlinx.android.synthetic.main.fragment_categories.*
 import kotlinx.android.synthetic.main.fragment_confirm_password.*
 import kotlinx.android.synthetic.main.fragment_email.*
 import kotlinx.android.synthetic.main.fragment_password.*
+import kotlinx.android.synthetic.main.fragment_username.*
 
 class LoginActivity : AppCompatActivity(), LoginContract.View {
 
@@ -36,13 +35,14 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
     private lateinit var emailFragment: EmailFragment
     private lateinit var passwordFragment: PasswordFragment
     private lateinit var confirmPasswordFragment: ConfirmPasswordFragment
+    private lateinit var usernameFragment : UsernameFragment
     private lateinit var categoriesFragment : CategoriesFragment
     private var active = Fragment()
 
     private var newPosition = 0
     private var startingPosition = 0
 
-    private lateinit var presenter : LoginPresenter
+    private lateinit var presenter : LoginContract.Presenter
 
     private lateinit var viewModel : LoginViewModel
 
@@ -82,9 +82,18 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         loadFragments()
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        button_username_skip.setOnClickListener {
+            presenter.next()
+        }
+    }
+
     override fun onBackPressed() {
         presenter.back()
     }
+
 
 
     override fun showBackButton() {
@@ -93,7 +102,7 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
 
     override fun showWelcome() {
         window.setBackgroundDrawable(ColorDrawable(getColor(R.color.colorNearlyWhite)))
-        //setTheme(R.style.AppTheme)
+
         newPosition = 0
         supportFragmentManager.beginTransaction().show(welcomeFragment).commit()
     }
@@ -120,6 +129,13 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         edittext_confirm_password.requestFocus()
     }
 
+    override fun showUsername() {
+        newPosition++
+        changeFragment(usernameFragment)
+
+        edittext_username.requestFocus()
+    }
+
     override fun showCategories(categories: ArrayList<Category>) {
         window.setBackgroundDrawable(ColorDrawable(getColor(R.color.colorNearlyWhite)))
         newPosition++
@@ -137,6 +153,8 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         }
     }
 
+
+
     override fun updateUI() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
@@ -149,29 +167,33 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
             UiHelper.hideView(button_back)
         }
 
-        when {
-            active == welcomeFragment -> {
+        when (active) {
+            welcomeFragment -> {
                 super.onBackPressed()
             }
 
-            active == emailFragment -> {
+            emailFragment -> {
                 newPosition--
                 changeFragment(welcomeFragment)
             }
 
-            active == passwordFragment -> {
+            passwordFragment -> {
                 newPosition--
                 changeFragment(emailFragment)
                 edittext_email.requestFocus()
             }
 
-            active == confirmPasswordFragment -> {
+            confirmPasswordFragment -> {
                 newPosition--
                 changeFragment(passwordFragment)
                 edittext_password.requestFocus()
             }
 
-            active == categoriesFragment -> {
+            usernameFragment -> {
+                super.onBackPressed()
+            }
+
+            categoriesFragment -> {
                 super.onBackPressed()
             }
             else -> {
@@ -197,6 +219,11 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         presenter.setConfirmation(confirmation)
     }
 
+    override fun readUsername() {
+        val username = edittext_username.text.toString()
+        presenter.setUsername(username)
+    }
+
 
 
     override fun showDefaultFAB() {
@@ -219,6 +246,11 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         val centerX = resources.displayMetrics.widthPixels / dp
 
         button_next.animate()
+            .setDuration(400)
+            .translationX(-centerX - 10)
+            .start()
+
+        progressbar_sign_in.animate()
             .setDuration(400)
             .translationX(-centerX - 10)
             .start()
@@ -256,7 +288,7 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         presenter.createAccount()
     }
 
-    fun onNextButtonClick(view : View) {
+    fun onNextButtonClick(view : View)  {
         if (::adapter.isInitialized) {
             presenter.next(adapter.getChecks())
         } else {
@@ -265,17 +297,20 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
     }
 
 
+
     private fun loadFragments() {
         welcomeFragment = WelcomeFragment()
         emailFragment = EmailFragment()
         passwordFragment = PasswordFragment()
         confirmPasswordFragment = ConfirmPasswordFragment()
+        usernameFragment = UsernameFragment()
         categoriesFragment = CategoriesFragment()
 
         supportFragmentManager.beginTransaction().add(R.id.layout_fragment, categoriesFragment).hide(categoriesFragment).commit()
         supportFragmentManager.beginTransaction().add(R.id.layout_fragment, confirmPasswordFragment).hide(confirmPasswordFragment).commit()
         supportFragmentManager.beginTransaction().add(R.id.layout_fragment, passwordFragment).hide(passwordFragment).commit()
         supportFragmentManager.beginTransaction().add(R.id.layout_fragment, emailFragment).hide(emailFragment).commit()
+        supportFragmentManager.beginTransaction().add(R.id.layout_fragment, usernameFragment).hide(usernameFragment).commit()
         supportFragmentManager.beginTransaction().add(R.id.layout_fragment, welcomeFragment).hide(welcomeFragment).commit()
 
         active = welcomeFragment

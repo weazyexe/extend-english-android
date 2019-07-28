@@ -18,6 +18,7 @@ class LoginPresenter : LoginContract.Presenter, LoginContract.LoadingListener {
     private lateinit var email : String
     private lateinit var password : String
     private lateinit var confirmation: String
+    private lateinit var username : String
 
     private var isSignIn = true
     private var step = Step.WELCOME
@@ -68,6 +69,11 @@ class LoginPresenter : LoginContract.Presenter, LoginContract.LoadingListener {
                 confirmPasswordHandle()
             }
 
+            Step.USERNAME -> {
+                view.readUsername()
+                usernameHandle()
+            }
+
             Step.CATEGORIES -> {
                 categoriesHandle(checks)
             }
@@ -95,8 +101,13 @@ class LoginPresenter : LoginContract.Presenter, LoginContract.LoadingListener {
                 view.goBack()
             }
 
-            Step.CATEGORIES -> {
+            Step.USERNAME -> {
                 step = Step.CONFIRM_PASSWORD
+                view.goBack()
+            }
+
+            Step.CATEGORIES -> {
+                step = Step.USERNAME
                 view.goBack()
             }
         }
@@ -112,6 +123,10 @@ class LoginPresenter : LoginContract.Presenter, LoginContract.LoadingListener {
 
     override fun setConfirmation(confirmation: String) {
         this.confirmation = confirmation
+    }
+
+    override fun setUsername(username: String) {
+        this.username = username
     }
 
 
@@ -163,10 +178,20 @@ class LoginPresenter : LoginContract.Presenter, LoginContract.LoadingListener {
     }
 
     override fun onCreateAccountFinished() {
-        model.loadAllCategories()
+        view.showUsername()
+        view.showDefaultFAB()
     }
 
     override fun onCreateAccountFailure() {
+        view.showDefaultFAB()
+        view.showErrorSnackbar()
+    }
+
+    override fun onUsernameUpdateFinished() {
+        model.loadAllCategories()
+    }
+
+    override fun onUsernameUpdateFailure() {
         view.showDefaultFAB()
         view.showErrorSnackbar()
     }
@@ -191,11 +216,22 @@ class LoginPresenter : LoginContract.Presenter, LoginContract.LoadingListener {
         if (password != confirmation) {
             view.showPasswordsDoNotMatchSnackbar()
         } else {
-            step = Step.CATEGORIES
+            step = Step.USERNAME
             view.showLoadingFAB()
 
             model.createAccount(email, password)
         }
+    }
+
+    private fun usernameHandle() {
+        if (username.isNotEmpty()) {
+            view.showLoadingFAB()
+            model.setUsername(username)
+        } else {
+            model.loadAllCategories()
+        }
+
+        step = Step.CATEGORIES
     }
 
     private fun categoriesHandle(checks : ArrayList<Boolean>?) {

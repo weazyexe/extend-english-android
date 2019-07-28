@@ -19,7 +19,7 @@
 
     <TextView
             android:id="@+id/text_category"
-            android:textColor="@color/colorGrey"
+            android:textColor="?android:textColorPrimary"
             tools:text="Category"
             android:textSize="20sp"
             android:layout_width="wrap_content"

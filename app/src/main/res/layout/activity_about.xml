@@ -64,6 +64,7 @@
                     android:text="@string/application_caps"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="?android:textColorPrimary"
                     android:textSize="12sp"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"/>
@@ -87,6 +88,7 @@
                             android:id="@+id/text_application"
                             android:textSize="16sp"
                             android:text="@string/extend_english"
+                            android:textColor="?android:textColorPrimary"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:transitionName="trtext_name"/>
@@ -94,6 +96,7 @@
                     <TextView
                             android:text="@string/app_version"
                             android:alpha="0.6"
+                            android:textColor="?android:textColorPrimary"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/text_application"/>
@@ -106,6 +109,7 @@
                     android:text="@string/developer_caps"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="?android:textColorPrimary"
                     android:textSize="12sp"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"/>
@@ -133,12 +137,14 @@
                                 android:id="@+id/text_name"
                                 android:textSize="16sp"
                                 android:text="@string/me"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
                         <TextView
                                 android:text="@string/android_developer"
                                 android:layout_width="wrap_content"
+                                android:textColor="?android:textColorPrimary"
                                 android:alpha="0.6"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_name"/>
@@ -156,6 +162,7 @@
                         <TextView
                                 android:id="@+id/text_twitter"
                                 android:textSize="16sp"
+                                android:textColor="?android:textColorPrimary"
                                 android:text="@string/twitter"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
@@ -163,6 +170,7 @@
                         <TextView
                                 android:text="@string/weazyexe"
                                 android:layout_width="wrap_content"
+                                android:textColor="?android:textColorPrimary"
                                 android:alpha="0.6"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_twitter"/>
@@ -181,6 +189,7 @@
                                 android:id="@+id/text_instagram"
                                 android:textSize="16sp"
                                 android:text="@string/instagram"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
@@ -188,6 +197,7 @@
                                 android:text="@string/weazyexe"
                                 android:layout_width="wrap_content"
                                 android:alpha="0.6"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_instagram"/>
 
@@ -205,6 +215,7 @@
                                 android:id="@+id/text_telegram"
                                 android:textSize="16sp"
                                 android:text="@string/telegram"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
@@ -212,6 +223,7 @@
                                 android:text="@string/weazyexe"
                                 android:layout_width="wrap_content"
                                 android:alpha="0.6"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_telegram"/>
 
@@ -252,6 +264,7 @@
                                 android:id="@+id/text_gson"
                                 android:textSize="16sp"
                                 android:text="@string/gson"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
@@ -259,6 +272,7 @@
                                 android:text="@string/gson_desc"
                                 android:layout_width="wrap_content"
                                 android:alpha="0.6"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_gson"/>
 
@@ -276,6 +290,7 @@
                                 android:id="@+id/text_guava"
                                 android:textSize="16sp"
                                 android:text="@string/guava"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
@@ -283,6 +298,7 @@
                                 android:text="@string/guava_desc"
                                 android:layout_width="wrap_content"
                                 android:alpha="0.6"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_guava"/>
 
@@ -300,6 +316,7 @@
                                 android:id="@+id/text_circle_image_view"
                                 android:textSize="16sp"
                                 android:text="@string/circle_image_view"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
@@ -307,6 +324,7 @@
                                 android:text="@string/circle_image_view_desc"
                                 android:layout_width="wrap_content"
                                 android:alpha="0.6"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_circle_image_view"/>
 
@@ -324,6 +342,7 @@
                                 android:id="@+id/text_card_stack_view"
                                 android:textSize="16sp"
                                 android:text="@string/card_stack_view"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
@@ -331,6 +350,7 @@
                                 android:text="@string/card_stack_view_desc"
                                 android:layout_width="wrap_content"
                                 android:alpha="0.6"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_card_stack_view"/>
 
@@ -347,6 +367,7 @@
                         <TextView
                                 android:id="@+id/text_glide"
                                 android:textSize="16sp"
+                                android:textColor="?android:textColorPrimary"
                                 android:text="@string/glide"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
@@ -355,6 +376,7 @@
                                 android:text="@string/glide_desc"
                                 android:layout_width="wrap_content"
                                 android:alpha="0.6"
+                                android:textColor="?android:textColorPrimary"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/text_glide"/>
 

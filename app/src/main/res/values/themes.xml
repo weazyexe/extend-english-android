@@ -6,7 +6,7 @@
         <item name="colorAccent">@color/colorOrange</item>
         <item name="android:navigationBarColor">@color/colorNearlyWhite</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColorPrimary">@color/colorBlack</item>
     </style>
 
     <style name="AppTheme.Launcher" parent="AppTheme">

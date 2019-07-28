@@ -4,6 +4,7 @@ import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.icu.util.TimeZone
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import exe.weazy.extendenglish.arch.LoginContract
 import exe.weazy.extendenglish.entity.Category
@@ -118,6 +119,18 @@ class LoginModel(private var presenter : LoginPresenter) : LoginContract.Model {
         val user = auth.currentUser
         if (user != null) {
             firestore.document("users/${user.uid}").set(hashMap)
+        }
+    }
+
+    override fun setUsername(username: String) {
+        val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(username).build()
+
+        auth.currentUser?.updateProfile(profileUpdates)?.addOnCompleteListener {
+            if (it.isSuccessful) {
+                presenter.onUsernameUpdateFinished()
+            } else {
+                presenter.onUsernameUpdateFailure()
+            }
         }
     }
 }
