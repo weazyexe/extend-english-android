@@ -1,6 +1,8 @@
 package exe.weazy.extendenglish.view.activity
 
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.speech.tts.Voice
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -11,6 +13,7 @@ import exe.weazy.extendenglish.view.fragment.LearnFragment
 import exe.weazy.extendenglish.view.fragment.SettingsFragment
 import exe.weazy.extendenglish.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {

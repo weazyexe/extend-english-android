@@ -144,13 +144,13 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
     }
 
     override fun checkWord(word: String, cardView: View) {
-        val translate = currentWord.translate
-        val words = translate.split(", ")
+        val translateWords = currentWord.translate.split(", ")
+        val engWords = currentWord.word.split(", ")
 
-        if (words.contains(word)) {
+        if (translateWords.contains(word) || engWords.contains(word)) {
             view.showWordCard(cardView)
         } else {
-            if (translate == word) {
+            if (currentWord.translate == word || currentWord.word == word) {
                 // Right answer handle
                 view.showWordCard(cardView)
             } else {
@@ -288,7 +288,6 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
             }
 
             Progress.LEARN_TODAY -> {
-                // TODO: learn today allWords
                 model.writeWordsByProgress(learnedToRepeat, Progress.REPEAT_YESTERDAY)
                 model.writeKnown(knew, know.size)
 
@@ -367,7 +366,8 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
 
         current.forEach { word ->
             variants.shuffle()
-            val cardWord = CardWord(word, variants.filter { it.word != word.word && it.category == word.category }.subList(0, 4))
+            val cardWord = CardWord(word,
+                variants.filter { it.word != word.word && it.category == word.category }.subList(0, 4))
             cardWords.add(cardWord)
         }
 

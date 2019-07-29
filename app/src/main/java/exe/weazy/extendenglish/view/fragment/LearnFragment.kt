@@ -117,9 +117,6 @@ class LearnFragment : Fragment(), CardStackListener, LearnContract.View {
     }
 
     override fun onCardAppeared(view: View?, position: Int) {
-
-        // FIXME: word/translate issue
-
         doneLayout = view?.findViewById(R.id.layout_done)
         againLayout = view?.findViewById(R.id.layout_again)
 
