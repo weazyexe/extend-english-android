@@ -202,6 +202,10 @@ class CardStackAdapter(private var words : MutableList<CardWord>)
                 wordWrite.text = cardWord.word.translate
                 wordVariant.text = cardWord.word.translate
                 wordChoose.text = cardWord.word.translate
+
+                transcriptionWrite.text = ""
+                transcriptionVariant.text = ""
+                transcriptionChoose.text = ""
             }
 
             wordShow.text = cardWord.word.word
