@@ -320,7 +320,9 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
             val diff = now.time - lastActivity.time
 
             if (diff > LIMIT_TIME && progress == Progress.LEARNED) {
-                progress = if (!repeatFourDays.isNullOrEmpty()) {
+                progress = if (!learned.isNullOrEmpty()) {
+                    Progress.REPEAT_LONG
+                } else if (!repeatFourDays.isNullOrEmpty()) {
                     Progress.REPEAT_FOUR_DAYS
                 } else if (!repeatThreeDays.isNullOrEmpty()) {
                     Progress.REPEAT_THREE_DAYS
@@ -328,8 +330,6 @@ class LearnPresenter : LearnContract.Presenter, LearnContract.LoadingListener {
                     Progress.REPEAT_TWO_DAYS
                 } else if (!repeatYesterday.isNullOrEmpty()) {
                     Progress.REPEAT_YESTERDAY
-                } else if (progress != Progress.LEARN_TODAY) {
-                    Progress.REPEAT_LONG
                 } else {
                     Progress.LEARN_TODAY
                 }
